@@ -13,8 +13,8 @@ public class Database {
         return new CommandLineRunner() {
             @Override
             public void run(String... args) throws Exception {
-                userRepository.save(new G5_SWP391.ChildGrownTracking.models.User("Kien", "afefaf", "fewafaf", "gwegs000", membership.BASIC, new java.util.Date(), new java.util.Date(), "true"));
-                userRepository.save(new G5_SWP391.ChildGrownTracking.models.User("Hehe", "afefaf", "fewafaf", "gwegs000", membership.PREMIUM, new java.util.Date(), new java.util.Date(), "true"));
+                userRepository.save(new G5_SWP391.ChildGrownTracking.models.User("Kien", "afefaf", "fewafaf", "gwegs000", membership.BASIC, java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), "true"));
+                userRepository.save(new G5_SWP391.ChildGrownTracking.models.User("Hehe", "afefaf", "fewafaf", "gwegs000", membership.PREMIUM, java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), "true"));
             }
         };
     }

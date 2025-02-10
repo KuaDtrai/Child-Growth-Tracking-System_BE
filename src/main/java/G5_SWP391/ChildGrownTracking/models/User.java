@@ -3,6 +3,7 @@ package G5_SWP391.ChildGrownTracking.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -28,13 +29,13 @@ public class User {
 
     private membership membership;
 
-    private Date createdDate;
+    private LocalDateTime createdDate;
 
-    private Date lastModifiedDate;
+    private LocalDateTime lastModifiedDate;
 
     private String status;
 
-    public User(String userName, String password, String email, String roleId, membership membership, Date createdDate, Date lastModifiedDate, String status) {
+    public User(String userName, String password, String email, String roleId, membership membership, LocalDateTime createdDate, LocalDateTime lastModifiedDate, String status) {
         this.userName = userName;
         this.password = password;
         this.email = email;

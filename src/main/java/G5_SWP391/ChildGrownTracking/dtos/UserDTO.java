@@ -27,11 +27,11 @@ public class UserDTO {
     @JsonProperty("membership")
     private String membership;
 
-    @JsonProperty("createdDate")
-    private Date createdDate;
-
-    @JsonProperty("lastModifiedDate")
-    private Date lastModifiedDate;
+//    @JsonProperty("createdDate")
+//    private Date createdDate;
+//
+//    @JsonProperty("lastModifiedDate")
+//    private Date lastModifiedDate;
 
     @JsonProperty("status")
     private String status;
