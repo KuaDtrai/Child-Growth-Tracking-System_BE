@@ -35,8 +35,21 @@ public class ChildController {
     List<Child> getAllChildren() {
         return repository.findAll();
     }
+    // http://localhost:8080/api/v1/child/findByName
+    @GetMapping("/findByName")
+    public ResponseEntity<ResponseObject> findChildByName(@RequestParam String name) {
+        List<Child> children = repository.findByNameContainingIgnoreCase(name);
 
-
+        if (!children.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
+                    "ok", "Found children with name containing: " + name, children
+            ));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject(
+                    "fail", "No child found with name containing: " + name, null
+            ));
+        }
+    }
 
     // get child by id
     // http://localhost:8080/api/v1/child/{id}
@@ -99,6 +112,22 @@ public class ChildController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     new ResponseObject("fail", "Child ID " + id + " not found!", null)
             );
+        }
+    }
+    // http://localhost:8080/api/v1/child/delete/{id}
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ResponseObject> deleteChild(@PathVariable Long id) {
+        Optional<Child> child = repository.findById(id);
+
+        if (child.isPresent()) {
+            repository.deleteById(id);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
+                    "ok", "Deleted child with ID: " + id, null
+            ));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject(
+                    "fail", "Child with ID " + id + " not found!", null
+            ));
         }
     }
 }
