@@ -13,17 +13,24 @@ import java.util.Date;
 
 @Configuration
 public class Database {
+    private final ChildRepository childRepository;
+
+    public Database(ChildRepository childRepository) {
+        this.childRepository = childRepository;
+    }
+
     @Bean
-    CommandLineRunner initDatabase(UserRepository userRepository, ChildRepository childRepository) {
-        return args -> {
-            // Thêm User
-            userRepository.save(new G5_SWP391.ChildGrownTracking.models.User("Kien", "afefaf", "fewafaf", "gwegs000", membership.BASIC, new Date(), new Date(), "true"));
-            userRepository.save(new G5_SWP391.ChildGrownTracking.models.User("Hehe", "afefaf", "fewafaf", "gwegs000", membership.PREMIUM, new Date(), new Date(), "true"));
+    CommandLineRunner initDatabase(UserRepository userRepository) {
+        return new CommandLineRunner() {
+            @Override
+            public void run(String... args) throws Exception {
+                userRepository.save(new G5_SWP391.ChildGrownTracking.models.User("Kien", "afefaf", "fewafaf", "gwegs000", membership.BASIC, java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), "true"));
+                userRepository.save(new G5_SWP391.ChildGrownTracking.models.User("Hehe", "afefaf", "fewafaf", "gwegs000", membership.PREMIUM, java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), "true"));
 
-            // Thêm 2 Child
-            childRepository.save(new Child("Bé A", new Date(), "Male", "P001", LocalDateTime.now(), LocalDateTime.now(), true));
-            childRepository.save(new Child("Bé B", new Date(), "Female", "P002", LocalDateTime.now(), LocalDateTime.now(), true));
-
+                // Thêm 2 Child
+                childRepository.save(new Child("Bé A", new Date(), "Male", "P001", LocalDateTime.now(), LocalDateTime.now(), true));
+                childRepository.save(new Child("Bé B", new Date(), "Female", "P002", LocalDateTime.now(), LocalDateTime.now(), true));
+            }
         };
     }
 }
