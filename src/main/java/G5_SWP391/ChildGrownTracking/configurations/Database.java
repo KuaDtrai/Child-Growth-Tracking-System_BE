@@ -41,9 +41,9 @@ public class Database {
 
 
 
-            Metric metric1 = createMetric(child1.getId(), 85.3, 1.25);
-            Metric metric2 = createMetric(child1.getId(), 87.1, 1.30);
-            Metric metric3 = createMetric(child2.getId(), 78.5, 1.20);
+            Metric metric1 = createMetric(child1.getId(), 85.3, 125);
+            Metric metric2 = createMetric(child1.getId(), 87.1, 130);
+            Metric metric3 = createMetric(child2.getId(), 78.5, 120);
             metricRepository.save(metric1);
             metricRepository.save(metric2);
             metricRepository.save(metric3);
@@ -53,11 +53,14 @@ public class Database {
     }
     private Metric createMetric(Long childId, double weight, double height) {
         BigDecimal weightBD = BigDecimal.valueOf(weight);
-        BigDecimal heightBD = BigDecimal.valueOf(height);
-        BigDecimal bmi = weightBD.divide(heightBD.multiply(heightBD), 2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal heightBD = BigDecimal.valueOf(height); // Giữ nguyên cm khi lưu
+        BigDecimal heightInMeters = heightBD.divide(BigDecimal.valueOf(100)); // Chuyển cm -> m để tính BMI
+        BigDecimal bmi = weightBD.divide(heightInMeters.multiply(heightInMeters), 2, BigDecimal.ROUND_HALF_UP);
 
         return new Metric(childId, weightBD, heightBD, bmi, LocalDateTime.now(), LocalDateTime.now(), true);
     }
+
+
 
 
 }
