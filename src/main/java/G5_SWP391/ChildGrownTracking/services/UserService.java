@@ -34,6 +34,7 @@ public class UserService {
     public User saveUser(UserDTO userDto) {
         User user = new User(userDto.getUserName(), userDto.getEmail(), userDto.getEmail(), userDto.getRoleId(), membership.valueOf(userDto.getMembership()),java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), userDto.getStatus());
         return userRepository.save(user);
+
     }
 
     public User deleteUserById(Long id){
@@ -44,5 +45,13 @@ public class UserService {
         }else {
             return null;
         }
+    }
+
+    public User findUserByUserNameAndPassword(String userName, String password) {
+        return userRepository.findByUserNameAndPassword(userName, password);
+    }
+
+    public User findUserByEmailAndPassword(String email, String password) {
+        return userRepository.findUserByEmailAndPassword(email, password);
     }
 }

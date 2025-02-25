@@ -53,7 +53,13 @@ public class UserController {
             @Valid
             @RequestBody UserDTO userDTO
     ){
-        User user = userSevice.saveUser(userDTO);
+
+
+        User user = userSevice.getUserByUserName(userDTO.getUserName());
+        System.out.println(user);
+        if (user == null) {
+            user = userSevice.saveUser(userDTO);
+        }else user = null;
 
         if(user != null)
             return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObject( "ok", "User saved successfully", user));
