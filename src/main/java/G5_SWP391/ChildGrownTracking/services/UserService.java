@@ -20,7 +20,7 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return userRepository.findAllByStatusIsTrue();
     }
 
     public User getUserById(Long id) {
@@ -32,7 +32,7 @@ public class UserService {
     }
 
     public User saveUser(UserDTO userDto) {
-        User user = new User(userDto.getUserName(), userDto.getEmail(), userDto.getEmail(), userDto.getRoleId(), membership.valueOf(userDto.getMembership()),java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), userDto.getStatus());
+        User user = new User(userDto.getUserName(), userDto.getEmail(), userDto.getEmail(), userDto.getRoleId(), membership.valueOf(userDto.getMembership()),java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), userDto.isStatus());
         return userRepository.save(user);
 
     }
@@ -40,8 +40,8 @@ public class UserService {
     public User deleteUserById(Long id){
         User user = userRepository.findById(id).orElse(null);
         if(user != null){
-            userRepository.deleteById(id);
-            return user;
+            user.setStatus(false);
+            return userRepository.save(user);
         }else {
             return null;
         }

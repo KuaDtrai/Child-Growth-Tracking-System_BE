@@ -34,5 +34,5 @@ public class UserDTO {
 //    private Date lastModifiedDate;
 
     @JsonProperty("status")
-    private String status;
+    private boolean status;
 }

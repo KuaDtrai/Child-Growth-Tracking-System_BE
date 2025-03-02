@@ -33,9 +33,9 @@ public class User {
 
     private LocalDateTime lastModifiedDate;
 
-    private String status;
+    private boolean status;
 
-    public User(String userName, String password, String email, String roleId, membership membership, LocalDateTime createdDate, LocalDateTime lastModifiedDate, String status) {
+    public User(String userName, String password, String email, String roleId, membership membership, LocalDateTime createdDate, LocalDateTime lastModifiedDate, boolean status) {
         this.userName = userName;
         this.password = password;
         this.email = email;
