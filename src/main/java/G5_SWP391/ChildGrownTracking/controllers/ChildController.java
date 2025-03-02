@@ -71,7 +71,7 @@ public class ChildController {
 
     // Delete child by ID
     // http://localhost:8080/api/v1/child/delete/{id}
-    @DeleteMapping("/delete/{id}")
+    @PutMapping("/delete/{id}")
     public ResponseEntity<ResponseObject> deleteChild(@PathVariable Long id) {
         return service.deleteChild(id);
     }

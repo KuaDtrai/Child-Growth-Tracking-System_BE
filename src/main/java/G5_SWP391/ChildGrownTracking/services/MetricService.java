@@ -32,7 +32,7 @@ public class MetricService {
         if(childId == null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Child ID is required.");
         }
-        if(!childRepository.existsById(childId)){
+        if(!childRepository.existsByIdAndStatusIsTrue(childId)){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Child with ID " + childId + " not found.");
         }
 
@@ -47,7 +47,7 @@ public class MetricService {
         if(childId == null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Child ID is required.");
         }
-        if(!childRepository.existsById(childId)){
+        if(!childRepository.existsByIdAndStatusIsTrue(childId)){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Child with ID " + childId + " not found.");
         }
 
@@ -66,7 +66,7 @@ public class MetricService {
         if(childId == null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Child ID is required.");
         }
-        if(!childRepository.existsById(childId)){
+        if(!childRepository.existsByIdAndStatusIsTrue(childId)){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Child with ID " + childId + " not found.");
         }
 
@@ -84,7 +84,7 @@ public class MetricService {
         if(childId == null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Child ID is required.");
         }
-        if(!childRepository.existsById(childId)){
+        if(!childRepository.existsByIdAndStatusIsTrue(childId)){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Child with ID " + childId + " not found.");
         }
 
@@ -121,12 +121,12 @@ public class MetricService {
         }
 
 
-        if(!childRepository.existsById(request.getChildId())){
+        if(!childRepository.existsByIdAndStatusIsTrue(request.getChildId())){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Child with ID " + request.getChildId() + " not found.");
         }
         // Kiểm tra childId có tồn tại không
-        Optional<Child> child = childRepository.findById(request.getChildId());
-        if (child.isEmpty()) {
+
+        if (childRepository.existsByIdAndStatusIsTrue(request.getChildId())) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Child with ID " + request.getChildId() + " not found.");
         }
 

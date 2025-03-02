@@ -1,6 +1,7 @@
 package G5_SWP391.ChildGrownTracking.services;
 
 import G5_SWP391.ChildGrownTracking.dtos.ChildRequestDTO;
+import G5_SWP391.ChildGrownTracking.dtos.ChildResponseDTO;
 import G5_SWP391.ChildGrownTracking.models.Child;
 import G5_SWP391.ChildGrownTracking.repositories.ChildRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
@@ -13,8 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ChildService {
@@ -45,14 +48,41 @@ public class ChildService {
     }
 
     public ResponseEntity<ResponseObject> getChildById(Long id) {
+//        if (id == null) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                    .body(new ResponseObject("fail", "Invalid ID: ID cannot be empty or null!", null));
+//        }
+//        List<Child> child = childRepository.findByIdAndStatusIsTrue(id);
+//        if (!child.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.OK)
+//                    .body(new ResponseObject("ok", "Found Child with id: " + id, child));
+//        } else {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                    .body(new ResponseObject("fail", "Cannot find Child with id: " + id, null));
+//        }
+
         if (id == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Invalid ID: ID cannot be empty or null!", null));
         }
-        Optional<Child> child = childRepository.findById(id);
-        if (child.isPresent()) {
+
+        List<Object[]> results = childRepository.findChildWithParentName(id);
+        if (!results.isEmpty()) {
+            List<ChildResponseDTO> childDTOs = results.stream().map(obj ->
+                    new ChildResponseDTO(
+                            ((Number) obj[0]).longValue(),   // id
+                            (String) obj[1],                 // name
+                            (Date) obj[2],                   // dob
+                            (String) obj[3],                 // gender
+                            (String) obj[4],                 // parentName (userName)
+                            (LocalDateTime) obj[5],          // createDate
+                            (LocalDateTime) obj[6],          // updateDate
+                            (Boolean) obj[7]                 // status
+                    )
+            ).collect(Collectors.toList());
+
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject("ok", "Found Child with id: " + id, child));
+                    .body(new ResponseObject("ok", "Found Child with id: " + id, childDTOs));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseObject("fail", "Cannot find Child with id: " + id, null));
@@ -66,7 +96,7 @@ public class ChildService {
         }
 
 
-        List<Child> children = childRepository.findByParenId(parentId);
+        List<Child> children = childRepository.findByParenIdAndStatusIsTrue(parentId);
         if (!children.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("ok", "Found children with parentId: " + parentId, children));
@@ -136,9 +166,9 @@ public class ChildService {
     }
 
     public ResponseEntity<ResponseObject> deleteChild(Long id) {
-        Optional<Child> child = childRepository.findById(id);
-        if (child.isPresent()) {
-            childRepository.deleteById(id);
+
+        if (childRepository.existsByIdAndStatusIsTrue(id)) {
+            childRepository.updateStatusById(id,false);
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("ok", "Deleted child with ID: " + id, null));
         } else {
