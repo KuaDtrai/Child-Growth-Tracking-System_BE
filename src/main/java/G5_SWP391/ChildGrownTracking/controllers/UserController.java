@@ -15,14 +15,20 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     private final UserService userSevice;
 
     // http://localhost:8080/api/v1/users
     @GetMapping("")
-    List<User> getAllUsers(){
-        return userSevice.getAllUsers();
+    ResponseEntity<ResponseObject> getAllUsers(){
+        List<User> users = userSevice.getAllUsers();
+        if(!users.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Found UserList", users));
+        }else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("false", "Not Found UserList", users));
+        }
     }
 
     @GetMapping("/userid/{id}")
@@ -67,7 +73,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject( "false", "Cannot save User", null));
     }
 
-    @DeleteMapping("/{id}")
+    @PutMapping("/{id}")
     ResponseEntity<ResponseObject> deleteUserById(@PathVariable("id") Long id){
         User user = userSevice.deleteUserById(id);
         if(user != null){

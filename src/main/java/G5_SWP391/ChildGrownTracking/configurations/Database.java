@@ -26,8 +26,8 @@ public class Database {
             childRepository.deleteAll();
             metricRepository.deleteAll();;
             // Thêm dữ liệu User
-            User user1 = new User("Kien", "afefaf", "kien@example.com", "ADMIN", membership.BASIC, LocalDateTime.now(), LocalDateTime.now(), "true");
-            User user2 = new User("hehehehehe", "afefaf", "hehe@example.com", "USER", membership.PREMIUM, LocalDateTime.now(), LocalDateTime.now(), "true");
+            User user1 = new User("Kien", "afefaf", "kien@example.com", "ADMIN", membership.BASIC, LocalDateTime.now(), LocalDateTime.now(), true);
+            User user2 = new User("hehehehehe", "afefaf", "hehe@example.com", "USER", membership.PREMIUM, LocalDateTime.now(), LocalDateTime.now(), true);
 
             userRepository.save(user1);
             userRepository.save(user2);
@@ -35,6 +35,7 @@ public class Database {
             // Thêm dữ liệu Child
             Long user1Id = user1.getId();
             Long user2Id = user2.getId();
+            System.out.println(user1Id);
             Child child1 = new Child("Bé A", new Date(), "Male", user1Id, LocalDateTime.now(), LocalDateTime.now(), true);
             Child child2 = new Child("Bé B", new Date(), "Female", user2Id, LocalDateTime.now(), LocalDateTime.now(), true);
 
