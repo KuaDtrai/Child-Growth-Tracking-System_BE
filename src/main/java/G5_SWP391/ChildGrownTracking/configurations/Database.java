@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -51,14 +52,14 @@ public class Database {
             metricRepository.save(metric2);
             metricRepository.save(metric3);
 
-            System.out.println("✅ Dữ liệu User và Child đã được khởi tạo thành công!");
+            System.out.println("✅ Dữ liệu đã được khởi tạo thành công!");
         };
     }
     private Metric createMetric(Long childId, double weight, double height) {
         BigDecimal weightBD = BigDecimal.valueOf(weight);
         BigDecimal heightBD = BigDecimal.valueOf(height); // Giữ nguyên cm khi lưu
         BigDecimal heightInMeters = heightBD.divide(BigDecimal.valueOf(100)); // Chuyển cm -> m để tính BMI
-        BigDecimal bmi = weightBD.divide(heightInMeters.multiply(heightInMeters), 2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal bmi = weightBD.divide(heightInMeters.multiply(heightInMeters), 2, RoundingMode.HALF_UP);
 
         return new Metric(childId, weightBD, heightBD, bmi, LocalDateTime.now(), LocalDateTime.now(), true);
     }
