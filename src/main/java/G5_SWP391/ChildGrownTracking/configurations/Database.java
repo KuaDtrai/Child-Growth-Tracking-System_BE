@@ -33,8 +33,8 @@ public class Database {
             userRepository.save(user2);
 
             // Thêm dữ liệu Child
-            Child child1 = new Child("Bé A", new Date(), "Male", "P001", LocalDateTime.now(), LocalDateTime.now(), true);
-            Child child2 = new Child("Bé B", new Date(), "Female", "P002", LocalDateTime.now(), LocalDateTime.now(), true);
+            Child child1 = new Child("Bé A", new Date(), "Male", 2L, LocalDateTime.now(), LocalDateTime.now(), true);
+            Child child2 = new Child("Bé B", new Date(), "Female", 3L, LocalDateTime.now(), LocalDateTime.now(), true);
 
             childRepository.save(child1);
             childRepository.save(child2);

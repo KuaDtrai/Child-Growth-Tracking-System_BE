@@ -3,17 +3,21 @@ package G5_SWP391.ChildGrownTracking.controllers;
 
 import G5_SWP391.ChildGrownTracking.dtos.MetricRequestDTO;
 import G5_SWP391.ChildGrownTracking.services.MetricService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/api/v1/metric")
+@RequiredArgsConstructor
 // http://localhost:8080/api/v1/metric
 public class MetricController {
 
-    @Autowired
-    private MetricService service;
+
+    private final MetricService service;
+
 
     // http://localhost:8080/api/v1/metric/
     @GetMapping("/findByChildId")
@@ -40,7 +44,10 @@ public class MetricController {
     }
     // http://localhost:8080/api/v1/metric/create
     @PostMapping("/create")
-    public ResponseEntity<?> createMetric(@RequestBody MetricRequestDTO request) {
+
+    public ResponseEntity<?> createMetric(
+            @Valid
+            @RequestBody MetricRequestDTO request) {
         return service.createMetric(request);
     }
 }

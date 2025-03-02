@@ -9,7 +9,8 @@ import java.util.List;
 
 
 public interface MetricRepository extends JpaRepository<Metric, Long> {
-    List<Metric> findByChildId (long childId);
+    List<Metric> findByChildIdAndStatusIsTrue (long childId);
+
 
     // Lấy height và recordedDate theo childId
     @Query("SELECT m.height, m.recordedDate FROM Metric m WHERE m.childId = :childId")

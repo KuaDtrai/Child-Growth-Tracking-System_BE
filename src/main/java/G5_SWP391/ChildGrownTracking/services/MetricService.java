@@ -28,7 +28,15 @@ public class MetricService {
     private ChildRepository childRepository;
 
     public ResponseEntity<?> getAllMetricByChildId(Long childId) {
-        List<Metric> metrics = metricRepository.findByChildId(childId);
+
+        if(childId == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Child ID is required.");
+        }
+        if(!childRepository.existsById(childId)){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Child with ID " + childId + " not found.");
+        }
+
+        List<Metric> metrics = metricRepository.findByChildIdAndStatusIsTrue(childId);
         if (metrics.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No metrics found for childId: " + childId);
         }
@@ -36,6 +44,13 @@ public class MetricService {
     }
 
     public ResponseEntity<?> getHeightAndRecordedDate(Long childId) {
+        if(childId == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Child ID is required.");
+        }
+        if(!childRepository.existsById(childId)){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Child with ID " + childId + " not found.");
+        }
+
         List<Object[]> result = metricRepository.findHeightAndRecordedDateByChildId(childId);
         if (result.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No height data found for childId: " + childId);
@@ -47,6 +62,14 @@ public class MetricService {
     }
 
     public ResponseEntity<?> getWeightAndRecordedDate(Long childId) {
+
+        if(childId == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Child ID is required.");
+        }
+        if(!childRepository.existsById(childId)){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Child with ID " + childId + " not found.");
+        }
+
         List<Object[]> result = metricRepository.findWeightAndRecordedDateByChildId(childId);
         if (result.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No weight data found for childId: " + childId);
@@ -58,6 +81,13 @@ public class MetricService {
     }
 
     public ResponseEntity<?> getBMIAndRecordedDate(Long childId) {
+        if(childId == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Child ID is required.");
+        }
+        if(!childRepository.existsById(childId)){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Child with ID " + childId + " not found.");
+        }
+
         List<Object[]> result = metricRepository.findBMIAndRecordedDateByChildId(childId);
         if (result.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No BMI data found for childId: " + childId);
@@ -90,6 +120,10 @@ public class MetricService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Height must be greater than zero.");
         }
 
+
+        if(!childRepository.existsById(request.getChildId())){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Child with ID " + request.getChildId() + " not found.");
+        }
         // Kiểm tra childId có tồn tại không
         Optional<Child> child = childRepository.findById(request.getChildId());
         if (child.isEmpty()) {

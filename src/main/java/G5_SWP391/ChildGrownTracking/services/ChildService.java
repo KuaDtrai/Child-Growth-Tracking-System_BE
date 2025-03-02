@@ -1,7 +1,9 @@
 package G5_SWP391.ChildGrownTracking.services;
 
+import G5_SWP391.ChildGrownTracking.dtos.ChildRequestDTO;
 import G5_SWP391.ChildGrownTracking.models.Child;
 import G5_SWP391.ChildGrownTracking.repositories.ChildRepository;
+import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
 import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +21,11 @@ public class ChildService {
 
     @Autowired
     private ChildRepository childRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public List<Child> getAllChildren() {
-        return childRepository.findAll();
+        return childRepository.findByStatusIsTrue();
     }
 
     public ResponseEntity<ResponseObject> findChildByName(String name) {
@@ -30,7 +34,7 @@ public class ChildService {
                     .body(new ResponseObject("fail", "Invalid name: name cannot be empty or null!", null));
         }
 
-        List<Child> children = childRepository.findByNameContainingIgnoreCase(name);
+        List<Child> children = childRepository.findByNameContainingIgnoreCaseAndStatusIsTrue(name);
         if (!children.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("ok", "Found children with name containing: " + name, children));
@@ -40,7 +44,11 @@ public class ChildService {
         }
     }
 
-    public ResponseEntity<ResponseObject> getUserById(Long id) {
+    public ResponseEntity<ResponseObject> getChildById(Long id) {
+        if (id == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject("fail", "Invalid ID: ID cannot be empty or null!", null));
+        }
         Optional<Child> child = childRepository.findById(id);
         if (child.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK)
@@ -51,11 +59,12 @@ public class ChildService {
         }
     }
 
-    public ResponseEntity<ResponseObject> findChildrenByParentId(String parentId) {
-        if (parentId == null || parentId.isEmpty()) {
+    public ResponseEntity<ResponseObject> findChildrenByParentId(Long parentId) {
+        if (parentId == null ) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Invalid parentId: cannot be empty or null!", null));
         }
+
 
         List<Child> children = childRepository.findByParenId(parentId);
         if (!children.isEmpty()) {
@@ -68,7 +77,7 @@ public class ChildService {
     }
 
 
-    public ResponseEntity<ResponseObject> createChild(Child newChild) {
+    public ResponseEntity<ResponseObject> createChild(ChildRequestDTO newChild) {
         if (newChild.getName() == null || newChild.getName().trim().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Name cannot be empty!", null));
@@ -84,12 +93,21 @@ public class ChildService {
                     .body(new ResponseObject("fail", "Gender cannot be empty!", null));
         }
 
-        if (newChild.getParenId() == null || newChild.getParenId().trim().isEmpty()) {
+        if (newChild.getParenId() == null ) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Parent ID cannot be empty!", null));
         }
 
-        Child savedChild = childRepository.save(newChild);
+        if(  !userRepository.existsById(newChild.getParenId()) ){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject("fail", "Parent ID is not exist!", null));
+        }
+
+
+
+        Child newChild1 = new Child(newChild.getName(), newChild.getDob(), newChild.getGender(), newChild.getParenId(), LocalDateTime.now(), LocalDateTime.now(), true);
+
+        Child savedChild = childRepository.save(newChild1);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseObject("ok", "Insert successfully!", savedChild));
     }

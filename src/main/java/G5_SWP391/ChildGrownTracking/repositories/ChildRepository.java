@@ -6,8 +6,11 @@ import java.util.List;
 
 
 public interface ChildRepository extends JpaRepository<Child, Long> {
-    List<Child> findByNameContainingIgnoreCase(String name);
-    List<Child> findByParenId(String parenId);
+    List<Child> findByNameContainingIgnoreCaseAndStatusIsTrue(String name);
+    List<Child> findByParenId(Long parenId);
+    List<Child> findByStatusIsTrue();
+    boolean existsById(Long ChildId);
+
 
 
 

@@ -28,7 +28,7 @@ public class Child {
 
    private String gender ;
 
-   private String parenId ;
+   private Long parenId ;
 
    private LocalDateTime createDate ;
 
@@ -36,7 +36,7 @@ public class Child {
 
    private boolean status ;
 
-    public Child( String name, Date dob, String gender, String parenId, LocalDateTime createDate, LocalDateTime updateDate, boolean status) {
+    public Child( String name, Date dob, String gender, Long parenId, LocalDateTime createDate, LocalDateTime updateDate, boolean status) {
 
         this.name = name;
         this.dob = dob;
