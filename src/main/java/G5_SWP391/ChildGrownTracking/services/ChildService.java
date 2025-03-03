@@ -128,27 +128,48 @@ public class ChildService {
     }
 
 
-    public ResponseEntity<ResponseObject> updateChild(Long id, Child updatedChild) {
+    public ResponseEntity<ResponseObject> updateChild(Long id, ChildRequestDTO childRequest) {
+        // Kiểm tra childId có tồn tại và có status = true không
+        if (!childRepository.existsByIdAndStatusIsTrue(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "Child ID " + id + " not found or inactive!", null));
+        }
+
+        // Kiểm tra parentId có tồn tại không (trạng thái active)
+        if (!userRepository.existsByIdAndStatusIsTrue(childRequest.getParenId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject("fail", "Invalid Parent ID: Parent does not exist or is inactive!", null));
+        }
+
+        // Lấy đối tượng Child từ database
         Optional<Child> existingChild = childRepository.findById(id);
 
         if (existingChild.isPresent()) {
             Child child = existingChild.get();
-            if (updatedChild.getName() != null) child.setName(updatedChild.getName());
-            if (updatedChild.getDob() != null) child.setDob(updatedChild.getDob());
-            if (updatedChild.getGender() != null) child.setGender(updatedChild.getGender());
-            if (updatedChild.getParenId() != null) child.setParenId(updatedChild.getParenId());
-            if (updatedChild.isStatus() != child.isStatus()) child.setStatus(updatedChild.isStatus());
 
+            // Cập nhật thông tin từ DTO (chỉ cập nhật nếu có dữ liệu)
+            if (childRequest.getName() != null) child.setName(childRequest.getName());
+            if (childRequest.getDob() != null) child.setDob(childRequest.getDob());
+            if (childRequest.getGender() != null) child.setGender(childRequest.getGender());
+            if (childRequest.getParenId() != null) child.setParenId(childRequest.getParenId());
+
+            // Cập nhật thời gian chỉnh sửa
             child.setUpdateDate(LocalDateTime.now());
+
+            // Lưu thay đổi vào database
             childRepository.save(child);
 
+            // Truy vấn lại để lấy ChildResponseDTO (bao gồm parentName)
+            ChildResponseDTO updatedChildDTO = childRepository.findChildByIdWithParentName(id);
+
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject("ok", "Updated successfully!", child));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseObject("fail", "Child ID " + id + " not found!", null));
+                    .body(new ResponseObject("ok", "Updated successfully!", updatedChildDTO));
         }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ResponseObject("fail", "Child ID " + id + " not found!", null));
     }
+
 
     public ResponseEntity<ResponseObject> deleteChild(Long id) {
 
