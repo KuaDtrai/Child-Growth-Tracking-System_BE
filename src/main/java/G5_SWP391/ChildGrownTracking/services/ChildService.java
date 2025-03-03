@@ -27,8 +27,16 @@ public class ChildService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<Child> getAllChildren() {
-        return childRepository.findByStatusIsTrue();
+    public ResponseEntity<ResponseObject> getAllChildren() {
+        List<ChildResponseDTO> children = childRepository.findAllChildrenWithParentName();
+
+        if (!children.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("ok", "List of all active children", children));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "No active children found", null));
+        }
     }
 
     public ResponseEntity<ResponseObject> findChildByName(String name) {
@@ -37,72 +45,49 @@ public class ChildService {
                     .body(new ResponseObject("fail", "Invalid name: name cannot be empty or null!", null));
         }
 
-        List<Child> children = childRepository.findByNameContainingIgnoreCaseAndStatusIsTrue(name);
+        List<ChildResponseDTO> children = childRepository.findByNameWithParentName(name);
+
         if (!children.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject("ok", "Found children with name containing: " + name, children));
+                    .body(new ResponseObject("ok", "Children found with name containing: " + name, children));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseObject("fail", "No child found with name containing: " + name, null));
+                    .body(new ResponseObject("fail", "No children found with name containing: " + name, null));
         }
     }
 
     public ResponseEntity<ResponseObject> getChildById(Long id) {
-//        if (id == null) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//                    .body(new ResponseObject("fail", "Invalid ID: ID cannot be empty or null!", null));
-//        }
-//        List<Child> child = childRepository.findByIdAndStatusIsTrue(id);
-//        if (!child.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.OK)
-//                    .body(new ResponseObject("ok", "Found Child with id: " + id, child));
-//        } else {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-//                    .body(new ResponseObject("fail", "Cannot find Child with id: " + id, null));
-//        }
-
         if (id == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Invalid ID: ID cannot be empty or null!", null));
         }
 
-        List<Object[]> results = childRepository.findChildWithParentName(id);
-        if (!results.isEmpty()) {
-            List<ChildResponseDTO> childDTOs = results.stream().map(obj ->
-                    new ChildResponseDTO(
-                            ((Number) obj[0]).longValue(),   // id
-                            (String) obj[1],                 // name
-                            (Date) obj[2],                   // dob
-                            (String) obj[3],                 // gender
-                            (String) obj[4],                 // parentName (userName)
-                            (LocalDateTime) obj[5],          // createDate
-                            (LocalDateTime) obj[6],          // updateDate
-                            (Boolean) obj[7]                 // status
-                    )
-            ).collect(Collectors.toList());
+        ChildResponseDTO child = childRepository.findChildByIdWithParentName(id);
 
+        if (child != null) {
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject("ok", "Found Child with id: " + id, childDTOs));
+                    .body(new ResponseObject("ok", "Found Child with id: " + id, child));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseObject("fail", "Cannot find Child with id: " + id, null));
         }
     }
 
+
     public ResponseEntity<ResponseObject> findChildrenByParentId(Long parentId) {
-        if (parentId == null ) {
+        if (parentId == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Invalid parentId: cannot be empty or null!", null));
         }
 
+        List<ChildResponseDTO> children = childRepository.findByParentIdWithParentName(parentId);
 
-        List<Child> children = childRepository.findByParenIdAndStatusIsTrue(parentId);
         if (!children.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject("ok", "Found children with parentId: " + parentId, children));
+                    .body(new ResponseObject("ok", "Children belonging to parent ID: " + parentId, children));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseObject("fail", "No child found with parentId: " + parentId, null));
+                    .body(new ResponseObject("fail", "No children found for parent ID: " + parentId, null));
         }
     }
 

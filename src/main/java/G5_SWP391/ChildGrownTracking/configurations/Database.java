@@ -51,7 +51,7 @@ public class Database {
             metricRepository.save(metric2);
             metricRepository.save(metric3);
 
-            System.out.println("✅ Dữ liệu User và Child đã được khởi tạo thành công!");
+            System.out.println("✅ Dữ liệu đã được khởi tạo thành công!");
         };
     }
     private Metric createMetric(Long childId, double weight, double height) {

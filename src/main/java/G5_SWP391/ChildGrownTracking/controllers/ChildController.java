@@ -29,7 +29,7 @@ public class ChildController {
     // Get all children
     // http://localhost:8080/api/v1/child/getAllChild
     @GetMapping("/getAllChild")
-    public List<Child> getAllChildren() {
+    public ResponseEntity<ResponseObject> getAllChildren() {
         return service.getAllChildren();
     }
 
