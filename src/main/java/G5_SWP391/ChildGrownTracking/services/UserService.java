@@ -1,13 +1,14 @@
 package G5_SWP391.ChildGrownTracking.services;
 
 import G5_SWP391.ChildGrownTracking.dtos.UserDTO;
+import G5_SWP391.ChildGrownTracking.models.Role;
 import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.models.membership;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -24,7 +25,8 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
+        User user = userRepository.findByIdAndStatusIsTrue(id);
+        return user;
     }
 
     public User getUserByUserName(String userName) {
@@ -32,7 +34,15 @@ public class UserService {
     }
 
     public User saveUser(UserDTO userDto) {
-        User user = new User(userDto.getUserName(), userDto.getEmail(), userDto.getEmail(), userDto.getRoleId(), membership.valueOf(userDto.getMembership()),java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), userDto.isStatus());
+        User user = new User(userDto.getUserName(),
+                userDto.getPassword(),
+                userDto.getEmail(),
+                Role.valueOf(userDto.getRoleId()),
+                membership.valueOf(userDto.getMembership()),
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                true
+        );
         return userRepository.save(user);
 
     }
@@ -47,8 +57,21 @@ public class UserService {
         }
     }
 
+    public User updateUser(long id, UserDTO userDto) {
+        User user = getUserById(id);
+        if (user != null) {
+            user.setUserName(userDto.getUserName());
+            user.setEmail(userDto.getEmail());
+            user.setEmail(userDto.getEmail());
+            user.setRoleId(Role.valueOf(userDto.getRoleId()));
+            user.setMembershipId(membership.valueOf(userDto.getMembership()));
+            user.setStatus(userDto.isStatus());
+            return userRepository.save(user);
+        }else return null;
+    }
+
     public User findUserByUserNameAndPassword(String userName, String password) {
-        return userRepository.findByUserNameAndPassword(userName, password);
+        return userRepository.findByUserNameAndPasswordAndStatusIsTrue(userName, password);
     }
 
     public User findUserByEmailAndPassword(String email, String password) {

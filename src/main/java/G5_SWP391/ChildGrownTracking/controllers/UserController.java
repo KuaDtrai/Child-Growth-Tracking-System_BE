@@ -31,6 +31,12 @@ public class UserController {
         }
     }
 
+    // http://localhost:8080/api/v1/users
+    @GetMapping("/role/member")
+    ResponseEntity<ResponseObject> getUsersByRole(@RequestParam("roleId") Long roleId) {
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "ok", ""));
+    }
+
     @GetMapping("/userid/{id}")
     ResponseEntity<ResponseObject> getUserById(@PathVariable("id") Long id){
 
@@ -71,6 +77,15 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObject( "ok", "User saved successfully", user));
         else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject( "false", "Cannot save User", null));
+    }
+
+    @PutMapping("/update/{id}")
+    ResponseEntity<ResponseObject> updateUser(@RequestBody UserDTO userDTO, @PathVariable("id") Long id){
+        User user = userSevice.updateUser(id ,userDTO);
+        if (user != null){
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject( "ok", "User updated successfully", user));
+        }else
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject( "false", "Cannot update User", null));
     }
 
     @PutMapping("/{id}")

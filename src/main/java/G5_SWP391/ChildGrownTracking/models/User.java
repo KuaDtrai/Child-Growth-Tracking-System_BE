@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 @Setter
 @Getter
 @AllArgsConstructor
@@ -17,47 +17,44 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private Long id;
 
+    @Column(name = "userName")
     private String userName;
 
+    @Column(name = "password")
     private String password;
 
+    @Column(name = "email")
     private String email;
 
-    private String roleId;
+    @Column(name = "roleId")
+    private Role roleId;
 
+    @Column(name = "membership")
     private membership membership;
 
+    @Column(name = "createDate")
     private LocalDateTime createdDate;
 
-    private LocalDateTime lastModifiedDate;
+    @Column(name = "updateDate")
+    private LocalDateTime updateDate;
 
+    @Column(name = "status")
     private boolean status;
 
-    public User(String userName, String password, String email, String roleId, membership membership, LocalDateTime createdDate, LocalDateTime lastModifiedDate, boolean status) {
+    public User(String userName, String password, String email, Role roleId, membership membershipId, LocalDateTime createdDate, LocalDateTime updateDate, boolean status) {
         this.userName = userName;
         this.password = password;
         this.email = email;
         this.roleId = roleId;
-        this.membership = membership;
+        this.membershipId = membershipId;
         this.createdDate = createdDate;
-        this.lastModifiedDate = lastModifiedDate;
+        this.updateDate = updateDate;
         this.status = status;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", userName='" + userName + '\'' +
-                ", password='" + password + '\'' +
-                ", email='" + email + '\'' +
-                ", roleId='" + roleId + '\'' +
-                ", membershipId='" + membership + '\'' +
-                ", createdDate=" + createdDate +
-                ", lastModifiedDate=" + lastModifiedDate +
-                ", status='" + status + '\'' +
-                '}';
-    }
+//    public User(String userName, String password, String email, Long roleId, String membership, LocalDateTime now, LocalDateTime now1, boolean b) {
+//    }
 }
