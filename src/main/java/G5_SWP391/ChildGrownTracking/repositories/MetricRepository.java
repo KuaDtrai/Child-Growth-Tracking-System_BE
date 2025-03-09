@@ -13,14 +13,14 @@ public interface MetricRepository extends JpaRepository<Metric, Long> {
 
 
     // Lấy height và recordedDate theo childId
-    @Query("SELECT m.height, m.recordedDate FROM Metric m WHERE m.childId = :childId")
+//    @Query("SELECT m.height, m.recordedDate FROM Metric m WHERE m.childId = :childId")
     List<Object[]> findHeightAndRecordedDateByChildId(@Param("childId") Long childId);
 
     // Lấy weight và recordedDate theo childId
-    @Query("SELECT m.weight, m.recordedDate FROM Metric m WHERE m.childId = :childId")
+//    @Query("SELECT m.weight, m.recordedDate FROM Metric m WHERE m.childId = :childId")
     List<Object[]> findWeightAndRecordedDateByChildId(@Param("childId") Long childId);
 
     // Lấy BMI và recordedDate theo childId
-    @Query("SELECT m.BMI, m.recordedDate FROM Metric m WHERE m.childId = :childId")
+//    @Query("SELECT m.BMI, m.recordedDate FROM Metric m WHERE m.childId = :childId")
     List<Object[]> findBMIAndRecordedDateByChildId(@Param("childId") Long childId);
 }

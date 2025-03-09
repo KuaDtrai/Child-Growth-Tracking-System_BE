@@ -5,7 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "Child")
@@ -28,7 +30,29 @@ public class Child {
 
    private String gender ;
 
-   private Long parenId ;
+    @ManyToOne
+    @JoinColumn(name = "parentId")  // Sửa tên cột cho đúng chuẩn SQL
+    private User parent;
+
+    @ManyToOne
+    @JoinColumn(name = "doctorId")  // Sửa tên cột cho đúng chuẩn SQL
+    private User doctor;
+
+    @OneToMany(mappedBy = "child", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Metric> metrics = new ArrayList<>();
+
+   public User getParenId() {
+       return parent;
+   }
+
+    public void setParenId(User parent) {
+         this.parent = parent;
+    }
+
+    @OneToMany(mappedBy = "child", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Post> Post = new ArrayList<>();
+
+
 
    private LocalDateTime createDate ;
 
@@ -36,30 +60,34 @@ public class Child {
 
    private boolean status ;
 
-    public Child( String name, Date dob, String gender, Long parenId, LocalDateTime createDate, LocalDateTime updateDate, boolean status) {
-
+    public Child(String name, Date dob, String gender, User parent, LocalDateTime createDate, LocalDateTime updateDate, boolean status) {
         this.name = name;
         this.dob = dob;
         this.gender = gender;
-        this.parenId = parenId;
+        this.parent = parent; // Gán đúng giá trị
         this.createDate = createDate;
         this.updateDate = updateDate;
         this.status = status;
     }
 
 
+    public void addMetric(Metric metric) {
+       metrics.add(metric);
+       metric.setChild(this);
+   }
 
-    @Override
-    public String toString() {
-        return "Child{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", dob=" + dob +
-                ", gender='" + gender + '\'' +
-                ", parenId='" + parenId + '\'' +
-                ", createDate=" + createDate +
-                ", updateDate=" + updateDate +
-                ", status=" + status +
-                '}';
+   public void removeMetric(Metric metric) {
+         metrics.remove(metric);
+         metric.setChild(null);
+   }
+
+    public void addPost(Post post) {
+         Post.add(post);
+         post.setChild(this);
+    }
+
+    public void removePost(Post post) {
+         Post.remove(post);
+         post.setChild(null);
     }
 }

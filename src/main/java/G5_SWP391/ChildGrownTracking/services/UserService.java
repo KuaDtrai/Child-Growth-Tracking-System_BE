@@ -32,7 +32,7 @@ public class UserService {
     }
 
     public User saveUser(UserDTO userDto) {
-        User user = new User(userDto.getUserName(), userDto.getEmail(), userDto.getEmail(), userDto.getRoleId(), membership.valueOf(userDto.getMembership()),java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), userDto.isStatus());
+        User user = new User(userDto.getUserName(), userDto.getEmail(), userDto.getEmail(), membership.valueOf(userDto.getMembership()),java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), userDto.isStatus());
         return userRepository.save(user);
 
     }

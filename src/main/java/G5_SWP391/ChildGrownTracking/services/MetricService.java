@@ -100,60 +100,60 @@ public class MetricService {
 
 
     public ResponseEntity<?> createMetric(MetricRequestDTO request) {
-        // Kiểm tra dữ liệu thiếu
-        if (request.getChildId() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Child ID is required.");
-        }
-        if (request.getWeight() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Weight is required.");
-        }
-        if (request.getHeight() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Height is required.");
-        }
-        if (request.getRecordedDate() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Recorded date is required.");
-        }
-        if (request.getWeight().compareTo(BigDecimal.ZERO) <= 0) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Weight must be greater than zero.");
-        }
-        if (request.getHeight().compareTo(BigDecimal.ZERO) <= 0) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Height must be greater than zero.");
-        }
-
-
-        if(!childRepository.existsByIdAndStatusIsTrue(request.getChildId())){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Child with ID " + request.getChildId() + " not found.");
-        }
-        // Kiểm tra childId có tồn tại không
-
-        if (childRepository.existsByIdAndStatusIsTrue(request.getChildId())) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Child with ID " + request.getChildId() + " not found.");
-        }
-
-        // Tính BMI = weight / (height * height) (chiều cao tính theo mét)
-        BigDecimal heightInMeters = request.getHeight().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP); // Chuyển cm -> m
-        BigDecimal BMI = request.getWeight().divide(heightInMeters.multiply(heightInMeters), 2, RoundingMode.HALF_UP);
-
-        // Tạo mới Metric
-        Metric metric = new Metric();
-        metric.setChildId(request.getChildId());
-        metric.setWeight(request.getWeight());
-        metric.setHeight(request.getHeight());
-        metric.setBMI(BMI);
-        metric.setRecordedDate(request.getRecordedDate());
-        metric.setCreateDate(LocalDateTime.now());
-        metric.setStatus(true);
-
-        metricRepository.save(metric);
+//        // Kiểm tra dữ liệu thiếu
+//        if (request.getChildId() == null) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Child ID is required.");
+//        }
+//        if (request.getWeight() == null) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Weight is required.");
+//        }
+//        if (request.getHeight() == null) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Height is required.");
+//        }
+//        if (request.getRecordedDate() == null) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Recorded date is required.");
+//        }
+//        if (request.getWeight().compareTo(BigDecimal.ZERO) <= 0) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Weight must be greater than zero.");
+//        }
+//        if (request.getHeight().compareTo(BigDecimal.ZERO) <= 0) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Height must be greater than zero.");
+//        }
+//
+//
+//        if(!childRepository.existsByIdAndStatusIsTrue(request.getChildId())){
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Child with ID " + request.getChildId() + " not found.");
+//        }
+//        // Kiểm tra childId có tồn tại không
+//
+//        if (childRepository.existsByIdAndStatusIsTrue(request.getChildId())) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Child with ID " + request.getChildId() + " not found.");
+//        }
+//
+//        // Tính BMI = weight / (height * height) (chiều cao tính theo mét)
+//        BigDecimal heightInMeters = request.getHeight().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP); // Chuyển cm -> m
+//        BigDecimal BMI = request.getWeight().divide(heightInMeters.multiply(heightInMeters), 2, RoundingMode.HALF_UP);
+//
+//        // Tạo mới Metric
+//        Metric metric = new Metric();
+//        metric.setChildId(request.getChildId());
+//        metric.setWeight(request.getWeight());
+//        metric.setHeight(request.getHeight());
+//        metric.setBMI(BMI);
+//        metric.setRecordedDate(request.getRecordedDate());
+//        metric.setCreateDate(LocalDateTime.now());
+//        metric.setStatus(true);
+//
+//        metricRepository.save(metric);
 
         // Trả về phản hồi có thông báo thành công
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "message", "Metric created successfully!",
-                "childId", metric.getChildId(),
-                "weight", metric.getWeight(),
-                "height", metric.getHeight(),
-                "BMI", metric.getBMI(),
-                "recordedDate", metric.getRecordedDate()
+
+
+
+
+                "recordedDate", request.getRecordedDate()
         ));
     }
 

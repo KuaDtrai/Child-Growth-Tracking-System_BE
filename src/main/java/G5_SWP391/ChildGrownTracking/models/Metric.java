@@ -20,8 +20,10 @@ public class Metric {
     @GeneratedValue ( strategy = GenerationType.AUTO )
     private long id ;
 
-    @Column(length = 36)
-    private long childId ;
+
+    @ManyToOne
+    @JoinColumn(name = "childId") // Để dễ dàng truy vấn
+    private Child child;
 
     @Column(precision = 5, scale = 2)
     private BigDecimal weight;
@@ -38,27 +40,13 @@ public class Metric {
 
     private boolean status;
 
-    public Metric(long childId, BigDecimal weight, BigDecimal height, BigDecimal BMI, LocalDateTime recordedDate, LocalDateTime createDate, boolean status) {
-        this.childId = childId;
+    public Metric(Child child, BigDecimal weight, BigDecimal height, BigDecimal BMI, LocalDateTime recordedDate, LocalDateTime createDate, boolean status) {
+        this.child = child;
         this.weight = weight;
         this.height = height;
         this.BMI = BMI;
         this.recordedDate = recordedDate;
         this.createDate = createDate;
         this.status = status;
-    }
-
-    @Override
-    public String toString() {
-        return "Metric{" +
-                "id=" + id +
-                ", childId=" + childId +
-                ", weight=" + weight +
-                ", height=" + height +
-                ", BMI=" + BMI +
-                ", recordedDate=" + recordedDate +
-                ", createDate=" + createDate +
-                ", status=" + status +
-                '}';
     }
 }

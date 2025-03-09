@@ -28,15 +28,15 @@ public class ChildService {
     private UserRepository userRepository;
 
     public ResponseEntity<ResponseObject> getAllChildren() {
-        List<ChildResponseDTO> children = childRepository.findAllChildrenWithParentName();
-
-        if (!children.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject("ok", "List of all active children", children));
-        } else {
+//        List<ChildResponseDTO> children = childRepository.findAllChildrenWithParentName();
+//
+//        if (!children.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.OK)
+//                    .body(new ResponseObject("ok", "List of all active children", children));
+//        } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseObject("fail", "No active children found", null));
-        }
+
     }
 
     public ResponseEntity<ResponseObject> findChildByName(String name) {
@@ -93,82 +93,77 @@ public class ChildService {
 
 
     public ResponseEntity<ResponseObject> createChild(ChildRequestDTO newChild) {
-        if (newChild.getName() == null || newChild.getName().trim().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject("fail", "Name cannot be empty!", null));
-        }
-
-        if (newChild.getDob() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject("fail", "Date of birth is required!", null));
-        }
-
-        if (newChild.getGender() == null || newChild.getGender().trim().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject("fail", "Gender cannot be empty!", null));
-        }
-
-        if (newChild.getParenId() == null ) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject("fail", "Parent ID cannot be empty!", null));
-        }
-
-        if(  !userRepository.existsById(newChild.getParenId()) ){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject("fail", "Parent ID is not exist!", null));
-        }
-
-
-
-        Child newChild1 = new Child(newChild.getName(), newChild.getDob(), newChild.getGender(), newChild.getParenId(), LocalDateTime.now(), LocalDateTime.now(), true);
-
-        Child savedChild = childRepository.save(newChild1);
+//        if (newChild.getName() == null || newChild.getName().trim().isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                    .body(new ResponseObject("fail", "Name cannot be empty!", null));
+//        }
+//
+//        if (newChild.getDob() == null) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                    .body(new ResponseObject("fail", "Date of birth is required!", null));
+//        }
+//
+//        if (newChild.getGender() == null || newChild.getGender().trim().isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                    .body(new ResponseObject("fail", "Gender cannot be empty!", null));
+//        }
+//
+//        if (newChild.getParenId() == null ) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                    .body(new ResponseObject("fail", "Parent ID cannot be empty!", null));
+//        }
+//
+//        if(  !userRepository.existsById(newChild.getParenId()) ){
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                    .body(new ResponseObject("fail", "Parent ID is not exist!", null));
+//        }
+//
+//
+//
+//        Child newChild1 = new Child(newChild.getName(), newChild.getDob(), newChild.getGender(), newChild.getParenId(), LocalDateTime.now(), LocalDateTime.now(), true);
+//
+//        Child savedChild = childRepository.save(newChild1);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ResponseObject("ok", "Insert successfully!", savedChild));
+                .body(new ResponseObject("ok", "Insert successfully!", null));
     }
 
 
     public ResponseEntity<ResponseObject> updateChild(Long id, ChildRequestDTO childRequest) {
-        // Kiểm tra childId có tồn tại và có status = true không
-        if (!childRepository.existsByIdAndStatusIsTrue(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseObject("fail", "Child ID " + id + " not found or inactive!", null));
-        }
+//        // Lấy đối tượng Child từ database, kiểm tra trạng thái
+//        Child child = childRepository.findByIdAndStatusIsTrue(id)
+//                .orElse(null);
+//        if (child == null) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                    .body(new ResponseObject("fail", "Child ID " + id + " not found or inactive!", null));
+//        }
+//
+//        // Kiểm tra parentId hợp lệ
+//        User parent = userRepository.findByIdAndStatusIsTrue(childRequest.getParenId())
+//                .orElse(null);
+//        if (parent == null) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                    .body(new ResponseObject("fail", "Invalid Parent ID: Parent does not exist or is inactive!", null));
+//        }
+//
+//        // Cập nhật thông tin nếu có dữ liệu mới
+//        if (childRequest.getName() != null) child.setName(childRequest.getName());
+//        if (childRequest.getDob() != null) child.setDob(childRequest.getDob());
+//        if (childRequest.getGender() != null) child.setGender(childRequest.getGender());
+//        if (parent != null) child.setParent(parent);
+//
+//        // Cập nhật thời gian chỉnh sửa
+//        child.setUpdateDate(LocalDateTime.now());
+//
+//        // Lưu thay đổi vào database
+//        childRepository.save(child);
+//
+//        // Truy vấn lại để lấy ChildResponseDTO (bao gồm parentName)
+//        ChildResponseDTO updatedChildDTO = childRepository.findChildByIdWithParentName(id);
 
-        // Kiểm tra parentId có tồn tại không (trạng thái active)
-        if (!userRepository.existsByIdAndStatusIsTrue(childRequest.getParenId())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject("fail", "Invalid Parent ID: Parent does not exist or is inactive!", null));
-        }
-
-        // Lấy đối tượng Child từ database
-        Optional<Child> existingChild = childRepository.findById(id);
-
-        if (existingChild.isPresent()) {
-            Child child = existingChild.get();
-
-            // Cập nhật thông tin từ DTO (chỉ cập nhật nếu có dữ liệu)
-            if (childRequest.getName() != null) child.setName(childRequest.getName());
-            if (childRequest.getDob() != null) child.setDob(childRequest.getDob());
-            if (childRequest.getGender() != null) child.setGender(childRequest.getGender());
-            if (childRequest.getParenId() != null) child.setParenId(childRequest.getParenId());
-
-            // Cập nhật thời gian chỉnh sửa
-            child.setUpdateDate(LocalDateTime.now());
-
-            // Lưu thay đổi vào database
-            childRepository.save(child);
-
-            // Truy vấn lại để lấy ChildResponseDTO (bao gồm parentName)
-            ChildResponseDTO updatedChildDTO = childRepository.findChildByIdWithParentName(id);
-
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject("ok", "Updated successfully!", updatedChildDTO));
-        }
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ResponseObject("fail", "Child ID " + id + " not found!", null));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseObject("ok", "Updated successfully!", null));
     }
+
 
 
     public ResponseEntity<ResponseObject> deleteChild(Long id) {
