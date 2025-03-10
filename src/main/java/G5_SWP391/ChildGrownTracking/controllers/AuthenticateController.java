@@ -6,6 +6,7 @@ import G5_SWP391.ChildGrownTracking.dtos.UserDTO;
 import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.responses.AuthenticateResponse;
 import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
+import G5_SWP391.ChildGrownTracking.responses.UserResponse;
 import G5_SWP391.ChildGrownTracking.services.AuthenticateService;
 import G5_SWP391.ChildGrownTracking.services.UserService;
 import com.nimbusds.jose.JOSEException;
@@ -30,7 +31,7 @@ public class AuthenticateController {
             @RequestHeader String email,
             @RequestHeader String password
     ) {
-        User user = userService.getUserByUserName(username);
+        UserResponse user = userService.getUserByUserName(username);
         if (user != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("error", "Username is already used", null));
         } else {

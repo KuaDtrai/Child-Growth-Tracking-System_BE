@@ -3,6 +3,7 @@ package G5_SWP391.ChildGrownTracking.controllers;
 import G5_SWP391.ChildGrownTracking.dtos.UserDTO;
 import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
+import G5_SWP391.ChildGrownTracking.responses.UserResponse;
 import G5_SWP391.ChildGrownTracking.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class UserController {
     // http://localhost:8080/api/v1/users
     @GetMapping("")
     ResponseEntity<ResponseObject> getAllUsers(){
-        List<User> users = userSevice.getAllUsers();
+        List<UserResponse> users = userSevice.getAllUsers();
         if(!users.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Found UserList", users));
         }else {
@@ -34,7 +35,7 @@ public class UserController {
     @GetMapping("/userid/{id}")
     ResponseEntity<ResponseObject> getUserById(@PathVariable("id") Long id){
 
-        User user = userSevice.getUserById(id);
+        UserResponse user = userSevice.getUserById(id);
         if(user != null){
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject( "ok", "Found User with id: " +id, user));
         }else {
@@ -46,7 +47,7 @@ public class UserController {
     ResponseEntity<ResponseObject> getUserByUsername(
             @PathVariable("username") String username
     ){
-        User user = userSevice.getUserByUserName(username);
+        UserResponse user = userSevice.getUserByUserName(username);
 
         if(user != null)
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject( "ok", "Found User with username: " +username, user));
@@ -59,23 +60,19 @@ public class UserController {
             @Valid
             @RequestBody UserDTO userDTO
     ){
+        User user = userSevice.getUserByEmail(userDTO.getUserName());
 
-
-        User user = userSevice.getUserByUserName(userDTO.getUserName());
-        System.out.println(user);
         if (user == null) {
-            user = userSevice.saveUser(userDTO);
-        }else user = null;
+            UserResponse newUser = userSevice.saveUser(userDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObject( "ok", "User saved successfully", newUser));
 
-        if(user != null)
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObject( "ok", "User saved successfully", user));
-        else
+        }else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject( "false", "Cannot save User", null));
     }
 
     @PutMapping("/{id}")
     ResponseEntity<ResponseObject> deleteUserById(@PathVariable("id") Long id){
-        User user = userSevice.deleteUserById(id);
+        UserResponse user = userSevice.deleteUserById(id);
         if(user != null){
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject( "ok", "User deleted successfully", user));
         }else {

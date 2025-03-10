@@ -4,9 +4,11 @@ import G5_SWP391.ChildGrownTracking.dtos.UserDTO;
 import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.models.membership;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
+import G5_SWP391.ChildGrownTracking.responses.UserResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -19,37 +21,72 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAllByStatusIsTrue();
+    public List<UserResponse> getAllUsers() {
+        List<User> users = userRepository.findAllByStatusIsTrue();
+        List<UserResponse> userResponses = new ArrayList<>();
+        for (User user : users) {
+            UserResponse userResponse = new UserResponse(user.getId(),
+                    user.getUserName(),
+                    user.getEmail(),
+                    user.getMembership(),
+                    user.getCreatedDate(),
+                    user.getUpdateDate(),
+                    user.isStatus());
+            userResponses.add(userResponse);
+        }
+        return userResponses;
     }
 
-    public User getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
+    public UserResponse getUserById(Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        assert user != null;
+        return new UserResponse(
+                user.getId(),
+                user.getUserName(),
+                user.getEmail(),
+                user.getMembership(),
+                user.getCreatedDate(),
+                user.getUpdateDate(),
+                user.isStatus()
+        );
     }
 
-    public User getUserByUserName(String userName) {
-        return userRepository.findByUserName(userName).orElse(null);
+    public UserResponse getUserByUserName(String userName) {
+        User user = userRepository.findByUserName(userName).orElse(null);
+        assert user != null;
+        return new UserResponse(
+                user.getId(), user.getUserName(), user.getEmail(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
+        );
     }
 
-    public User saveUser(UserDTO userDto) {
-        User user = new User(userDto.getUserName(), userDto.getEmail(), userDto.getEmail(), membership.valueOf(userDto.getMembership()),java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), userDto.isStatus());
-        return userRepository.save(user);
+    public User getUserByEmail(String email) {
+        User user = userRepository.findByEmailAndStatusIsTrue(email).orElse(null);
+        return user;
+    }
+
+    public UserResponse saveUser(UserDTO userDto) {
+        User user = new User(userDto.getUserName(), userDto.getPassword(), userDto.getEmail(), membership.valueOf(userDto.getMembership()),java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), userDto.isStatus());
+        userRepository.save(user);
+        return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
 
     }
 
-    public User deleteUserById(Long id){
+    public UserResponse deleteUserById(Long id){
         User user = userRepository.findById(id).orElse(null);
         if(user != null){
             user.setStatus(false);
-            return userRepository.save(user);
+            userRepository.save(user);
+            return new UserResponse(
+                    user.getId(), user.getUserName(), user.getEmail(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
+            );
         }else {
             return null;
         }
     }
 
-    public User findUserByUserNameAndPassword(String userName, String password) {
-        return userRepository.findByUserNameAndPassword(userName, password);
-    }
+//    public User findUserByUserNameAndPassword(String userName, String password) {
+//        return userRepository.findByUserNameAndPassword(userName, password);
+//    }
 
     public User findUserByEmailAndPassword(String email, String password) {
         return userRepository.findUserByEmailAndPassword(email, password);
