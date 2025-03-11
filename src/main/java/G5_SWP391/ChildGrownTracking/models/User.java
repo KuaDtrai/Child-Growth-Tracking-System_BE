@@ -1,10 +1,12 @@
 package G5_SWP391.ChildGrownTracking.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -27,14 +29,12 @@ public class User {
 
     private String email;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Child> children = new ArrayList<>();
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Child> children2 = new ArrayList<>();
-
-    @Enumerated(EnumType.STRING)
-    private role role;
 
     @Enumerated(EnumType.STRING)
     private membership membership;
@@ -45,11 +45,11 @@ public class User {
 
     private boolean status;
 
-    public User(String userName, String password, String email, role role, membership membership, LocalDateTime createdDate, LocalDateTime updateDate, boolean status) {
+    public User(String userName, String password, String email, membership membership, LocalDateTime createdDate, LocalDateTime updateDate, boolean status) {
         this.userName = userName;
         this.password = password;
         this.email = email;
-        this.role = role;
+
         this.membership = membership;
         this.createdDate = createdDate;
         this.updateDate = updateDate;

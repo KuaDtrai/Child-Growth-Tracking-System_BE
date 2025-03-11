@@ -1,5 +1,6 @@
 package G5_SWP391.ChildGrownTracking.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -28,7 +29,9 @@ public class Child {
 
    private Date dob ;
 
+
    private String gender ;
+
 
     @ManyToOne
     @JoinColumn(name = "parentId")  // Sửa tên cột cho đúng chuẩn SQL

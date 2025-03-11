@@ -1,5 +1,6 @@
 package G5_SWP391.ChildGrownTracking.repositories;
 
+import G5_SWP391.ChildGrownTracking.models.Child;
 import G5_SWP391.ChildGrownTracking.models.Metric;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,6 +10,7 @@ import java.util.List;
 
 
 public interface MetricRepository extends JpaRepository<Metric, Long> {
+
     List<Metric> findByChildIdAndStatusIsTrue (long childId);
 
 
@@ -23,4 +25,6 @@ public interface MetricRepository extends JpaRepository<Metric, Long> {
     // Lấy BMI và recordedDate theo childId
 //    @Query("SELECT m.BMI, m.recordedDate FROM Metric m WHERE m.childId = :childId")
     List<Object[]> findBMIAndRecordedDateByChildId(@Param("childId") Long childId);
+
+    List<Metric> findByChildAndStatusIsTrue(Child child);
 }
