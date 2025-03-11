@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(path = "/api/v1/metric")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 // http://localhost:8080/api/v1/metric
 public class MetricController {
 

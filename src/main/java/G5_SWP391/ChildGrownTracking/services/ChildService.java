@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -28,33 +29,71 @@ public class ChildService {
     private UserRepository userRepository;
 
     public ResponseEntity<ResponseObject> getAllChildren() {
-//        List<ChildResponseDTO> children = childRepository.findAllChildrenWithParentName();
-//
-//        if (!children.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.OK)
-//                    .body(new ResponseObject("ok", "List of all active children", children));
-//        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseObject("fail", "No active children found", null));
+        List<Child> children = childRepository.findByStatusIsTrue();
+        List<ChildResponseDTO> childResponseList = new ArrayList<>();
 
+        for (Child child : children) {
+            if (child.getParent() != null && child.getParent().isStatus()) { // Kiểm tra parent có tồn tại và active
+                ChildResponseDTO dto = new ChildResponseDTO(
+                        child.getId(),
+                        child.getName(),
+                        child.getDob(),
+                        child.getGender(),
+                        child.getParent().getUserName(), // Lấy tên cha/mẹ
+                        child.getCreateDate(),
+                        child.getUpdateDate(),
+                        child.isStatus()
+                );
+                childResponseList.add(dto);
+            }
+        }
+
+        if (childResponseList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "No active children with active parents", null));
+        }
+
+        return ResponseEntity.ok(new ResponseObject("ok", "List of active children", childResponseList));
     }
 
+
+
     public ResponseEntity<ResponseObject> findChildByName(String name) {
-        if (name.isEmpty()) {
+        if (name == null || name.trim().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Invalid name: name cannot be empty or null!", null));
         }
 
-        List<ChildResponseDTO> children = childRepository.findByNameWithParentName(name);
+        // Tìm tất cả Child có status = true và tên chứa từ khóa (không phân biệt hoa thường)
+        List<Child> children = childRepository.findByNameContainingIgnoreCaseAndStatusIsTrue(name);
 
-        if (!children.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject("ok", "Children found with name containing: " + name, children));
-        } else {
+        // Kiểm tra status của parent sau khi lấy dữ liệu
+        List<ChildResponseDTO> childResponseList = new ArrayList<>();
+        for (Child child : children) {
+            if (child.getParent() != null && child.getParent().isStatus() && child.isStatus()) {
+                // Nếu parent có status = true thì thêm vào danh sách
+                ChildResponseDTO dto = new ChildResponseDTO(
+                        child.getId(),
+                        child.getName(),
+                        child.getDob(),
+                        child.getGender(),
+                        child.getParent().getUserName(),
+                        child.getCreateDate(),
+                        child.getUpdateDate(),
+                        child.isStatus()
+                );
+                childResponseList.add(dto);
+            }
+        }
+
+        if (childResponseList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseObject("fail", "No children found with name containing: " + name, null));
         }
+
+        return ResponseEntity.ok(new ResponseObject("ok", "Children found with name containing: " + name, childResponseList));
     }
+
 
     public ResponseEntity<ResponseObject> getChildById(Long id) {
         if (id == null) {
@@ -62,16 +101,34 @@ public class ChildService {
                     .body(new ResponseObject("fail", "Invalid ID: ID cannot be empty or null!", null));
         }
 
-        ChildResponseDTO child = childRepository.findChildByIdWithParentName(id);
+        Optional<Child> optionalChild = childRepository.findByIdAndStatusIsTrue(id);
 
-        if (child != null) {
+        if (optionalChild.isPresent()) {
+            Child child = optionalChild.get();
+            if (child.getParent() == null || !child.getParent().isStatus()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ResponseObject("fail", "Parent of Child is inactive or not found", null));
+            }
+
+            ChildResponseDTO childResponseDTO = new ChildResponseDTO(
+                    child.getId(),
+                    child.getName(),
+                    child.getDob(),
+                    child.getGender(),
+                    child.getParent().getUserName(),  // Lấy userName từ parent
+                    child.getCreateDate(),
+                    child.getUpdateDate(),
+                    child.isStatus()
+            );
+
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject("ok", "Found Child with id: " + id, child));
+                    .body(new ResponseObject("ok", "Found Child with id: " + id, childResponseDTO));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseObject("fail", "Cannot find Child with id: " + id, null));
         }
     }
+
 
 
     public ResponseEntity<ResponseObject> findChildrenByParentId(Long parentId) {

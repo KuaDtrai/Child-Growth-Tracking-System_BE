@@ -1,10 +1,12 @@
 package G5_SWP391.ChildGrownTracking.services;
 
 import G5_SWP391.ChildGrownTracking.dtos.MetricRequestDTO;
+import G5_SWP391.ChildGrownTracking.dtos.MetricResponseDTO;
 import G5_SWP391.ChildGrownTracking.models.Child;
 import G5_SWP391.ChildGrownTracking.models.Metric;
 import G5_SWP391.ChildGrownTracking.repositories.ChildRepository;
 import G5_SWP391.ChildGrownTracking.repositories.MetricRepository;
+import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,21 +30,45 @@ public class MetricService {
     @Autowired
     private ChildRepository childRepository;
 
-    public ResponseEntity<?> getAllMetricByChildId(Long childId) {
-
-        if(childId == null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Child ID is required.");
-        }
-        if(!childRepository.existsByIdAndStatusIsTrue(childId)){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Child with ID " + childId + " not found.");
+    public ResponseEntity<ResponseObject> getAllMetricByChildId(Long childId) {
+        if (childId == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject("fail", "Child ID is required.", null));
         }
 
-        List<Metric> metrics = metricRepository.findByChildIdAndStatusIsTrue(childId);
-        if (metrics.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No metrics found for childId: " + childId);
+        Optional<Child> childOptional = childRepository.findByIdAndStatusIsTrue(childId);
+        if (childOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "Child with ID " + childId + " not found.", null));
         }
-        return ResponseEntity.ok(metrics);
+
+        Child child = childOptional.get();
+        List<Metric> activeMetrics = metricRepository.findByChildAndStatusIsTrue(child);
+
+        if (activeMetrics.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "No metrics found for childId: " + childId, null));
+        }
+
+        // Dùng vòng for để chuyển đổi dữ liệu
+        List<MetricResponseDTO> metricDTOs = new ArrayList<>();
+        for (Metric metric : activeMetrics) {
+            MetricResponseDTO dto = new MetricResponseDTO(
+                    metric.getId(),
+                    metric.getWeight(),
+                    metric.getHeight(),
+                    metric.getBMI(),
+                    metric.getRecordedDate(),
+                    metric.getCreateDate(),
+                    metric.isStatus()
+            );
+            metricDTOs.add(dto);
+        }
+
+        return ResponseEntity.ok(new ResponseObject("ok", "Metrics found for childId: " + childId, metricDTOs));
     }
+
+
 
     public ResponseEntity<?> getHeightAndRecordedDate(Long childId) {
         if(childId == null){

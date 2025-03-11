@@ -16,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/api/v1/child")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 // http://localhost:8080/api/v1/child
 
 public class ChildController {
