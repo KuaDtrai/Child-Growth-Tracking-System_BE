@@ -39,17 +39,18 @@ public class User {
     @Enumerated(EnumType.STRING)
     private membership membership;
 
+    private role role;
     private LocalDateTime createdDate;
 
     private LocalDateTime updateDate;
 
     private boolean status;
 
-    public User(String userName, String password, String email, membership membership, LocalDateTime createdDate, LocalDateTime updateDate, boolean status) {
+    public User(String userName, String password, String email ,role role, membership membership, LocalDateTime createdDate, LocalDateTime updateDate, boolean status) {
         this.userName = userName;
         this.password = password;
         this.email = email;
-
+        this.role = role ;
         this.membership = membership;
         this.createdDate = createdDate;
         this.updateDate = updateDate;
@@ -66,6 +67,7 @@ public class User {
         child.setParenId(null);
     }
 
+
     @Override
     public String toString() {
         return "User{" +
@@ -80,4 +82,6 @@ public class User {
                 ", status=" + status +
                 '}';
     }
+
+
 }
