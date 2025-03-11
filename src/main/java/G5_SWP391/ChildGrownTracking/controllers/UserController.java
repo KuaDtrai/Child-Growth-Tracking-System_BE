@@ -2,6 +2,7 @@ package G5_SWP391.ChildGrownTracking.controllers;
 
 import G5_SWP391.ChildGrownTracking.dtos.UserDTO;
 import G5_SWP391.ChildGrownTracking.models.User;
+import G5_SWP391.ChildGrownTracking.responses.DoctorResponse;
 import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
 import G5_SWP391.ChildGrownTracking.responses.UserResponse;
 import G5_SWP391.ChildGrownTracking.services.UserService;
@@ -34,7 +35,7 @@ public class UserController {
 
     @GetMapping("/doctor")
     ResponseEntity<ResponseObject> getAllDoctor(){
-        List<UserResponse> users = userSevice.getAllDoctor();
+        List<DoctorResponse> users = userSevice.getAllDoctor();
         if(!users.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Found UserList", users));
         }else {

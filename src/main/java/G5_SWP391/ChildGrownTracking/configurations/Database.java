@@ -2,6 +2,7 @@ package G5_SWP391.ChildGrownTracking.configurations;
 
 import G5_SWP391.ChildGrownTracking.models.*;
 import G5_SWP391.ChildGrownTracking.repositories.ChildRepository;
+import G5_SWP391.ChildGrownTracking.repositories.DoctorRepository;
 import G5_SWP391.ChildGrownTracking.repositories.MetricRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -16,19 +17,26 @@ import java.util.Date;
 public class Database {
 
     @Bean
-    CommandLineRunner initDatabase(UserRepository userRepository, ChildRepository childRepository, MetricRepository metricRepository) {
+    CommandLineRunner initDatabase(UserRepository userRepository, ChildRepository childRepository, MetricRepository metricRepository, DoctorRepository doctorRepository) {
         return args -> {
             // Xóa toàn bộ dữ liệu cũ trước khi thêm mới
             userRepository.deleteAll();
             childRepository.deleteAll();
             metricRepository.deleteAll();
+            doctorRepository.deleteAll();
 
             // Thêm dữ liệu User
             User user1 = new User("kien",  "afefaf", "kien@example.com", role.MEMBER ,membership.BASIC, LocalDateTime.now(), LocalDateTime.now(), true);
             User user2 = new User("ducanh",  "afefaf", "hehe@example.com", role.MEMBER ,membership.PREMIUM, LocalDateTime.now(), LocalDateTime.now(), true);
+            User user3 = new User("ducphan",  "afefaf", "hehe@example.com", role.DOCTOR ,membership.PREMIUM, LocalDateTime.now(), LocalDateTime.now(), true);
 
             user1 = userRepository.save(user1); // Lưu User trước
             user2 = userRepository.save(user2);
+            user3 = userRepository.save(user3);
+
+            Doctor doctor1 = new Doctor(user3, "grgsg", "sgsegrg");
+
+            doctor1 = doctorRepository.save(doctor1);
 
             Child child1 = new Child("Bé A", new Date(), "Male", user1, LocalDateTime.now(), LocalDateTime.now(), true);
             Child child2 = new Child("Bé B", new Date(), "Female", user2, LocalDateTime.now(), LocalDateTime.now(), true);

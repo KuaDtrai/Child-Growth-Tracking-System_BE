@@ -1,10 +1,13 @@
 package G5_SWP391.ChildGrownTracking.services;
 
 import G5_SWP391.ChildGrownTracking.dtos.UserDTO;
+import G5_SWP391.ChildGrownTracking.models.Doctor;
 import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.models.membership;
 import G5_SWP391.ChildGrownTracking.models.role;
+import G5_SWP391.ChildGrownTracking.repositories.DoctorRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
+import G5_SWP391.ChildGrownTracking.responses.DoctorResponse;
 import G5_SWP391.ChildGrownTracking.responses.UserResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,9 +19,11 @@ import java.util.List;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final DoctorRepository doctorRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, DoctorRepository doctorRepository) {
         this.userRepository = userRepository;
+        this.doctorRepository = doctorRepository;
     }
 
     public List<UserResponse> getUsers() {
@@ -57,9 +62,9 @@ public class UserService {
         return userResponses;
     }
 
-    public List<UserResponse> getAllDoctor() {
+    public List<DoctorResponse> getAllDoctor() {
         List<User> doctors = userRepository.findAllByStatusIsTrueAndRole(role.DOCTOR);
-        List<UserResponse> userResponses = new ArrayList<>();
+        List<DoctorResponse> doctorsResponses = new ArrayList<>();
         for (User user : doctors) {
             UserResponse userResponse = new UserResponse(user.getId(),
                     user.getUserName(),
@@ -69,9 +74,11 @@ public class UserService {
                     user.getCreatedDate(),
                     user.getUpdateDate(),
                     user.isStatus());
-            userResponses.add(userResponse);
+            Doctor doctor = doctorRepository.findByUserId(user.getId());
+            DoctorResponse doctorResponse = new DoctorResponse(userResponse, doctor.getSpecialization(), doctor.getCertificate());
+            doctorsResponses.add(doctorResponse);
         }
-        return userResponses;
+        return doctorsResponses;
     }
 
     public UserResponse getUserById(Long id) {

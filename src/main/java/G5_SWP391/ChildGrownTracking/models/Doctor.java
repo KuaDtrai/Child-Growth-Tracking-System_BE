@@ -24,13 +24,13 @@ public class Doctor {
     @Nationalized
     private String specialization;
 
-    private String rowData;
+    private String Certificate;
 
 
 
     public Doctor(User user, String specialization, String rowData) {
         this.user = user;
         this.specialization = specialization;
-        this.rowData = rowData;
+        this.Certificate = rowData;
     }
 }
