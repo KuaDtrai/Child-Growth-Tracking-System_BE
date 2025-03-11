@@ -22,9 +22,19 @@ public class UserController {
     private final UserService userSevice;
 
     // http://localhost:8080/api/v1/users
-    @GetMapping("")
-    ResponseEntity<ResponseObject> getAllUsers(){
-        List<UserResponse> users = userSevice.getAllUsers();
+    @GetMapping("/member")
+    ResponseEntity<ResponseObject> getUsers() {
+        List<UserResponse> users = userSevice.getAllMember();
+        if(!users.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Found UserList", users));
+        }else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("false", "Not Found UserList", users));
+        }
+    }
+
+    @GetMapping("/doctor")
+    ResponseEntity<ResponseObject> getAllDoctor(){
+        List<UserResponse> users = userSevice.getAllDoctor();
         if(!users.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Found UserList", users));
         }else {

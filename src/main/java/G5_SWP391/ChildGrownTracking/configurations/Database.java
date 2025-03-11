@@ -1,9 +1,6 @@
 package G5_SWP391.ChildGrownTracking.configurations;
 
-import G5_SWP391.ChildGrownTracking.models.Child;
-import G5_SWP391.ChildGrownTracking.models.Metric;
-import G5_SWP391.ChildGrownTracking.models.User;
-import G5_SWP391.ChildGrownTracking.models.membership;
+import G5_SWP391.ChildGrownTracking.models.*;
 import G5_SWP391.ChildGrownTracking.repositories.ChildRepository;
 import G5_SWP391.ChildGrownTracking.repositories.MetricRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
@@ -27,8 +24,8 @@ public class Database {
             metricRepository.deleteAll();
 
             // Thêm dữ liệu User
-            User user1 = new User("kien",  "afefaf", "kien@example.com", membership.BASIC, LocalDateTime.now(), LocalDateTime.now(), true);
-            User user2 = new User("ducanh",  "afefaf", "hehe@example.com", membership.PREMIUM, LocalDateTime.now(), LocalDateTime.now(), true);
+            User user1 = new User("kien",  "afefaf", "kien@example.com", role.MEMBER ,membership.BASIC, LocalDateTime.now(), LocalDateTime.now(), true);
+            User user2 = new User("ducanh",  "afefaf", "hehe@example.com", role.MEMBER ,membership.PREMIUM, LocalDateTime.now(), LocalDateTime.now(), true);
 
             user1 = userRepository.save(user1); // Lưu User trước
             user2 = userRepository.save(user2);

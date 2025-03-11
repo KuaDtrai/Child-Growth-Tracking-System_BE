@@ -2,6 +2,7 @@ package G5_SWP391.ChildGrownTracking.responses;
 
 import G5_SWP391.ChildGrownTracking.models.Child;
 import G5_SWP391.ChildGrownTracking.models.membership;
+import G5_SWP391.ChildGrownTracking.models.role;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +25,9 @@ public class UserResponse {
 
     @JsonProperty("email")
     private String email;
+
+    @JsonProperty("role")
+    private role role;
 
     @JsonProperty("membership")
     private membership membership;

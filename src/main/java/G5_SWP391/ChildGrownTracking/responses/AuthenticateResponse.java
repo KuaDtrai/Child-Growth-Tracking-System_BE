@@ -1,5 +1,6 @@
 package G5_SWP391.ChildGrownTracking.responses;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -9,6 +10,12 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AuthenticateResponse {
+    @JsonProperty("token")
     String token;
+
+    @JsonProperty("user")
+    UserResponse userResponse;
+
+    @JsonProperty("authenticated")
     boolean authenticated;
 }

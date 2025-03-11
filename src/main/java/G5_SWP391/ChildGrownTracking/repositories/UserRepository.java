@@ -1,6 +1,7 @@
 package G5_SWP391.ChildGrownTracking.repositories;
 
 import G5_SWP391.ChildGrownTracking.models.User;
+import G5_SWP391.ChildGrownTracking.models.role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -11,11 +12,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmailAndStatusIsTrue(String email);
 
-    List<User> findAllByStatusIsTrue();
+//    List<User> findAllByStatusIsTrueAndRoleIsMEMBER();
 
     User findByUserNameAndPassword(String userName, String password);
 
     User findUserByEmailAndPassword(String email, String password);
     boolean existsById(Long parenId);
     boolean existsByIdAndStatusIsTrue(Long parenId);
+
+//    List<User> findAllByStatusIsTrue();
+
+    List<User> findAllByStatusIsTrueAndRole(role role);
 }

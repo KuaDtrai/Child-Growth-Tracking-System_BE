@@ -21,8 +21,8 @@ public class UserDTO {
     @JsonProperty("email")
     private String email;
 
-    @JsonProperty("roleId")
-    private String roleId;
+    @JsonProperty("role")
+    private String role;
 
     @JsonProperty("membership")
     private String membership;

@@ -5,6 +5,7 @@ import G5_SWP391.ChildGrownTracking.dtos.IntrospcectDTO;
 import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
 import G5_SWP391.ChildGrownTracking.responses.AuthenticateResponse;
+import G5_SWP391.ChildGrownTracking.responses.UserResponse;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -36,12 +37,12 @@ public class AuthenticateService {
 
     public AuthenticateResponse authenticate(AuthenticateDTO request) {
         User user = userService.findUserByEmailAndPassword(request.getEmail(), request.getPassword());
-
+        UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), false);
         if (user == null) {
             return AuthenticateResponse.builder().authenticated(false).build();
         }else {
             String token = generateToken(user);
-            return AuthenticateResponse.builder().token(token).authenticated(true).build();
+            return AuthenticateResponse.builder().token(token).userResponse(userResponse).authenticated(true).build();
         }
     }
 

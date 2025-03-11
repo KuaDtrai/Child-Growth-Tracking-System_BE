@@ -3,13 +3,13 @@ package G5_SWP391.ChildGrownTracking.services;
 import G5_SWP391.ChildGrownTracking.dtos.UserDTO;
 import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.models.membership;
+import G5_SWP391.ChildGrownTracking.models.role;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
 import G5_SWP391.ChildGrownTracking.responses.UserResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -21,13 +21,50 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<UserResponse> getAllUsers() {
-        List<User> users = userRepository.findAllByStatusIsTrue();
+    public List<UserResponse> getUsers() {
+        List<User> users = userRepository.findAll();
         List<UserResponse> userResponses = new ArrayList<>();
         for (User user : users) {
+            UserResponse userResponse = new UserResponse(
+                    user.getId(),
+                    user.getUserName(),
+                    user.getEmail(),
+                    user.getRole(),
+                    user.getMembership(),
+                    user.getCreatedDate(),
+                    user.getUpdateDate(),
+                    user.isStatus()
+            );
+            userResponses.add(userResponse);
+        }
+        return userResponses;
+    }
+
+    public List<UserResponse> getAllMember() {
+        List<User> members = userRepository.findAllByStatusIsTrueAndRole(role.MEMBER);
+        List<UserResponse> userResponses = new ArrayList<>();
+        for (User user : members) {
             UserResponse userResponse = new UserResponse(user.getId(),
                     user.getUserName(),
                     user.getEmail(),
+                    user.getRole(),
+                    user.getMembership(),
+                    user.getCreatedDate(),
+                    user.getUpdateDate(),
+                    user.isStatus());
+            userResponses.add(userResponse);
+        }
+        return userResponses;
+    }
+
+    public List<UserResponse> getAllDoctor() {
+        List<User> doctors = userRepository.findAllByStatusIsTrueAndRole(role.DOCTOR);
+        List<UserResponse> userResponses = new ArrayList<>();
+        for (User user : doctors) {
+            UserResponse userResponse = new UserResponse(user.getId(),
+                    user.getUserName(),
+                    user.getEmail(),
+                    user.getRole(),
                     user.getMembership(),
                     user.getCreatedDate(),
                     user.getUpdateDate(),
@@ -44,6 +81,7 @@ public class UserService {
                 user.getId(),
                 user.getUserName(),
                 user.getEmail(),
+                user.getRole(),
                 user.getMembership(),
                 user.getCreatedDate(),
                 user.getUpdateDate(),
@@ -55,7 +93,7 @@ public class UserService {
         User user = userRepository.findByUserName(userName).orElse(null);
         assert user != null;
         return new UserResponse(
-                user.getId(), user.getUserName(), user.getEmail(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
+                user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
         );
     }
 
@@ -65,9 +103,9 @@ public class UserService {
     }
 
     public UserResponse saveUser(UserDTO userDto) {
-        User user = new User(userDto.getUserName(), userDto.getPassword(), userDto.getEmail(), membership.valueOf(userDto.getMembership()),java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), userDto.isStatus());
+        User user = new User(userDto.getUserName(), userDto.getPassword(), userDto.getEmail(), role.valueOf(userDto.getRole()), membership.valueOf(userDto.getMembership()),java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), userDto.isStatus());
         userRepository.save(user);
-        return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
+        return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
 
     }
 
@@ -77,7 +115,7 @@ public class UserService {
             user.setStatus(false);
             userRepository.save(user);
             return new UserResponse(
-                    user.getId(), user.getUserName(), user.getEmail(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
+                    user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
             );
         }else {
             return null;
