@@ -39,7 +39,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private membership membership;
 
+    @Enumerated(EnumType.STRING)
     private role role;
+
     private LocalDateTime createdDate;
 
     private LocalDateTime updateDate;
