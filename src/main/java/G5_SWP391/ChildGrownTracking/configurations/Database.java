@@ -1,10 +1,8 @@
 package G5_SWP391.ChildGrownTracking.configurations;
 
 import G5_SWP391.ChildGrownTracking.models.*;
-import G5_SWP391.ChildGrownTracking.repositories.ChildRepository;
-import G5_SWP391.ChildGrownTracking.repositories.DoctorRepository;
-import G5_SWP391.ChildGrownTracking.repositories.MetricRepository;
-import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
+import G5_SWP391.ChildGrownTracking.repositories.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,13 +14,16 @@ import java.util.Date;
 @Configuration
 public class Database {
 
+
     @Bean
-    CommandLineRunner initDatabase(UserRepository userRepository, ChildRepository childRepository, MetricRepository metricRepository, DoctorRepository doctorRepository) {
+    CommandLineRunner initDatabase(UserRepository userRepository, ChildRepository childRepository, MetricRepository metricRepository, DoctorRepository doctorRepository, PostRepository postRepository) {
         return args -> {
+
+
             // Xóa toàn bộ dữ liệu cũ trước khi thêm mới
             metricRepository.deleteAll();
             childRepository.deleteAll();
-
+            postRepository.deleteAll();
             doctorRepository.deleteAll();
             userRepository.deleteAll();
 
@@ -41,9 +42,11 @@ public class Database {
 
             Child child1 = new Child("Bé A", new Date(), "Male", user1, LocalDateTime.now(), LocalDateTime.now(), true);
             Child child2 = new Child("Bé B", new Date(), "Female", user2, LocalDateTime.now(), LocalDateTime.now(), true);
+            Child child3 = new Child("Bé c", new Date(), "Female", user2, LocalDateTime.now(), LocalDateTime.now(), true);
 
             childRepository.save(child1); // Lưu Child sau khi User đã có ID
             childRepository.save(child2);
+            childRepository.save(child3);
 
 
             // Thêm dữ liệu Metric (truyền `Child` vào thay vì `Long childId`)
@@ -54,6 +57,15 @@ public class Database {
             metricRepository.save(metric1);
             metricRepository.save(metric2);
             metricRepository.save(metric3);
+
+
+            Post post1 = new Post(user1,child1,"Title1","Description 1",LocalDateTime.now(),true);
+            Post post2 = new Post(user2,child2,"Title2","Description 1",LocalDateTime.now(),true);
+            Post post3 = new Post(user3,child3,"Title3","Description 1",LocalDateTime.now(),true);
+
+            postRepository.save(post1);
+            postRepository.save(post2);
+            postRepository.save(post3);
 
             System.out.println("✅ Dữ liệu đã được khởi tạo thành công!");
         };

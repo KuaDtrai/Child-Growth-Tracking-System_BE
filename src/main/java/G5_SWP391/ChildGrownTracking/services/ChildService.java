@@ -7,6 +7,7 @@ import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.models.role;
 import G5_SWP391.ChildGrownTracking.repositories.ChildRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
+import G5_SWP391.ChildGrownTracking.responses.Child_parentName_DoctorName_Response;
 import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,18 +31,21 @@ public class ChildService {
     @Autowired
     private UserRepository userRepository;
 
-    public ResponseEntity<ResponseObject> getAllChildren() {
+    public ResponseEntity<ResponseObject> getAllChildrenHaveDoctor() {
         List<Child> children = childRepository.findByStatusIsTrue();
-        List<ChildResponseDTO> childResponseList = new ArrayList<>();
+        List<Child_parentName_DoctorName_Response> childResponseList = new ArrayList<>();
 
         for (Child child : children) {
-            if (child.getParent() != null && child.getParent().isStatus()) { // Kiểm tra parent có tồn tại và active
-                ChildResponseDTO dto = new ChildResponseDTO(
+            if (child.getParent() != null && child.getParent().isStatus()
+                    && child.getDoctor() != null && child.getDoctor().getRole().equals(role.DOCTOR)) {
+
+                Child_parentName_DoctorName_Response dto = new Child_parentName_DoctorName_Response(
                         child.getId(),
                         child.getName(),
                         child.getDob(),
                         child.getGender(),
                         child.getParent().getUserName(), // Lấy tên cha/mẹ
+                        child.getDoctor().getUserName(), // Lấy tên bác sĩ
                         child.getCreateDate(),
                         child.getUpdateDate(),
                         child.isStatus()
@@ -52,11 +56,44 @@ public class ChildService {
 
         if (childResponseList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseObject("fail", "No active children with active parents", null));
+                    .body(new ResponseObject("fail", "not found any child have doctor", null));
         }
 
-        return ResponseEntity.ok(new ResponseObject("ok", "List of active children", childResponseList));
+        return ResponseEntity.ok(new ResponseObject("ok", "list of children have doctor", childResponseList));
     }
+
+
+    public ResponseEntity<ResponseObject> getAllChildDontHaveDoctor() {
+        List<Child> children = childRepository.findByStatusIsTrue();
+        List<ChildResponseDTO> childResponseList = new ArrayList<>();
+
+        for (Child child : children) {
+            if (child.getParent() != null && child.getParent().isStatus()
+                    && child.getDoctor() == null) {
+
+                ChildResponseDTO dto = new ChildResponseDTO(
+                        child.getId(),
+                        child.getName(),
+                        child.getDob(),
+                        child.getGender(),
+                        child.getParent().getUserName(), // Lấy tên cha/mẹ
+
+                        child.getCreateDate(),
+                        child.getUpdateDate(),
+                        child.isStatus()
+                );
+                childResponseList.add(dto);
+            }
+        }
+
+        if (childResponseList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "not found any child have doctor", null));
+        }
+
+        return ResponseEntity.ok(new ResponseObject("ok", "list of children have doctor", childResponseList));
+    }
+
 
 
 

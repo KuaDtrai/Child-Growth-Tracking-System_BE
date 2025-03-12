@@ -28,10 +28,17 @@ public class ChildController {
 
 
     // Get all children
-    // http://localhost:8080/api/v1/child/getAllChild
-    @GetMapping("/getAllChild")
-    public ResponseEntity<ResponseObject> getAllChildren() {
-        return service.getAllChildren();
+    // http://localhost:8080/api/v1/child/getAllChildHaveDoctor
+    @GetMapping("/getAllChildHaveDoctor")
+    public ResponseEntity<ResponseObject> getAllChildHaveDoctor() {
+        return service.getAllChildrenHaveDoctor();
+    }
+
+    // Get all children
+    // http://localhost:8080/api/v1/child/getAllChildDontHaveDoctor
+    @GetMapping("/getAllChildDontHaveDoctor")
+    public ResponseEntity<ResponseObject> getAllChildDontHaveDoctor() {
+        return service.getAllChildDontHaveDoctor();
     }
 
     // Search by name
