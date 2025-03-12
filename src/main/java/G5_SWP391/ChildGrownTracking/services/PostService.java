@@ -1,9 +1,12 @@
 package G5_SWP391.ChildGrownTracking.services;
 
+import G5_SWP391.ChildGrownTracking.dtos.PostDTO;
 import G5_SWP391.ChildGrownTracking.models.Child;
 import G5_SWP391.ChildGrownTracking.models.Post;
+import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.repositories.ChildRepository;
 import G5_SWP391.ChildGrownTracking.repositories.PostRepository;
+import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
 import G5_SWP391.ChildGrownTracking.responses.PostResponse;
 import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostService {
@@ -21,22 +27,106 @@ public class PostService {
     private PostRepository postRepository;
     @Autowired
     private ChildRepository childRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    public ResponseEntity <ResponseObject> findByChild(@RequestParam Long childId) {
-        if (!childRepository.findById(childId).isPresent()) {
+    public ResponseEntity <ResponseObject> findByChildId(@RequestParam Long childId) {
+
+        Child child = childRepository.findByIdAndStatusIsTrue(childId).orElse(null);
+        if (child == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseObject("fail", "Child with ID " + childId + " not found.", null));
         }
 
-        Child child = childRepository.findByIdAndStatusIsTrue(childId).get();
-        List<PostResponse> posts = postRepository.findByChild(child);
+
+        List<Post> posts = postRepository.findByChild(child);
+
         if(posts.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseObject("fail", "Child with ID " + childId + " not found.", null));
         }
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new ResponseObject("success", "Posts found.", posts));
+        List<PostResponse> postResponses = new ArrayList<>();
+        for( Post post : posts){
+            if(post.isStatus()){
+                PostResponse Response = new PostResponse(
+                        post.getId(),
+                        post.getTitle(),
+                        post.getDescription(),
+                        post.getCreatedDate(),
+                        post.isStatus()
+                );
+                postResponses.add(Response);
+            }
+        }
 
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseObject("success", "Posts found.", postResponses));
+
+    }
+
+    public ResponseEntity<ResponseObject> createPost(PostDTO postDTO) {
+        Optional<User> userOptional = userRepository.findById(postDTO.getUserId());
+        if (!userOptional.isPresent() || !userOptional.get().isStatus()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "User not found or inactive.", null));
+        }
+        // Kiểm tra Child có tồn tại và active không
+        Optional<Child> childOptional = childRepository.findById(postDTO.getChildId());
+        if (!childOptional.isPresent() || !childOptional.get().isStatus()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "Child not found or inactive.", null));
+        }
+
+
+        User user = userOptional.get();
+        Child child = childOptional.get();
+
+        // Tạo Post mới
+        Post newPost = new Post(
+                user,
+                child,
+                postDTO.getTitle(),
+                postDTO.getDescription(),
+                LocalDateTime.now(),
+                true // Mặc định bài viết mới sẽ active
+        );
+
+        postRepository.save(newPost); // Lưu vào database
+
+        PostResponse p = new PostResponse(
+                newPost.getId(),
+                newPost.getTitle(),
+                newPost.getDescription(),
+                newPost.getCreatedDate(),
+                newPost.isStatus()
+        );
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ResponseObject("success", "Post created successfully", p));
+
+    }
+
+    public ResponseEntity<ResponseObject> deletePost(Long postId) {
+        // Tìm Post theo ID
+        Optional<Post> postOptional = postRepository.findById(postId);
+        if (!postOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "Post with ID " + postId + " not found.", null));
+        }
+
+        Post post = postOptional.get();
+
+        // Nếu Post đã bị vô hiệu hóa rồi thì báo lỗi
+        if (!post.isStatus()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject("fail", "Post is already deleted.", null));
+        }
+
+        // Cập nhật status về false
+        post.setStatus(false);
+        postRepository.save(post);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseObject("success", "Post deleted successfully.", null));
     }
 
 }

@@ -1,5 +1,6 @@
 package G5_SWP391.ChildGrownTracking.controllers;
 
+import G5_SWP391.ChildGrownTracking.dtos.PostDTO;
 import G5_SWP391.ChildGrownTracking.models.Post;
 import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
 import G5_SWP391.ChildGrownTracking.services.PostService;
@@ -19,7 +20,17 @@ public class PostController {
 
     @GetMapping("/getAllPostByChildId")
     public ResponseEntity<ResponseObject> getAllPostByChildId(@RequestParam("childId") Long childId) {
-        return postService.findByChild(childId);
+        return postService.findByChildId(childId);
+    }
+
+    @PostMapping("/createPost")
+    public ResponseEntity<ResponseObject> createPost(@RequestBody PostDTO post) {
+        return postService.createPost(post);
+    }
+
+    @PutMapping("/deletePost")
+    public ResponseEntity<ResponseObject> deletePost(@RequestParam("postId") Long postId) {
+        return postService.deletePost(postId);
     }
 
 

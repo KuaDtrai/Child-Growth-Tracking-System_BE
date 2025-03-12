@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    List<PostResponse> findByChild(Child child);
+    List<Post> findByChild(Child child);
 }
