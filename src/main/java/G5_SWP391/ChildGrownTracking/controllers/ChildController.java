@@ -76,4 +76,11 @@ public class ChildController {
     public ResponseEntity<ResponseObject> deleteChild(@PathVariable Long id) {
         return service.deleteChild(id);
     }
+
+    // set doctor for child
+    // http://localhost:8080/api/v1/child/setDoctor/
+    @PutMapping("/setDoctor/")
+    public ResponseEntity<ResponseObject> setDoctorForChild(@RequestParam Long childId, @RequestParam Long doctorId) {
+        return service.setDoctorForChild(childId, doctorId);
+    }
 }

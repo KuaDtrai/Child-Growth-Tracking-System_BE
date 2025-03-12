@@ -3,6 +3,8 @@ package G5_SWP391.ChildGrownTracking.services;
 import G5_SWP391.ChildGrownTracking.dtos.ChildRequestDTO;
 import G5_SWP391.ChildGrownTracking.dtos.ChildResponseDTO;
 import G5_SWP391.ChildGrownTracking.models.Child;
+import G5_SWP391.ChildGrownTracking.models.User;
+import G5_SWP391.ChildGrownTracking.models.role;
 import G5_SWP391.ChildGrownTracking.repositories.ChildRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
 import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
@@ -233,5 +235,34 @@ public class ChildService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseObject("fail", "Child with ID " + id + " not found!", null));
         }
+    }
+
+    public ResponseEntity<ResponseObject> setDoctorForChild(Long childId, Long doctorId) {
+        if (childId == null || doctorId == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject("fail", "Child ID and Doctor ID are required.", null));
+        }
+
+        Optional<Child> childOptional = childRepository.findByIdAndStatusIsTrue(childId);
+        if (childOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "Child with ID " + childId + " not found.", null));
+        }
+
+        Optional<User> doctorOptional = userRepository.findByIdAndStatusIsTrue(doctorId);
+        if (doctorOptional.isEmpty() || !doctorOptional.get().getRole().equals(role.DOCTOR)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "Doctor (User) with ID " + doctorId + " not found.", null));
+        }
+
+        // Gán user (doctor) cho child
+        Child child = childOptional.get();
+        User doctor = doctorOptional.get();
+        child.setDoctor(doctor);
+
+        // Lưu thay đổi vào database
+        childRepository.save(child);
+
+        return ResponseEntity.ok(new ResponseObject("ok", "Doctor assigned successfully to child.", null ));
     }
 }

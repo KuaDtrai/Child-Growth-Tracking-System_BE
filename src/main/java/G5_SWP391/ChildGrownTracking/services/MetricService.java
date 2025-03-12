@@ -4,6 +4,7 @@ import G5_SWP391.ChildGrownTracking.dtos.MetricRequestDTO;
 import G5_SWP391.ChildGrownTracking.dtos.MetricResponseDTO;
 import G5_SWP391.ChildGrownTracking.models.Child;
 import G5_SWP391.ChildGrownTracking.models.Metric;
+import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.repositories.ChildRepository;
 import G5_SWP391.ChildGrownTracking.repositories.MetricRepository;
 import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
@@ -42,13 +43,24 @@ public class MetricService {
                     .body(new ResponseObject("fail", "Child with ID " + childId + " not found.", null));
         }
 
-        Child child = childOptional.get();
+
+        Child child = childOptional.get(); // để chắc chắc có dữ liệu trong child đồng thời ép kiểu về child để xài
+
+        // ✅ Kiểm tra Parent (User) của Child có status = true hay không
+        User parent = child.getParent();
+        if (parent == null || !parent.isStatus()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new ResponseObject("fail", "Parent of childId " + childId + " is inactive.", null));
+        }
+
         List<Metric> activeMetrics = metricRepository.findByChildAndStatusIsTrue(child);
 
         if (activeMetrics.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseObject("fail", "No metrics found for childId: " + childId, null));
         }
+
+
 
         // Dùng vòng for để chuyển đổi dữ liệu
         List<MetricResponseDTO> metricDTOs = new ArrayList<>();
