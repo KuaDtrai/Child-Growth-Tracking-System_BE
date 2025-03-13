@@ -42,4 +42,6 @@ public class Post {
         this.createdDate = createdDate;
         this.status = status;
     }
+
+
 }
