@@ -20,11 +20,11 @@ public class Database {
     CommandLineRunner initDatabase(UserRepository userRepository, ChildRepository childRepository, MetricRepository metricRepository, DoctorRepository doctorRepository) {
         return args -> {
             // Xóa toàn bộ dữ liệu cũ trước khi thêm mới
-            metricRepository.deleteAll();
-            childRepository.deleteAll();
-
-            doctorRepository.deleteAll();
-            userRepository.deleteAll();
+//            metricRepository.deleteAll();
+//            childRepository.deleteAll();
+//
+//            doctorRepository.deleteAll();
+//            userRepository.deleteAll();
 
             // Thêm dữ liệu User
             User user1 = new User("kien",  "afefaf", "kien@example.com", role.MEMBER ,membership.BASIC, LocalDateTime.now(), LocalDateTime.now(), true);
