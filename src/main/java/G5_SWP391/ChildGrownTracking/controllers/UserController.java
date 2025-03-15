@@ -86,7 +86,7 @@ public class UserController {
             @Valid
             @RequestBody UserDTO userDTO
     ){
-        User user = userSevice.getUserByEmail(userDTO.getUserName());
+        User user = userSevice.getUserByEmail(userDTO.getEmail());
         if (user == null) {
             UserResponse newUser = userSevice.saveUser(userDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObject( "ok", "User saved successfully", newUser));

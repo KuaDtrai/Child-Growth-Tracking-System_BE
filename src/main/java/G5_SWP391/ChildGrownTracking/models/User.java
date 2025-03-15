@@ -2,6 +2,9 @@ package G5_SWP391.ChildGrownTracking.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -27,6 +30,8 @@ public class User {
 
     private String password;
 
+    @Email
+    @Column(unique = true)
     private String email;
 
     @JsonIgnore
