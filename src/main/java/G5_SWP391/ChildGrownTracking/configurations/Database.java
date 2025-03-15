@@ -30,7 +30,7 @@ public class Database {
             // Thêm dữ liệu User
             User user1 = new User("kien",  "afefaf", "kien@example.com", role.MEMBER ,membership.BASIC, LocalDateTime.now(), LocalDateTime.now(), true);
             User user2 = new User("ducanh",  "afefaf", "hehe@example.com", role.MEMBER ,membership.PREMIUM, LocalDateTime.now(), LocalDateTime.now(), true);
-            User user3 = new User("ducphan",  "afefaf", "hehe@example.com", role.DOCTOR ,membership.PREMIUM, LocalDateTime.now(), LocalDateTime.now(), true);
+            User user3 = new User("ducphan",  "afefaf", "huhu@example.com", role.DOCTOR ,membership.PREMIUM, LocalDateTime.now(), LocalDateTime.now(), true);
 
             user1 = userRepository.save(user1); // Lưu User trước
             user2 = userRepository.save(user2);
