@@ -151,7 +151,7 @@ public class UserController {
     }
 
     // http://localhost:8080/api/v1/users/{id}
-    @PutMapping("/{id}")
+    @PutMapping("/delete/{id}")
     ResponseEntity<ResponseObject> deleteUserById(@PathVariable("id") Long id){
         UserResponse user = userSevice.deleteUserById(id);
         if(user != null){
