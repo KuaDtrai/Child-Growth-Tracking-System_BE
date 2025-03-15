@@ -29,7 +29,7 @@ public class User {
 
     private String email;
 
-    @JsonIgnore
+
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Child> children = new ArrayList<>();
 

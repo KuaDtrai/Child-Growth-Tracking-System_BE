@@ -21,11 +21,7 @@ public class Database {
 
 
             // Xóa toàn bộ dữ liệu cũ trước khi thêm mới
-            metricRepository.deleteAll();
-            childRepository.deleteAll();
-            postRepository.deleteAll();
-            doctorRepository.deleteAll();
-            userRepository.deleteAll();
+
 
             // Thêm dữ liệu User
             User user1 = new User("kien",  "afefaf", "kien@example.com", role.MEMBER ,membership.BASIC, LocalDateTime.now(), LocalDateTime.now(), true);

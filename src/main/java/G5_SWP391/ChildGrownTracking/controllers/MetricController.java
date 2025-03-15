@@ -2,6 +2,7 @@ package G5_SWP391.ChildGrownTracking.controllers;
 
 
 import G5_SWP391.ChildGrownTracking.dtos.MetricRequestDTO;
+import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
 import G5_SWP391.ChildGrownTracking.services.MetricService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,35 +21,24 @@ public class MetricController {
     private final MetricService service;
 
 
-    // http://localhost:8080/api/v1/metric/
+    // http://localhost:8080/api/v1/metric/findByChildId
     @GetMapping("/findByChildId")
-    public ResponseEntity<?> getMetricsByChildId(@RequestParam Long childId) {
+    public ResponseEntity<ResponseObject> getMetricsByChildId(@RequestParam(required = false) Long childId ) {
         return service.getAllMetricByChildId(childId);
     }
 
-    // http://localhost:8080/api/v1/metric/height
-    @GetMapping("/height")
-    public ResponseEntity<?> getHeightByChildId(@RequestParam Long childId) {
-        return service.getHeightAndRecordedDate(childId);
-    }
 
-    // http://localhost:8080/api/v1/metric/weight
-    @GetMapping("/weight")
-    public ResponseEntity<?> getWeightByChildId(@RequestParam Long childId) {
-        return service.getWeightAndRecordedDate(childId);
-    }
-
-    // http://localhost:8080/api/v1/metric/bmi
-    @GetMapping("/bmi")
-    public ResponseEntity<?> getBMIByChildId(@RequestParam Long childId) {
-        return service.getBMIAndRecordedDate(childId);
-    }
     // http://localhost:8080/api/v1/metric/create
     @PostMapping("/create")
 
-    public ResponseEntity<?> createMetric(
-            @Valid
-            @RequestBody MetricRequestDTO request) {
+    public ResponseEntity<?> createMetric(@RequestBody(required = false) MetricRequestDTO request) {
         return service.createMetric(request);
     }
+
+    // http://localhost:8080/api/v1/metric/delete
+    @PutMapping("/delete")
+    public ResponseEntity<ResponseObject> deleteMetric(@RequestParam(required = false) Long metricId) {
+        return service.deleteMetric(metricId);
+    }
+
 }

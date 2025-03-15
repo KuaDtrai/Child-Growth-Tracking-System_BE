@@ -49,4 +49,28 @@ public class Metric {
         this.createDate = createDate;
         this.status = status;
     }
+
+    public Child getChild() {
+        return child;
+    }
+
+    public void setChild(Child child) {
+        this.child = child;
+    }
+
+    @Override
+    public String toString() {
+        return "Metric{" +
+                "id=" + id +
+                ", weight=" + weight +
+                ", height=" + height +
+                ", BMI=" + BMI +
+                ", recordedDate=" + recordedDate +
+                ", createDate=" + createDate +
+                ", status=" + status +
+                '}';
+    }
+
+
+
 }

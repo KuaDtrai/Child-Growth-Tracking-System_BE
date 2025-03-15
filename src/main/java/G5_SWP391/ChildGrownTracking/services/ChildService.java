@@ -137,7 +137,7 @@ public class ChildService {
     public ResponseEntity<ResponseObject> getChildById(Long id) {
         if (id == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject("fail", "Invalid ID: ID cannot be empty or null!", null));
+                    .body(new ResponseObject("fail", "Invalid ID: childId cannot be empty or null!", null));
         }
 
         Optional<Child> optionalChild = childRepository.findByIdAndStatusIsTrue(id);
