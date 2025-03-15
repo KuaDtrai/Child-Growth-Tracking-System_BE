@@ -49,10 +49,10 @@ public class ChildController {
     }
 
     // Get child by ID
-    // http://localhost:8080/api/v1/child/{id}
-    @GetMapping("/{id}")
-    public ResponseEntity<ResponseObject> getChildById(@PathVariable Long id) {
-        return service.getChildById(id);
+    // http://localhost:8080/api/v1/child/findById
+    @GetMapping("/findById")
+    public ResponseEntity<ResponseObject> getChildById(@RequestParam(required = false) Long childId ) {
+        return service.getChildById(childId);
     }
 
     // Search by parentId
