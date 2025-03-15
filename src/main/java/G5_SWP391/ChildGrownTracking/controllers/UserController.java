@@ -96,7 +96,7 @@ public class UserController {
     }
 
     // http://localhost:8080/api/v1/users/{id}
-    @PutMapping("")
+    @PutMapping("/{id}")
     ResponseEntity<ResponseObject> updateUser(
             @Valid @PathVariable("id") Long id,
             @Valid @RequestBody UserDTO userDTO
