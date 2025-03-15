@@ -26,13 +26,4 @@ public class UserDTO {
 
     @JsonProperty("membership")
     private String membership;
-
-//    @JsonProperty("createdDate")
-//    private Date createdDate;
-//
-//    @JsonProperty("lastModifiedDate")
-//    private Date lastModifiedDate;
-
-    @JsonProperty("status")
-    private boolean status;
 }

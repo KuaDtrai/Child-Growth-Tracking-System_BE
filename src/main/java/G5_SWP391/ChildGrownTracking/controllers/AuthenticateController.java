@@ -3,7 +3,6 @@ package G5_SWP391.ChildGrownTracking.controllers;
 import G5_SWP391.ChildGrownTracking.dtos.AuthenticateDTO;
 import G5_SWP391.ChildGrownTracking.dtos.IntrospcectDTO;
 import G5_SWP391.ChildGrownTracking.dtos.UserDTO;
-import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.responses.AuthenticateResponse;
 import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
 import G5_SWP391.ChildGrownTracking.responses.UserResponse;
@@ -35,7 +34,7 @@ public class AuthenticateController {
         if (user != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("error", "Username is already used", null));
         } else {
-            UserDTO userDTO = new UserDTO(username, password, email, "", "", true);
+            UserDTO userDTO = new UserDTO(username, password, email, "", "");
             user = userService.saveUser(userDTO);
             if (user != null) {
                 return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObject("ok", "Register successfully", user));
@@ -51,7 +50,7 @@ public class AuthenticateController {
             @RequestBody AuthenticateDTO request
     ) {
         AuthenticateResponse token = authenticateService.authenticate(request);
-        if (token != null) {
+        if (token.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObject("ok", "login 1 successfully", token));
         }else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("error", "Invalid username or password", null));
@@ -60,7 +59,10 @@ public class AuthenticateController {
     @PostMapping("/introspect")
     ResponseEntity<ResponseObject> authenticate(@RequestBody IntrospcectDTO token) throws ParseException, JOSEException {
         var result = authenticateService.introspect(token);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObject("ok", "introspect", result));
+        if (result)
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObject("ok", "introspect", true));
+        else
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObject("error", "introspect failed", null));
     }
 
 }

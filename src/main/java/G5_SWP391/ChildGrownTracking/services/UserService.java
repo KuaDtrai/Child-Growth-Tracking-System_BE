@@ -62,24 +62,7 @@ public class UserService {
         return userResponses;
     }
 
-    public List<DoctorResponse> getAllDoctor() {
-        List<User> doctors = userRepository.findAllByStatusIsTrueAndRole(role.DOCTOR);
-        List<DoctorResponse> doctorsResponses = new ArrayList<>();
-        for (User user : doctors) {
-            UserResponse userResponse = new UserResponse(user.getId(),
-                    user.getUserName(),
-                    user.getEmail(),
-                    user.getRole(),
-                    user.getMembership(),
-                    user.getCreatedDate(),
-                    user.getUpdateDate(),
-                    user.isStatus());
-            Doctor doctor = doctorRepository.findByUserId(user.getId());
-            DoctorResponse doctorResponse = new DoctorResponse(userResponse, doctor.getSpecialization(), doctor.getCertificate());
-            doctorsResponses.add(doctorResponse);
-        }
-        return doctorsResponses;
-    }
+
 
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id).orElse(null);
@@ -110,10 +93,30 @@ public class UserService {
     }
 
     public UserResponse saveUser(UserDTO userDto) {
-        User user = new User(userDto.getUserName(), userDto.getPassword(), userDto.getEmail(), role.valueOf(userDto.getRole()), membership.valueOf(userDto.getMembership()),java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), userDto.isStatus());
-        userRepository.save(user);
+        User user = new User(userDto.getUserName(), userDto.getPassword(), userDto.getEmail(), role.valueOf(userDto.getRole()), membership.valueOf(userDto.getMembership()),java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), true);
+        user = userRepository.save(user);
+        if (user.getRole() == role.DOCTOR){
+            doctorRepository.save(new Doctor(user, "", ""));
+        }
         return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
+    }
 
+    public UserResponse updateUser(User user, UserDTO userDto) {
+        user.setUserName(userDto.getUserName());
+        user.setPassword(userDto.getPassword());
+        user.setEmail(userDto.getEmail());
+        user.setRole(role.valueOf(userDto.getRole()));
+        user.setMembership(membership.valueOf(userDto.getMembership()));
+        user.setUpdateDate(java.time.LocalDateTime.now());
+        user = userRepository.save(user);
+
+        if (user.getRole() == role.DOCTOR){
+            doctorRepository.save(new Doctor(user, "", ""));
+        }
+        UserResponse userResponse = new UserResponse(
+                user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
+        );
+        return userResponse;
     }
 
     public UserResponse deleteUserById(Long id){

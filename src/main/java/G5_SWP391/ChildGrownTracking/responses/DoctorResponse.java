@@ -11,6 +11,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DoctorResponse {
+    @JsonProperty("doctorId")
+    private Long doctorId;
+
     @JsonProperty("user")
     private UserResponse user;
 
@@ -19,4 +22,5 @@ public class DoctorResponse {
 
     @JsonProperty("certificate")
     private String certificate;
+
 }
