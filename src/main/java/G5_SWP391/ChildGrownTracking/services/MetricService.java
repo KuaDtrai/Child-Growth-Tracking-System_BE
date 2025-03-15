@@ -1,10 +1,8 @@
 package G5_SWP391.ChildGrownTracking.services;
 
 import G5_SWP391.ChildGrownTracking.dtos.MetricRequestDTO;
-import G5_SWP391.ChildGrownTracking.dtos.MetricResponseDTO;
 import G5_SWP391.ChildGrownTracking.models.Child;
 import G5_SWP391.ChildGrownTracking.models.Metric;
-import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.repositories.ChildRepository;
 import G5_SWP391.ChildGrownTracking.repositories.MetricRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
@@ -17,11 +15,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class MetricService {
@@ -57,7 +52,7 @@ public class MetricService {
                     .body(new ResponseObject("fail", "No metrics found for childId: " + childId, null));
         }
 
-        return ResponseEntity.ok(new ResponseObject("ok", "Metrics found for childId: " + childId, activeMetrics.toString()));
+        return ResponseEntity.ok(new ResponseObject("ok", "Metrics found for childId: " + childId, activeMetrics));
     }
 
 

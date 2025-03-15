@@ -37,10 +37,7 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
     void updateStatusById(@Param("id") Long id, @Param("status") boolean status);
 
 
-    @Query("SELECT new G5_SWP391.ChildGrownTracking.dtos.ChildResponseDTO(" +
-            "c.id, c.name, c.dob, c.gender, c.parent.userName, c.createDate, c.updateDate, c.status) " +
-            "FROM Child c WHERE c.parent.id = :parentId AND c.status = true")
-    List<ChildResponseDTO> findByParentIdWithParentName(@Param("parentId") Long parentId);
+
 
 
 

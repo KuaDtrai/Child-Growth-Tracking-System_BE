@@ -41,24 +41,20 @@ public class ChildController {
         return service.getAllChildDontHaveDoctor();
     }
 
-    // Search by name
-    // http://localhost:8080/api/v1/child/findByName
-    @GetMapping("/findByName")
-    public ResponseEntity<ResponseObject> findChildByName(@RequestParam String name) {
-        return service.findChildByName(name);
-    }
 
     // Get child by ID
     // http://localhost:8080/api/v1/child/findById
     @GetMapping("/findById")
-    public ResponseEntity<ResponseObject> getChildById(@RequestParam(required = false) Long childId ) {
+    public ResponseEntity<ResponseObject> getChildById(
+            @RequestParam(required = false) Long childId ) {
         return service.getChildById(childId);
     }
 
     // Search by parentId
     // http://localhost:8080/api/v1/child/findByParentId
     @GetMapping("/findByParentId")
-    public ResponseEntity<ResponseObject> findChildrenByParentId(@RequestParam Long parentId) {
+    public ResponseEntity<ResponseObject> findChildrenByParentId(
+            @RequestParam(required = false) Long parentId) {
         return service.findChildrenByParentId(parentId);
     }
 
