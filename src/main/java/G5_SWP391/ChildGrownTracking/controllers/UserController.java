@@ -40,7 +40,7 @@ public class UserController {
         if(!users.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Found UserList", users));
         }else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("false", "Not Found UserList", users));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("fail", "Not Found UserList", users));
         }
     }
 
@@ -51,7 +51,7 @@ public class UserController {
         if(!users.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Found UserList", users));
         }else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("false", "Not Found UserList", users));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("fail", "Not Found UserList", users));
         }
     }
 
@@ -63,7 +63,7 @@ public class UserController {
         if(user != null){
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject( "ok", "Found User with id: " +id, user));
         }else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject( "false", "Cannot find User with id: " +id, null));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject( "fail", "Cannot find User with id: " +id, null));
         }
     }
 
@@ -77,7 +77,7 @@ public class UserController {
         if(user != null)
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject( "ok", "Found User with username: " +username, user));
         else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject( "false", "Cannot find User with username: " +username, null));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject( "fail", "Cannot find User with username: " +username, null));
     }
 
     // http://localhost:8080/api/v1/users
@@ -89,10 +89,12 @@ public class UserController {
         User user = userSevice.getUserByEmail(userDTO.getEmail());
         if (user == null) {
             UserResponse newUser = userSevice.saveUser(userDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObject( "ok", "User saved successfully", newUser));
-
+            if (newUser != null) {
+                return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObject( "ok", "User saved successfully", newUser));
+            }else
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject( "fail", "User saved fail", null));
         }else
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject( "false", "Cannot save User", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject( "false", "User is already exist", null));
     }
 
     // http://localhost:8080/api/v1/users/{id}
@@ -104,10 +106,14 @@ public class UserController {
         User user = userRepository.findById(id).orElse(null);
         if(user != null) {
             UserResponse userResponse = userSevice.updateUser(user, userDTO);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject( "ok", "User updated successfully", userResponse));
+            if (userResponse != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject( "ok", "User updated successfully", userResponse));
+            }else
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject( "fail", "User updated fail", null));
+
         }
         else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject( "false", "Cannot update User", null));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject( "fail", "User not found", null));
     }
 
     // http://localhost:8080/api/v1/users/membership/{id}
@@ -116,10 +122,14 @@ public class UserController {
             @Valid @PathVariable("id") Long id,
             @Valid @RequestBody membership membership
     ){
-        User user = userRepository.findById(id).get();
-        user.setMembership(membership);
-        userRepository.save(user);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject( "ok", "User updated successfully", null));
+        User user = userRepository.findById(id).orElse(null);
+        if(user != null) {
+            user.setMembership(membership);
+            userRepository.save(user);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject( "ok", "User updated successfully", user));
+        }else
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject( "fail", "User not found", null));
+
     }
 
     // http://localhost:8080/api/v1/users/doctor/{id}
@@ -145,7 +155,10 @@ public class UserController {
         Doctor doctor = doctorRepository.findById(doctorId).orElse(null);
         if(doctor != null){
             DoctorResponse doctorResponse = doctorSevice.updateDoctor(doctor, doctorDTO);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject( "ok", "User updated successfully", doctorResponse));
+            if (doctorResponse != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject( "ok", "User updated successfully", doctorResponse));
+            }else
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject( "fail", "Doctor not found", null));
         }else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject( "false", "Cannot find Doctor with id: " +doctorId, null));
     }
