@@ -1,5 +1,6 @@
 package G5_SWP391.ChildGrownTracking.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,8 @@ public class Metric {
 
 
     @ManyToOne
-    @JoinColumn(name = "childId") // Để dễ dàng truy vấn
+    @JoinColumn(name = "childId")
+    @JsonBackReference// Để dễ dàng truy vấn
     private Child child;
 
     @Column(precision = 5, scale = 2)

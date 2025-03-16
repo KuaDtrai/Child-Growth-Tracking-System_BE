@@ -22,7 +22,7 @@ import java.util.List;
 public class ChildController {
 
 
-    private final   ChildService service;
+    private final ChildService service;
 
 
 
@@ -41,31 +41,28 @@ public class ChildController {
         return service.getAllChildDontHaveDoctor();
     }
 
-    // Search by name
-    // http://localhost:8080/api/v1/child/findByName
-    @GetMapping("/findByName")
-    public ResponseEntity<ResponseObject> findChildByName(@RequestParam String name) {
-        return service.findChildByName(name);
-    }
 
     // Get child by ID
     // http://localhost:8080/api/v1/child/findById
     @GetMapping("/findById")
-    public ResponseEntity<ResponseObject> getChildById(@RequestParam(required = false) Long childId ) {
+    public ResponseEntity<ResponseObject> getChildById(
+            @RequestParam(required = false) Long childId ) {
         return service.getChildById(childId);
     }
 
     // Search by parentId
     // http://localhost:8080/api/v1/child/findByParentId
     @GetMapping("/findByParentId")
-    public ResponseEntity<ResponseObject> findChildrenByParentId(@RequestParam Long parentId) {
+    public ResponseEntity<ResponseObject> findChildrenByParentId(
+            @RequestParam(required = false) Long parentId) {
         return service.findChildrenByParentId(parentId);
     }
 
     // Create new child
     // http://localhost:8080/api/v1/child/createChild
     @PostMapping("/createChild")
-    public ResponseEntity<ResponseObject> createChild( @RequestBody ChildRequestDTO newChild) {
+    public ResponseEntity<ResponseObject> createChild(
+            @RequestBody(required = false) ChildRequestDTO newChild) {
         return service.createChild(newChild);
     }
 
@@ -73,21 +70,25 @@ public class ChildController {
     // Update child by ID
     // http://localhost:8080/api/v1/child/update/{id}
     @PutMapping("/update/{id}")
-    public ResponseEntity<ResponseObject> updateChild(@PathVariable Long id, @RequestBody ChildRequestDTO updatedChild) {
+    public ResponseEntity<ResponseObject> updateChild(
+            @PathVariable(required = false) Long id,
+            @RequestBody(required = false) ChildRequestDTO updatedChild) {
         return service.updateChild(id, updatedChild);
     }
 
     // Delete child by ID
     // http://localhost:8080/api/v1/child/delete/{id}
     @PutMapping("/delete/{id}")
-    public ResponseEntity<ResponseObject> deleteChild(@PathVariable Long id) {
+    public ResponseEntity<ResponseObject> deleteChild(@PathVariable(required = false) Long id) {
         return service.deleteChild(id);
     }
 
     // set doctor for child
     // http://localhost:8080/api/v1/child/setDoctor/
     @PutMapping("/setDoctor/")
-    public ResponseEntity<ResponseObject> setDoctorForChild(@RequestParam Long childId, @RequestParam Long doctorId) {
+    public ResponseEntity<ResponseObject> setDoctorForChild(
+            @RequestParam(required = false) Long childId,
+            @RequestParam(required = false) Long doctorId) {
         return service.setDoctorForChild(childId, doctorId);
     }
 }

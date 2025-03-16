@@ -1,6 +1,8 @@
 package G5_SWP391.ChildGrownTracking.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -34,14 +36,17 @@ public class Child {
 
 
     @ManyToOne
-    @JoinColumn(name = "parentId")  // Sửa tên cột cho đúng chuẩn SQL
+    @JoinColumn(name = "parentId")
+    @JsonBackReference   // Sửa tên cột cho đúng chuẩn SQL
     private User parent;
 
     @ManyToOne
-    @JoinColumn(name = "doctorId")  // Sửa tên cột cho đúng chuẩn SQL
+    @JoinColumn(name = "doctorId")
+    @JsonBackReference// Sửa tên cột cho đúng chuẩn SQL
     private User doctor;
 
     @OneToMany(mappedBy = "child", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<Metric> metrics = new ArrayList<>();
 
    public User getParenId() {
@@ -53,6 +58,7 @@ public class Child {
     }
 
     @OneToMany(mappedBy = "child", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<Post> Post = new ArrayList<>();
 
 
