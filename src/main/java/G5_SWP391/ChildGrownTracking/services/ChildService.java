@@ -264,8 +264,8 @@ public class ChildService {
     }
 
 
-    public ResponseEntity<ResponseObject> updateChild(Long id, ChildRequestDTO childRequest) {
-        if (id == null) {
+    public ResponseEntity<ResponseObject> updateChild(Long childId, ChildRequestDTO childRequest) {
+        if (childId == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Child ID is required.", null));
         }
@@ -286,10 +286,10 @@ public class ChildService {
                     .body(new ResponseObject("fail", "Parent ID is required!", null));
         }
 
-        Optional<Child> childOptional = childRepository.findByIdAndStatusIsTrue(id);
+        Optional<Child> childOptional = childRepository.findByIdAndStatusIsTrue(childId);
         if (childOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseObject("fail", "Child with ID " + id + " not found.", null));
+                    .body(new ResponseObject("fail", "Child with ID " + childId + " not found.", null));
         }
         Child child = childOptional.get();
 
@@ -302,6 +302,11 @@ public class ChildService {
         if(user.getRole() != role.MEMBER){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Parent ID is not exist!", null));
+        }
+
+        if(!child.getParent().getId().equals(childRequest.getParenId())){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject("fail", "child ID is not pair with parentId !", null));
         }
 
         child.setName(childRequest.getName());
@@ -323,7 +328,7 @@ public class ChildService {
                 child.getUpdateDate(),
                 child.isStatus()
         );
-        return ResponseEntity.ok(new ResponseObject("ok", "Child with ID " + id + " updated successfully.", childResponseDTO));
+        return ResponseEntity.ok(new ResponseObject("ok", "Child with ID " + childId + " updated successfully.", childResponseDTO));
 
     }
 
