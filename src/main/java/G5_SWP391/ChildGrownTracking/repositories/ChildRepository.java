@@ -13,12 +13,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ChildRepository extends JpaRepository<Child, Long> {
-    List<Child> findByNameContainingIgnoreCaseAndStatusIsTrue(String name);
+
     List<Child> findByParentAndStatusIsTrue(User parent);
     List<Child> findByStatusIsTrue();
     Optional<Child> findByIdAndStatusIsTrue(Long id);
-
-
     boolean existsByIdAndStatusIsTrue(Long childId);
 
 
@@ -31,10 +29,7 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
 
 
 
-    @Modifying
-    @Transactional
-    @Query("UPDATE Child c SET c.status = :status WHERE c.id = :id")
-    void updateStatusById(@Param("id") Long id, @Param("status") boolean status);
+
 
 
 
