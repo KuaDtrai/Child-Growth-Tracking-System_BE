@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -93,6 +94,8 @@ public class UserService {
     }
 
     public UserResponse saveUser(UserDTO userDto) {
+        if (!isEmailValid(userDto.getEmail()))
+            return null;
         User user = new User(userDto.getUserName(), userDto.getPassword(), userDto.getEmail(), role.valueOf(userDto.getRole()), membership.valueOf(userDto.getMembership()),java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), true);
         user = userRepository.save(user);
         if (user.getRole() == role.DOCTOR){
@@ -138,5 +141,18 @@ public class UserService {
 
     public User findUserByEmailAndPassword(String email, String password) {
         return userRepository.findUserByEmailAndPassword(email, password);
+    }
+
+    public static boolean isEmailValid(String email) {
+
+        // Regular expression to match valid email formats
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+
+        // Compile the regex
+        Pattern p = Pattern.compile(emailRegex);
+
+        // Check if email matches the pattern
+        return email != null && p.matcher(email).matches();
     }
 }
