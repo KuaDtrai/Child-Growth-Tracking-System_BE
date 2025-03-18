@@ -1,6 +1,7 @@
 package G5_SWP391.ChildGrownTracking.controllers;
 
 import G5_SWP391.ChildGrownTracking.dtos.DoctorDTO;
+import G5_SWP391.ChildGrownTracking.dtos.UpdateUserDTO;
 import G5_SWP391.ChildGrownTracking.dtos.UserDTO;
 import G5_SWP391.ChildGrownTracking.models.Doctor;
 import G5_SWP391.ChildGrownTracking.models.User;
@@ -101,8 +102,8 @@ public class UserController {
     @PutMapping("/{id}")
     ResponseEntity<ResponseObject> updateUser(
             @Valid @PathVariable("id") Long id,
-            @Valid @RequestBody UserDTO userDTO
-    ){
+            @Valid @RequestBody UpdateUserDTO userDTO
+            ){
         User user = userRepository.findById(id).orElse(null);
         if(user != null) {
             UserResponse userResponse = userSevice.updateUser(user, userDTO);

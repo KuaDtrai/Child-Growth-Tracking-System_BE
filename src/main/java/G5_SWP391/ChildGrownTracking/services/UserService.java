@@ -1,5 +1,6 @@
 package G5_SWP391.ChildGrownTracking.services;
 
+import G5_SWP391.ChildGrownTracking.dtos.UpdateUserDTO;
 import G5_SWP391.ChildGrownTracking.dtos.UserDTO;
 import G5_SWP391.ChildGrownTracking.models.Doctor;
 import G5_SWP391.ChildGrownTracking.models.User;
@@ -104,9 +105,11 @@ public class UserService {
         return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
     }
 
-    public UserResponse updateUser(User user, UserDTO userDto) {
+    public UserResponse updateUser(User user, UpdateUserDTO userDto) {
+        if (!isEmailValid(userDto.getEmail()))
+            return null;
+
         user.setUserName(userDto.getUserName());
-        user.setPassword(userDto.getPassword());
         user.setEmail(userDto.getEmail());
         user.setRole(role.valueOf(userDto.getRole()));
         user.setMembership(membership.valueOf(userDto.getMembership()));

@@ -9,12 +9,9 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-public class UserDTO {
+public class UpdateUserDTO {
     @JsonProperty("username")
     private String userName;
-
-    @JsonProperty("password")
-    private String password;
 
     @JsonProperty("email")
     private String email;
