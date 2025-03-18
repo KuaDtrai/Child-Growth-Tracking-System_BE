@@ -18,6 +18,7 @@ import java.text.ParseException;
 
 @RestController
 @RequestMapping("/api/v1/authenticate")
+@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 public class AuthenticateController {
     private final UserService userService;

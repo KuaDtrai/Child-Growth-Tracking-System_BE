@@ -22,9 +22,9 @@ public class MetricController {
 
 
     // http://localhost:8080/api/v1/metric/findByChildId
-    @GetMapping("/findByChildId")
-    public ResponseEntity<ResponseObject> getMetricsByChildId(@RequestParam(required = false) Long childId ) {
-        return service.getAllMetricByChildId(childId);
+    @GetMapping("/findByChildId/{id}")
+    public ResponseEntity<ResponseObject> getMetricsByChildId(@PathVariable(required = false) Long id ) {
+        return service.getAllMetricByChildId(id);
     }
 
 
@@ -36,9 +36,9 @@ public class MetricController {
     }
 
     // http://localhost:8080/api/v1/metric/delete
-    @PutMapping("/delete")
-    public ResponseEntity<ResponseObject> deleteMetric(@RequestParam(required = false) Long metricId) {
-        return service.deleteMetric(metricId);
+    @PutMapping("/delete/{id}")
+    public ResponseEntity<ResponseObject> deleteMetric(@PathVariable(required = false) Long id ) {
+        return service.deleteMetric(id);
     }
 
 }

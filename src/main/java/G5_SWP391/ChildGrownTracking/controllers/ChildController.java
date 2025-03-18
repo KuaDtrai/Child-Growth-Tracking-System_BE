@@ -44,18 +44,18 @@ public class ChildController {
 
     // Get child by ID
     // http://localhost:8080/api/v1/child/findById
-    @GetMapping("/findById")
+    @GetMapping("/findById/{id}")
     public ResponseEntity<ResponseObject> getChildById(
-            @RequestParam(required = false) Long childId ) {
-        return service.getChildById(childId);
+            @PathVariable(required = false) Long id) {
+        return service.getChildById(id);
     }
 
     // Search by parentId
     // http://localhost:8080/api/v1/child/findByParentId
-    @GetMapping("/findByParentId")
+    @GetMapping("/findByParentId/{id}")
     public ResponseEntity<ResponseObject> findChildrenByParentId(
-            @RequestParam(required = false) Long parentId) {
-        return service.findChildrenByParentId(parentId);
+            @PathVariable(required = false) Long id ) {
+        return service.findChildrenByParentId(id);
     }
 
     // Create new child

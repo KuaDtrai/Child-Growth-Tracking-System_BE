@@ -18,9 +18,9 @@ public class PostController {
     @Autowired
     private PostService postService;
 
-    @GetMapping("/getAllPostByChildId")
-    public ResponseEntity<ResponseObject> getAllPostByChildId(@RequestParam("childId") Long childId) {
-        return postService.findByChildId(childId);
+    @GetMapping("/getAllPostByChildId/{id}")
+    public ResponseEntity<ResponseObject> getAllPostByChildId(@PathVariable(required = false) Long id ) {
+        return postService.findByChildId(id);
     }
 
     @PostMapping("/createPost")
@@ -28,9 +28,9 @@ public class PostController {
         return postService.createPost(post);
     }
 
-    @PutMapping("/deletePost")
-    public ResponseEntity<ResponseObject> deletePost(@RequestParam("postId") Long postId) {
-        return postService.deletePost(postId);
+    @PutMapping("/deletePost/{id}")
+    public ResponseEntity<ResponseObject> deletePost(@PathVariable(required = false) Long id ) {
+        return postService.deletePost(id);
     }
 
 
