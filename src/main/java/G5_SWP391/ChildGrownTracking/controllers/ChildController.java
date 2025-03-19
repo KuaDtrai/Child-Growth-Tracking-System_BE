@@ -1,6 +1,7 @@
 package G5_SWP391.ChildGrownTracking.controllers;
 
 import G5_SWP391.ChildGrownTracking.dtos.ChildRequestDTO;
+import G5_SWP391.ChildGrownTracking.dtos.UpdateChildRequestDTO;
 import G5_SWP391.ChildGrownTracking.models.Child;
 import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
 import G5_SWP391.ChildGrownTracking.services.ChildService;
@@ -72,7 +73,7 @@ public class ChildController {
     @PutMapping("/update/{id}")
     public ResponseEntity<ResponseObject> updateChild(
             @PathVariable(required = false) Long id,
-            @RequestBody(required = false) ChildRequestDTO updatedChild) {
+            @RequestBody(required = false) UpdateChildRequestDTO updatedChild) {
         return service.updateChild(id, updatedChild);
     }
 

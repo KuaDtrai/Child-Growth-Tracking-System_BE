@@ -2,6 +2,7 @@ package G5_SWP391.ChildGrownTracking.services;
 
 import G5_SWP391.ChildGrownTracking.dtos.ChildRequestDTO;
 import G5_SWP391.ChildGrownTracking.dtos.ChildResponseDTO;
+import G5_SWP391.ChildGrownTracking.dtos.UpdateChildRequestDTO;
 import G5_SWP391.ChildGrownTracking.models.Child;
 import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.models.role;
@@ -264,28 +265,25 @@ public class ChildService {
     }
 
 
-    public ResponseEntity<ResponseObject> updateChild(Long childId, ChildRequestDTO childRequest) {
+    public ResponseEntity<ResponseObject> updateChild(Long childId, UpdateChildRequestDTO childRequest) {
         if (childId == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Child ID is required.", null));
         }
-        if(childRequest.getName() == null || childRequest.getName().trim().isEmpty()){
+        if (childRequest.getName() == null || childRequest.getName().trim().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Name cannot be empty!", null));
         }
-        if(childRequest.getDob() == null){
+        if (childRequest.getDob() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Date of birth is required!", null));
         }
-        if(childRequest.getGender() == null || childRequest.getGender().trim().isEmpty()){
+        if (childRequest.getGender() == null || childRequest.getGender().trim().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Gender of birth is required!", null));
         }
-        if(childRequest.getParenId() == null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject("fail", "Parent ID is required!", null));
-        }
 
+        // Fetch the child record without validating or updating the parent ID.
         Optional<Child> childOptional = childRepository.findByIdAndStatusIsTrue(childId);
         if (childOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -293,26 +291,11 @@ public class ChildService {
         }
         Child child = childOptional.get();
 
-        Optional<User> parentOptional = userRepository.findByIdAndStatusIsTrue(childRequest.getParenId());
-        if (parentOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject("fail", "Parent ID is not exist!", null));
-        }
-        User user = parentOptional.get();
-        if(user.getRole() != role.MEMBER){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject("fail", "Parent ID is not exist!", null));
-        }
-
-        if(!child.getParent().getId().equals(childRequest.getParenId())){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject("fail", "child ID is not pair with parentId !", null));
-        }
-
+        // Update only the allowed fields
         child.setName(childRequest.getName());
         child.setDob(childRequest.getDob());
         child.setGender(childRequest.getGender());
-        child.setParent(user);
+        // Do not update the parent; it remains unchanged.
         child.setUpdateDate(LocalDateTime.now());
 
         childRepository.save(child);
@@ -329,8 +312,8 @@ public class ChildService {
                 child.isStatus()
         );
         return ResponseEntity.ok(new ResponseObject("ok", "Child with ID " + childId + " updated successfully.", childResponseDTO));
-
     }
+
 
 
     public ResponseEntity<ResponseObject> deleteChild(Long id) {
