@@ -18,7 +18,7 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
     List<Child> findByStatusIsTrue();
     Optional<Child> findByIdAndStatusIsTrue(Long id);
     boolean existsByIdAndStatusIsTrue(Long childId);
-
+    List<Child> findByDoctorAndStatusIsTrue (User doctor);
 
 
 

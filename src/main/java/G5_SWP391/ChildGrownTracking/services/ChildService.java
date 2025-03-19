@@ -378,4 +378,54 @@ public class ChildService {
 
         return ResponseEntity.ok(new ResponseObject("ok", "Doctor assigned successfully to child.", null));
     }
+
+    public ResponseEntity<ResponseObject> getChildByDoctorId(Long doctorId) {
+        if( doctorId == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject("fail", "Doctor ID is required.", null));
+        }
+
+        Optional<User> doctorOptional = userRepository.findByIdAndStatusIsTrue(doctorId);
+
+        if(doctorOptional.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "Doctor with ID " + doctorId + " not found.", null));
+        }
+
+        User doctor = doctorOptional.get();
+
+        if(doctor.getRole() != role.DOCTOR){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject("fail", "Doctor with ID " + doctorId + " not found.", null));
+        }
+
+        List<Child> children = childRepository.findByDoctorAndStatusIsTrue(doctor);
+
+        if(children.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "Doctor with ID " + doctorId + " has no children.", null));
+        }
+
+        List<ChildResponseDTO> childResponseList = new ArrayList<>();
+
+        for(Child child : children){
+            ChildResponseDTO dto = new ChildResponseDTO(
+                    child.getId(),
+                    child.getName(),
+                    child.getDob(),
+                    child.getGender(),
+                    child.getParent().getUserName(),
+                    child.getDoctor().getUserName(),
+                    child.getCreateDate(),
+                    child.getUpdateDate(),
+                    child.isStatus()
+            );
+            childResponseList.add(dto);
+        }
+
+        return ResponseEntity.ok(new ResponseObject("ok", "List of children of doctor with ID " + doctorId, childResponseList));
+
+
+
+    }
 }

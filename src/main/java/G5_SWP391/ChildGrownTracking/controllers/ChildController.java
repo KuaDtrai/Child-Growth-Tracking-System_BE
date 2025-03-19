@@ -92,4 +92,13 @@ public class ChildController {
             @RequestParam(required = false) Long doctorId) {
         return service.setDoctorForChild(childId, doctorId);
     }
+
+    // get child by doctor
+    // http://localhost:8080/api/v1/child/getChildByDoctorId
+    @GetMapping("/getChildByDoctorId")
+    public ResponseEntity<ResponseObject> getChildByDoctorId(
+            @RequestParam(required = false) Long doctorId) {
+        return service.getChildByDoctorId(doctorId);
+    }
+
 }
