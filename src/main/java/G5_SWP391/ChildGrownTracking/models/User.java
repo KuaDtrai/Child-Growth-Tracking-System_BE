@@ -45,6 +45,14 @@ public class User {
     @JsonManagedReference
     private List<Child> children2 = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user" , cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference("user-feedbacks")
+    private List<Feedback> userFeedbacks = new ArrayList<>();
+
+    @OneToMany(mappedBy = "doctor" , cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference("doctor-feedbacks")
+    private List<Feedback> doctorFeedbacks = new ArrayList<>();
+
     @Enumerated(EnumType.STRING)
     private membership membership;
 
