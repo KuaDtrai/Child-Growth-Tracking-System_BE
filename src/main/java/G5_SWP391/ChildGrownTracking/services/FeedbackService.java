@@ -13,8 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class FeedbackService {
@@ -112,5 +111,46 @@ public class FeedbackService {
                 new ResponseObject("success", "Feedback created successfully", responseDTO)
         );
 
+    }
+
+    public List<FeedbackResponseDTO> getAllFeedback() {
+        List<Feedback> feedbacks = feedbackRepository.findAll();
+        List<FeedbackResponseDTO> feedbackResponseDTOs = new ArrayList<>();
+        for (Feedback feedback : feedbacks) {
+            FeedbackResponseDTO responseDTO = new FeedbackResponseDTO(feedback.getId(), feedback.getDescription(), feedback.getRating(), feedback.getUser().getUserName(), feedback.getDoctor().getUserName());
+            feedbackResponseDTOs.add(responseDTO);
+        }
+        return feedbackResponseDTOs;
+    }
+
+    public List<FeedbackResponseDTO> getAllFeedbackByDoctor(Long doctorId) {
+//        Optional<User> user = userRepository.findByIdAndStatusIsTrue(doctorId);
+        List<Feedback> feedbacks = feedbackRepository.findByDoctorId(doctorId);
+        List<FeedbackResponseDTO> feedbackResponseDTOs = new LinkedList<>();
+        for (Feedback feedback : feedbacks) {
+            FeedbackResponseDTO responseDTO = new FeedbackResponseDTO(feedback.getId(), feedback.getDescription(), feedback.getRating(), feedback.getUser().getUserName(), feedback.getDoctor().getUserName());
+            feedbackResponseDTOs.add(responseDTO);
+        }
+        return feedbackResponseDTOs;
+    }
+
+    public List<FeedbackResponseDTO> getAllFeedbackByUser(Long userId) {
+        List<Feedback> feedbacks = feedbackRepository.findByUserId(userId);
+        List<FeedbackResponseDTO> feedbackResponseDTOs = new LinkedList<>();
+        for (Feedback feedback : feedbacks) {
+            FeedbackResponseDTO responseDTO = new FeedbackResponseDTO(feedback.getId(), feedback.getDescription(), feedback.getRating(), feedback.getUser().getUserName(), feedback.getUser().getUserName());
+            feedbackResponseDTOs.add(responseDTO);
+        }
+        return feedbackResponseDTOs;
+    }
+
+    public int getDoctorRating(Long doctorId) {
+        List<Feedback> feedbacks = feedbackRepository.findByDoctorId(doctorId);
+        int rating = 0;
+        for (Feedback feedback : feedbacks) {
+            rating += feedback.getRating().getValue();
+        }
+        rating = rating / feedbacks.size();
+        return rating;
     }
 }

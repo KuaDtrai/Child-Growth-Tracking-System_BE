@@ -1,11 +1,16 @@
 package G5_SWP391.ChildGrownTracking.controllers;
 
 import G5_SWP391.ChildGrownTracking.dtos.FeedbackDTO;
+import G5_SWP391.ChildGrownTracking.responses.FeedbackResponseDTO;
 import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
 import G5_SWP391.ChildGrownTracking.services.FeedbackService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping(path = "/api/v1/feedback")
 @RestController
@@ -32,6 +37,44 @@ public class FeedbackController {
         return feedbackService.createFeedback(doctorId,parentId, feedback);
     }
 
+    @GetMapping("")
+    public ResponseEntity<ResponseObject> memberFeedback(
+    ){
+        List<FeedbackResponseDTO> feedbackResponseDTOS = feedbackService.getAllFeedback();
+        if (!feedbackResponseDTOS.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Feedback found", feedbackResponseDTOS));
+        }else
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "No feedback found", null));
+    }
 
+    @GetMapping("/doctor/{id}")
+    public ResponseEntity<ResponseObject> doctorFeedback(
+            @Valid @PathVariable("id") Long id
+    ){
+        List<FeedbackResponseDTO> feedbackResponseDTOS = feedbackService.getAllFeedbackByDoctor(id);
+        if (!feedbackResponseDTOS.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Feedback found", feedbackResponseDTOS));
+        }else
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "No feedback found", null));
+    }
+
+    @GetMapping("/member/{id}")
+    public ResponseEntity<ResponseObject> memberFeedback(
+            @Valid @PathVariable("id") Long id
+    ){
+        List<FeedbackResponseDTO> feedbackResponseDTOS = feedbackService.getAllFeedbackByUser(id);
+        if (!feedbackResponseDTOS.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Feedback found", null));
+        }else
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "No feedback found", null));
+    }
+
+    @GetMapping("/doctor/rating/{id}")
+    public ResponseEntity<ResponseObject> getDoctorAverageRating(
+            @Valid @PathVariable("id") Long id
+    ){
+        int rating = feedbackService.getDoctorRating(id);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Rating", rating));
+    }
 
 }

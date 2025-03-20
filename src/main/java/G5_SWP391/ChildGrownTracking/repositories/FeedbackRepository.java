@@ -1,5 +1,6 @@
 package G5_SWP391.ChildGrownTracking.repositories;
 
+import G5_SWP391.ChildGrownTracking.models.Doctor;
 import G5_SWP391.ChildGrownTracking.models.Feedback;
 
 import G5_SWP391.ChildGrownTracking.models.User;
@@ -8,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
 
@@ -17,7 +17,9 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
     @Query("SELECT COUNT(f) FROM Feedback f WHERE f.user.id = :userId AND f.doctor.id = :doctorId")
     long countByUserAndDoctor(@Param("userId") Long userId, @Param("doctorId") Long doctorId);
 
+    List<Feedback> findByDoctorId(Long doctor);
 
+    List<Feedback> findByUserId(Long userId);
 }
 
 
