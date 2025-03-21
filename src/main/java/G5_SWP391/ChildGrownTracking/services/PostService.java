@@ -90,6 +90,19 @@ public class PostService {
 
         Child child = childOptional.get();
 
+        if(!user.getRole().equals(role.DOCTOR) || !user.getRole().equals(role.MEMBER)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject("fail", "User is not doctor or parent.", null));
+        }
+
+        if(user.getRole().equals(role.DOCTOR)){
+            if(!user.getChildren2().contains(child)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ResponseObject("fail", "User is not doctor of this child.", null));
+            }
+        }
+
+
         if(user.getRole().equals(role.MEMBER)){
             if(!user.getChildren().contains(child)){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
