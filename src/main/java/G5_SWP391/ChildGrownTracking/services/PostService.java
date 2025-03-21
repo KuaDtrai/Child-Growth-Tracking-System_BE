@@ -50,6 +50,7 @@ public class PostService {
             if(post.isStatus()){
                 PostResponse Response = new PostResponse(
                         post.getId(),
+                        post.getUser().getId(),
                         post.getTitle(),
                         post.getDescription(),
                         post.getCreatedDate(),
@@ -65,21 +66,33 @@ public class PostService {
     }
 
     public ResponseEntity<ResponseObject> createPost(PostDTO postDTO) {
-        Optional<User> userOptional = userRepository.findById(postDTO.getUserId());
+
+        if( postDTO.getUserId() == null || postDTO.getChildId() == null || postDTO.getTitle() == null || postDTO.getDescription() == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject("fail", "Missing required fields.", null));
+        }
+
+
+        Optional<User> userOptional = userRepository.findByIdAndStatusIsTrue(postDTO.getUserId());
         if (!userOptional.isPresent() || !userOptional.get().isStatus()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseObject("fail", "User not found or inactive.", null));
         }
-        // Kiểm tra Child có tồn tại và active không
-        Optional<Child> childOptional = childRepository.findById(postDTO.getChildId());
+
+        User user = userOptional.get();
+
+        Optional<Child> childOptional = childRepository.findByIdAndStatusIsTrue(postDTO.getChildId());
         if (!childOptional.isPresent() || !childOptional.get().isStatus()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseObject("fail", "Child not found or inactive.", null));
         }
 
-
-        User user = userOptional.get();
         Child child = childOptional.get();
+
+        if(!user.getChildren().contains(child)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject("fail", "User is not parent of this child.", null));
+        }
 
         // Tạo Post mới
         Post newPost = new Post(
@@ -95,6 +108,7 @@ public class PostService {
 
         PostResponse p = new PostResponse(
                 newPost.getId(),
+                newPost.getUser().getId(),
                 newPost.getTitle(),
                 newPost.getDescription(),
                 newPost.getCreatedDate(),

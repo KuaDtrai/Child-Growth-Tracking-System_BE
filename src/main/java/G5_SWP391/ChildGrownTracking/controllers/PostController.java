@@ -24,7 +24,7 @@ public class PostController {
     }
 
     @PostMapping("/createPost")
-    public ResponseEntity<ResponseObject> createPost(@RequestBody PostDTO post) {
+    public ResponseEntity<ResponseObject> createPost(@RequestBody(required = false) PostDTO post) {
         return postService.createPost(post);
     }
 

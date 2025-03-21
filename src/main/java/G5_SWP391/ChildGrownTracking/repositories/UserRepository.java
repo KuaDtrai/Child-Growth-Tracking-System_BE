@@ -18,11 +18,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByUserNameAndPassword(String userName, String password);
 
     User findUserByEmailAndPassword(String email, String password);
-    boolean existsById(Long parenId);
-    boolean existsByIdAndStatusIsTrue(Long parenId);
+    
     boolean existsByChildrenAndStatusIsTrue(Child child);
 
 //    List<User> findAllByStatusIsTrue();
+    ;
 
     List<User> findAllByStatusIsTrueAndRole(role role);
 
