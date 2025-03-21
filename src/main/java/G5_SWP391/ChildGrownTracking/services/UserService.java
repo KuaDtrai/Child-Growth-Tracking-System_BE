@@ -97,10 +97,15 @@ public class UserService {
     public UserResponse saveUser(UserDTO userDto) {
         if (!isEmailValid(userDto.getEmail()))
             return null;
-        User user = new User(userDto.getUserName(), userDto.getPassword(), userDto.getEmail(), role.valueOf(userDto.getRole()), membership.valueOf(userDto.getMembership()),java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), true);
-        user = userRepository.save(user);
+        User user = new User(userDto.getUserName(), userDto.getPassword(), userDto.getEmail(), role.valueOf(userDto.getRole()), membership.BASIC,java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), true);
+
         if (user.getRole() == role.DOCTOR){
+            user.setMembership(membership.PREMIUM);
+            user = userRepository.save(user);
             doctorRepository.save(new Doctor(user, "", ""));
+        } else if (user.getRole() == role.MEMBER) {
+            user.setMembership(membership.BASIC);
+            user = userRepository.save(user);
         }
         return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
     }
