@@ -77,15 +77,7 @@ public class User {
         this.status = status;
     }
 
-    public void addChildren(Child child) {
-        children.add(child);
-        child.setParenId(this);
-    }
 
-    public void removeChildren(Child child) {
-        children.remove(child);
-        child.setParenId(null);
-    }
 
 
     @Override
