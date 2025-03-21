@@ -35,7 +35,7 @@ public class AuthenticateController {
         if (user != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("error", "Username is already used", null));
         } else {
-            UserDTO userDTO = new UserDTO(username, password, email, "", "");
+            UserDTO userDTO = new UserDTO(username, password, email, "");
             user = userService.saveUser(userDTO);
             if (user != null) {
                 return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObject("ok", "Register successfully", user));
