@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "Feedback")
 @Setter
@@ -31,12 +33,21 @@ public class Feedback {
 
     private String description;
 
+    private LocalDateTime createdDate;
+
+    private LocalDateTime updateDate;
+
+    private boolean status;
 
 
-    public Feedback(User user, User doctor, RatingPoint rating, String description) {
+
+    public Feedback(User user, User doctor, RatingPoint rating, String description, LocalDateTime createdDate, LocalDateTime updateDate, boolean status) {
         this.user = user;
         this.doctor = doctor;
         this.rating = rating;
         this.description = description;
+        this.createdDate = createdDate;
+        this.updateDate = updateDate;
+        this.status = status;
     }
 }

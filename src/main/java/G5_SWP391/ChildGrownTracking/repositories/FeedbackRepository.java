@@ -12,14 +12,13 @@ import java.util.List;
 
 public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
 
-     List<Feedback> findByDoctorAndUser(User doctor, User user);
+//     List<Feedback> findByDoctorAndUser(User doctor, User user);
 
     @Query("SELECT COUNT(f) FROM Feedback f WHERE f.user.id = :userId AND f.doctor.id = :doctorId")
     long countByUserAndDoctor(@Param("userId") Long userId, @Param("doctorId") Long doctorId);
 
-    List<Feedback> findByDoctorId(Long doctor);
+    List<Feedback> findByUserIdAndStatusIsTrue(Long userId);
 
-    List<Feedback> findByUserId(Long userId);
-}
+    List<Feedback> findByDoctorIdAndStatusIsTrue(Long doctorId);}
 
 

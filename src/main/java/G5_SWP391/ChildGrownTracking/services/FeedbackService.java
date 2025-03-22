@@ -2,6 +2,7 @@ package G5_SWP391.ChildGrownTracking.services;
 
 import G5_SWP391.ChildGrownTracking.dtos.FeedbackDTO;
 import G5_SWP391.ChildGrownTracking.models.Feedback;
+import G5_SWP391.ChildGrownTracking.models.RatingPoint;
 import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.models.role;
 import G5_SWP391.ChildGrownTracking.repositories.FeedbackRepository;
@@ -36,12 +37,12 @@ public class FeedbackService {
                     new ResponseObject("fail", "Parent Id is required", null)
             );
         }
-        if(feedback.getDiscription() == null){
+        if(feedback.getDescription() == null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     new ResponseObject("fail", "Discription is required", null)
             );
         }
-        if(feedback.getRating() == null){
+        if(RatingPoint.fromValue(feedback.getRating()) == null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     new ResponseObject("fail", "Rating is required", null)
             );
@@ -93,17 +94,23 @@ public class FeedbackService {
         Feedback newFeedback = new Feedback(
                 parent,
                 doctor,
-                feedback.getRating(),
-                feedback.getDiscription()
+                RatingPoint.fromValue(feedback.getRating()),
+                feedback.getDescription(),
+                java.time.LocalDateTime.now(),
+                java.time.LocalDateTime.now(),
+                true
         );
 
-        feedbackRepository.save(newFeedback);
+        newFeedback = feedbackRepository.save(newFeedback);
         FeedbackResponseDTO responseDTO = new FeedbackResponseDTO(
                 newFeedback.getId(),
                 newFeedback.getDescription(),
-                newFeedback.getRating(),
-                parent.getUserName(),
-                doctor.getUserName()
+                newFeedback.getRating().getValue(),
+                newFeedback.getUser().getUserName(),
+                newFeedback.getDoctor().getUserName(),
+                newFeedback.getCreatedDate(),
+                newFeedback.getUpdateDate(),
+                newFeedback.isStatus()
         );
 
 
@@ -117,40 +124,53 @@ public class FeedbackService {
         List<Feedback> feedbacks = feedbackRepository.findAll();
         List<FeedbackResponseDTO> feedbackResponseDTOs = new ArrayList<>();
         for (Feedback feedback : feedbacks) {
-            FeedbackResponseDTO responseDTO = new FeedbackResponseDTO(feedback.getId(), feedback.getDescription(), feedback.getRating(), feedback.getUser().getUserName(), feedback.getDoctor().getUserName());
-            feedbackResponseDTOs.add(responseDTO);
+            if (feedback.isStatus()) {
+                FeedbackResponseDTO responseDTO = new FeedbackResponseDTO(feedback.getId(), feedback.getDescription(), feedback.getRating().getValue(), feedback.getUser().getUserName(), feedback.getDoctor().getUserName(), feedback.getCreatedDate(), feedback.getUpdateDate(), feedback.isStatus());
+                feedbackResponseDTOs.add(responseDTO);
+            }
         }
         return feedbackResponseDTOs;
     }
 
     public List<FeedbackResponseDTO> getAllFeedbackByDoctor(Long doctorId) {
 //        Optional<User> user = userRepository.findByIdAndStatusIsTrue(doctorId);
-        List<Feedback> feedbacks = feedbackRepository.findByDoctorId(doctorId);
+        List<Feedback> feedbacks = feedbackRepository.findByDoctorIdAndStatusIsTrue(doctorId);
         List<FeedbackResponseDTO> feedbackResponseDTOs = new LinkedList<>();
         for (Feedback feedback : feedbacks) {
-            FeedbackResponseDTO responseDTO = new FeedbackResponseDTO(feedback.getId(), feedback.getDescription(), feedback.getRating(), feedback.getUser().getUserName(), feedback.getDoctor().getUserName());
+            FeedbackResponseDTO responseDTO = new FeedbackResponseDTO(feedback.getId(), feedback.getDescription(), feedback.getRating().getValue(), feedback.getUser().getUserName(), feedback.getDoctor().getUserName(), feedback.getCreatedDate(), feedback.getUpdateDate(), feedback.isStatus());
             feedbackResponseDTOs.add(responseDTO);
         }
         return feedbackResponseDTOs;
     }
 
     public List<FeedbackResponseDTO> getAllFeedbackByUser(Long userId) {
-        List<Feedback> feedbacks = feedbackRepository.findByUserId(userId);
+        List<Feedback> feedbacks = feedbackRepository.findByUserIdAndStatusIsTrue(userId);
         List<FeedbackResponseDTO> feedbackResponseDTOs = new LinkedList<>();
         for (Feedback feedback : feedbacks) {
-            FeedbackResponseDTO responseDTO = new FeedbackResponseDTO(feedback.getId(), feedback.getDescription(), feedback.getRating(), feedback.getUser().getUserName(), feedback.getUser().getUserName());
+            FeedbackResponseDTO responseDTO = new FeedbackResponseDTO(feedback.getId(), feedback.getDescription(), feedback.getRating().getValue(), feedback.getUser().getUserName(), feedback.getUser().getUserName(), feedback.getCreatedDate(), feedback.getUpdateDate(), feedback.isStatus());
             feedbackResponseDTOs.add(responseDTO);
         }
         return feedbackResponseDTOs;
     }
 
-    public int getDoctorRating(Long doctorId) {
-        List<Feedback> feedbacks = feedbackRepository.findByDoctorId(doctorId);
-        int rating = 0;
+    public float getDoctorRating(Long doctorId) {
+        List<Feedback> feedbacks = feedbackRepository.findByDoctorIdAndStatusIsTrue(doctorId);
+        float rating = 0;
         for (Feedback feedback : feedbacks) {
             rating += feedback.getRating().getValue();
         }
         rating = rating / feedbacks.size();
         return rating;
     }
+
+    public boolean deleteFeedbackById(Long id) {
+        Feedback feedback = feedbackRepository.findById(id).get();
+        if (feedback.isStatus()) {
+            feedback.setStatus(false);
+            feedbackRepository.save(feedback);
+            return true;
+        }else
+            return false;
+    }
+
 }

@@ -64,7 +64,7 @@ public class FeedbackController {
     ){
         List<FeedbackResponseDTO> feedbackResponseDTOS = feedbackService.getAllFeedbackByUser(id);
         if (!feedbackResponseDTOS.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Feedback found", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Feedback found", feedbackResponseDTOS));
         }else
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "No feedback found", null));
     }
@@ -73,8 +73,17 @@ public class FeedbackController {
     public ResponseEntity<ResponseObject> getDoctorAverageRating(
             @Valid @PathVariable("id") Long id
     ){
-        int rating = feedbackService.getDoctorRating(id);
+        float rating = feedbackService.getDoctorRating(id);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Rating", rating));
+    }
+
+    @PutMapping("/delete/{id}")
+    public ResponseEntity<ResponseObject> deleteFeedback(
+            @Valid @PathVariable("id") Long id
+    ){
+        boolean isDeleted = feedbackService.deleteFeedbackById(id);
+        if (isDeleted) return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Feedback deleted", null));
+        else return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "Feedback deleted", null));
     }
 
 }
