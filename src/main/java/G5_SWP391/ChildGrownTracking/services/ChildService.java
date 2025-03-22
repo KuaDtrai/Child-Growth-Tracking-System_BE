@@ -221,11 +221,11 @@ public class ChildService {
                     .body(new ResponseObject("fail", "Gender cannot be empty!", null));
         }
 
-        if (newChild.getParenId() == null ) {
+        if (newChild.getParentId() == null ) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Parent ID cannot be empty!", null));
         }
-        Optional<User> parentOptional = userRepository.findByIdAndStatusIsTrue(newChild.getParenId());
+        Optional<User> parentOptional = userRepository.findByIdAndStatusIsTrue(newChild.getParentId());
         if (parentOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Parent ID is not exist!", null));
