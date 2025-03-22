@@ -23,7 +23,7 @@ public class ChildRequestDTO {
     private String gender;
 
     @NotNull(message = "parenId ID is required.")
-    private Long parenId;
+    private Long parentId;
 
 }
 
