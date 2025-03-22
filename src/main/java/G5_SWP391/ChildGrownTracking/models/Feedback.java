@@ -37,17 +37,15 @@ public class Feedback {
 
     private LocalDateTime updateDate;
 
-    private boolean status;
 
 
 
-    public Feedback(User user, User doctor, RatingPoint rating, String description, LocalDateTime createdDate, LocalDateTime updateDate, boolean status) {
+    public Feedback(User user, User doctor, RatingPoint rating, String description, LocalDateTime createdDate, LocalDateTime updateDate) {
         this.user = user;
         this.doctor = doctor;
         this.rating = rating;
         this.description = description;
         this.createdDate = createdDate;
         this.updateDate = updateDate;
-        this.status = status;
     }
 }

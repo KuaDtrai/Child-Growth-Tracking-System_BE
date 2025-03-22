@@ -97,8 +97,7 @@ public class FeedbackService {
                 RatingPoint.fromValue(feedback.getRating()),
                 feedback.getDescription(),
                 java.time.LocalDateTime.now(),
-                java.time.LocalDateTime.now(),
-                true
+                java.time.LocalDateTime.now()
         );
 
         newFeedback = feedbackRepository.save(newFeedback);
@@ -109,8 +108,7 @@ public class FeedbackService {
                 newFeedback.getUser().getUserName(),
                 newFeedback.getDoctor().getUserName(),
                 newFeedback.getCreatedDate(),
-                newFeedback.getUpdateDate(),
-                newFeedback.isStatus()
+                newFeedback.getUpdateDate()
         );
 
 
@@ -124,37 +122,37 @@ public class FeedbackService {
         List<Feedback> feedbacks = feedbackRepository.findAll();
         List<FeedbackResponseDTO> feedbackResponseDTOs = new ArrayList<>();
         for (Feedback feedback : feedbacks) {
-            if (feedback.isStatus()) {
-                FeedbackResponseDTO responseDTO = new FeedbackResponseDTO(feedback.getId(), feedback.getDescription(), feedback.getRating().getValue(), feedback.getUser().getUserName(), feedback.getDoctor().getUserName(), feedback.getCreatedDate(), feedback.getUpdateDate(), feedback.isStatus());
+
+                FeedbackResponseDTO responseDTO = new FeedbackResponseDTO(feedback.getId(), feedback.getDescription(), feedback.getRating().getValue(), feedback.getUser().getUserName(), feedback.getDoctor().getUserName(), feedback.getCreatedDate(), feedback.getUpdateDate());
                 feedbackResponseDTOs.add(responseDTO);
-            }
+
         }
         return feedbackResponseDTOs;
     }
 
     public List<FeedbackResponseDTO> getAllFeedbackByDoctor(Long doctorId) {
 //        Optional<User> user = userRepository.findByIdAndStatusIsTrue(doctorId);
-        List<Feedback> feedbacks = feedbackRepository.findByDoctorIdAndStatusIsTrue(doctorId);
+        List<Feedback> feedbacks = feedbackRepository.findByDoctorId(doctorId);
         List<FeedbackResponseDTO> feedbackResponseDTOs = new LinkedList<>();
         for (Feedback feedback : feedbacks) {
-            FeedbackResponseDTO responseDTO = new FeedbackResponseDTO(feedback.getId(), feedback.getDescription(), feedback.getRating().getValue(), feedback.getUser().getUserName(), feedback.getDoctor().getUserName(), feedback.getCreatedDate(), feedback.getUpdateDate(), feedback.isStatus());
+            FeedbackResponseDTO responseDTO = new FeedbackResponseDTO(feedback.getId(), feedback.getDescription(), feedback.getRating().getValue(), feedback.getUser().getUserName(), feedback.getDoctor().getUserName(), feedback.getCreatedDate(), feedback.getUpdateDate());
             feedbackResponseDTOs.add(responseDTO);
         }
         return feedbackResponseDTOs;
     }
 
     public List<FeedbackResponseDTO> getAllFeedbackByUser(Long userId) {
-        List<Feedback> feedbacks = feedbackRepository.findByUserIdAndStatusIsTrue(userId);
+        List<Feedback> feedbacks = feedbackRepository.findByUserId(userId);
         List<FeedbackResponseDTO> feedbackResponseDTOs = new LinkedList<>();
         for (Feedback feedback : feedbacks) {
-            FeedbackResponseDTO responseDTO = new FeedbackResponseDTO(feedback.getId(), feedback.getDescription(), feedback.getRating().getValue(), feedback.getUser().getUserName(), feedback.getUser().getUserName(), feedback.getCreatedDate(), feedback.getUpdateDate(), feedback.isStatus());
+            FeedbackResponseDTO responseDTO = new FeedbackResponseDTO(feedback.getId(), feedback.getDescription(), feedback.getRating().getValue(), feedback.getUser().getUserName(), feedback.getUser().getUserName(), feedback.getCreatedDate(), feedback.getUpdateDate());
             feedbackResponseDTOs.add(responseDTO);
         }
         return feedbackResponseDTOs;
     }
 
     public float getDoctorRating(Long doctorId) {
-        List<Feedback> feedbacks = feedbackRepository.findByDoctorIdAndStatusIsTrue(doctorId);
+        List<Feedback> feedbacks = feedbackRepository.findByDoctorId(doctorId);
         float rating = 0;
         for (Feedback feedback : feedbacks) {
             rating += feedback.getRating().getValue();
@@ -165,12 +163,9 @@ public class FeedbackService {
 
     public boolean deleteFeedbackById(Long id) {
         Feedback feedback = feedbackRepository.findById(id).get();
-        if (feedback.isStatus()) {
-            feedback.setStatus(false);
-            feedbackRepository.save(feedback);
+
+            feedbackRepository.delete(feedback);
             return true;
-        }else
-            return false;
     }
 
 }

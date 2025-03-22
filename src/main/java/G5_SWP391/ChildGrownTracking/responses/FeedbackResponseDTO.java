@@ -34,7 +34,4 @@ public class FeedbackResponseDTO {
 
     @JsonProperty("updateDate")
     private LocalDateTime updateDate;
-
-    @JsonProperty("status")
-    private boolean status;
 }
