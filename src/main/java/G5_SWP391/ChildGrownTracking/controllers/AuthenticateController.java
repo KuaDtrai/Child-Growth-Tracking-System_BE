@@ -4,6 +4,7 @@ import G5_SWP391.ChildGrownTracking.dtos.AuthenticateDTO;
 import G5_SWP391.ChildGrownTracking.dtos.IntrospcectDTO;
 import G5_SWP391.ChildGrownTracking.dtos.UserDTO;
 import G5_SWP391.ChildGrownTracking.responses.AuthenticateResponse;
+import G5_SWP391.ChildGrownTracking.responses.IntrospectResponse;
 import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
 import G5_SWP391.ChildGrownTracking.responses.UserResponse;
 import G5_SWP391.ChildGrownTracking.services.AuthenticateService;
@@ -59,11 +60,16 @@ public class AuthenticateController {
 
     @PostMapping("/introspect")
     ResponseEntity<ResponseObject> authenticate(@RequestBody IntrospcectDTO token) throws ParseException, JOSEException {
-        var result = authenticateService.introspect(token);
-        if (result)
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObject("ok", "introspect", true));
-        else
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObject("error", "introspect failed", null));
+        IntrospectResponse result = authenticateService.introspect(token);
+
+        if (result.isVerified()) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED)
+                    .body(new ResponseObject("ok", "introspect success", result));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ResponseObject("error", "introspect failed", null));
+        }
     }
+
 
 }

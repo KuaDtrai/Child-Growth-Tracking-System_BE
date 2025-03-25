@@ -14,7 +14,7 @@ public class AuthenticateResponse {
     String token;
 
     @JsonProperty("user")
-    UserResponse userResponse;
+    UserResponse2 userResponse;
 
     @JsonProperty("authenticated")
     boolean authenticated;
