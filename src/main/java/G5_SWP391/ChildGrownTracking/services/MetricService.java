@@ -3,6 +3,7 @@ package G5_SWP391.ChildGrownTracking.services;
 import G5_SWP391.ChildGrownTracking.dtos.MetricRequestDTO;
 import G5_SWP391.ChildGrownTracking.models.Child;
 import G5_SWP391.ChildGrownTracking.models.Metric;
+import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.repositories.ChildRepository;
 import G5_SWP391.ChildGrownTracking.repositories.MetricRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
@@ -14,7 +15,10 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,18 +82,35 @@ public class MetricService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Height must be greater than zero.");
         }
 
+        Optional<Child> childOptional = childRepository.findByIdAndStatusIsTrue(inputMetric.getChildId());
 
-        if(!childRepository.existsByIdAndStatusIsTrue(inputMetric.getChildId())
-        || !userRepository.existsByChildrenAndStatusIsTrue(childRepository.findByIdAndStatusIsTrue(inputMetric.getChildId()).get())) {
+        if (childOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Child with ID " + inputMetric.getChildId() + " not found.");
         }
+
+        Child child = childOptional.get();
+
+        Optional<User> userOptional = userRepository.findByChildrenAndStatusIsTrue(child);
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with child ID " + inputMetric.getChildId() + " not found.");
+        }
+
+        User user = userOptional.get();
+        LocalDateTime childDobLocalDateTime = Instant.ofEpochMilli(child.getDob().getTime())
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+
+        if (inputMetric.getRecordedDate().isBefore(childDobLocalDateTime)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Recorded date is before child date.");
+        }
+
 
 
         // Tính BMI = weight / (height * height) (chiều cao tính theo mét)
         BigDecimal heightInMeters = inputMetric.getHeight().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP); // Chuyển cm -> m
         BigDecimal BMI = inputMetric.getWeight().divide(heightInMeters.multiply(heightInMeters), 2, RoundingMode.HALF_UP);
-        Optional<Child> childOptional = childRepository.findByIdAndStatusIsTrue(inputMetric.getChildId());
-        Child child = childOptional.get(); // Chắc chắn có dữ liệu
+//        Optional<Child> childOptional = childRepository.findByIdAndStatusIsTrue(inputMetric.getChildId());
+//        Child child = childOptional.get(); // Chắc chắn có dữ liệu
         // Tạo mới Metric
         Metric newMetric = new Metric();
         newMetric.setChild(child);

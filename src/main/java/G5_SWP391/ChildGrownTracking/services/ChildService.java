@@ -5,6 +5,7 @@ import G5_SWP391.ChildGrownTracking.dtos.ChildResponseDTO;
 import G5_SWP391.ChildGrownTracking.dtos.UpdateChildRequestDTO;
 import G5_SWP391.ChildGrownTracking.models.Child;
 import G5_SWP391.ChildGrownTracking.models.User;
+import G5_SWP391.ChildGrownTracking.models.membership;
 import G5_SWP391.ChildGrownTracking.models.role;
 import G5_SWP391.ChildGrownTracking.repositories.ChildRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
@@ -237,6 +238,15 @@ public class ChildService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Parent ID is not exist!", null));
         }
+
+        if(parent.getRole() == role.MEMBER && parent.getMembership() == membership.BASIC){
+            List<Child> child = childRepository.findByParentAndStatusIsTrue(parent);
+            if(child.size() >= 1){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ResponseObject("fail", "Reach max child for BASIC account !", null));
+            }
+        }
+
 
         Child child = new Child(
                 newChild.getName(),
