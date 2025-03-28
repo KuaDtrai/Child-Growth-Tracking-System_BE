@@ -42,10 +42,10 @@ public class PostService {
 
         List<Post> posts = postRepository.findByChild(child);
 
-        if(posts.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseObject("fail", "Child with ID " + childId + " not found.", null));
-        }
+//        if(posts.isEmpty()){
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                    .body(new ResponseObject("fail", "Child with ID " + childId + " not found any posts.", null));
+//        }
         List<PostResponse> postResponses = new ArrayList<>();
         for( Post post : posts){
             if(post.isStatus()){
@@ -59,6 +59,11 @@ public class PostService {
                 );
                 postResponses.add(Response);
             }
+        }
+        // If no active posts are found, return a NOT FOUND response
+        if (postResponses.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "Child with ID " + childId + " has no active posts.", null));
         }
 
         return ResponseEntity.status(HttpStatus.OK)
