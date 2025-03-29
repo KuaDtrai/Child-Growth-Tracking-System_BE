@@ -4,10 +4,13 @@ import G5_SWP391.ChildGrownTracking.dtos.DoctorDTO;
 import G5_SWP391.ChildGrownTracking.models.Doctor;
 import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.models.role;
+import G5_SWP391.ChildGrownTracking.repositories.ChildRepository;
 import G5_SWP391.ChildGrownTracking.repositories.DoctorRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
 import G5_SWP391.ChildGrownTracking.responses.DoctorResponse;
 import G5_SWP391.ChildGrownTracking.responses.UserResponse;
+import G5_SWP391.ChildGrownTracking.responses.DoctorResponse2;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,25 +24,40 @@ import java.util.List;
 public class DoctorService {
     private final UserRepository userRepository;
     private final DoctorRepository doctorRepository;
+    private final ChildRepository childRepository;
 
-    public List<DoctorResponse> getAllDoctor() {
+    public List<DoctorResponse2> getAllDoctor() {
         List<User> doctors = userRepository.findAllByStatusIsTrueAndRole(role.DOCTOR);
-        List<DoctorResponse> doctorsResponses = new ArrayList<>();
+        List<DoctorResponse2> doctorsResponses = new ArrayList<>();
+
         for (User user : doctors) {
-            UserResponse userResponse = new UserResponse(user.getId(),
+            UserResponse userResponse = new UserResponse(
+                    user.getId(),
                     user.getUserName(),
                     user.getEmail(),
                     user.getRole(),
                     user.getMembership(),
                     user.getCreatedDate(),
                     user.getUpdateDate(),
-                    user.isStatus());
+                    user.isStatus()
+            );
+
             Doctor doctor = doctorRepository.findByUserId(user.getId());
-            DoctorResponse doctorResponse = new DoctorResponse(user.getId(), userResponse, doctor.getSpecialization(), doctor.getCertificate());
-            doctorsResponses.add(doctorResponse);
+            Long childCount = childRepository.countByDoctorAndStatusIsTrue(user); // Lấy số lượng trẻ
+
+            // Tạo DoctorResponse2 dùng record
+            doctorsResponses.add(new DoctorResponse2(
+                    user.getId(),
+                    userResponse,
+                    doctor.getSpecialization(),
+                    doctor.getCertificate(),
+                    childCount
+            ));
         }
+
         return doctorsResponses;
     }
+
 
     public DoctorResponse addDoctor(User user, DoctorDTO doctor) {
         Doctor newDoctor = new Doctor(
