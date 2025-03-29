@@ -105,8 +105,8 @@ public class FeedbackService {
                 newFeedback.getId(),
                 newFeedback.getDescription(),
                 newFeedback.getRating().getValue(),
-                newFeedback.getUser().getUserName(),
-                newFeedback.getDoctor().getUserName(),
+                newFeedback.getUser().getUsername(),
+                newFeedback.getDoctor().getUsername(),
                 newFeedback.getCreatedDate(),
                 newFeedback.getUpdateDate()
         );
@@ -123,7 +123,7 @@ public class FeedbackService {
         List<FeedbackResponseDTO> feedbackResponseDTOs = new ArrayList<>();
         for (Feedback feedback : feedbacks) {
 
-                FeedbackResponseDTO responseDTO = new FeedbackResponseDTO(feedback.getId(), feedback.getDescription(), feedback.getRating().getValue(), feedback.getUser().getUserName(), feedback.getDoctor().getUserName(), feedback.getCreatedDate(), feedback.getUpdateDate());
+                FeedbackResponseDTO responseDTO = new FeedbackResponseDTO(feedback.getId(), feedback.getDescription(), feedback.getRating().getValue(), feedback.getUser().getUsername(), feedback.getDoctor().getUsername(), feedback.getCreatedDate(), feedback.getUpdateDate());
                 feedbackResponseDTOs.add(responseDTO);
 
         }
@@ -135,7 +135,7 @@ public class FeedbackService {
         List<Feedback> feedbacks = feedbackRepository.findByDoctorId(doctorId);
         List<FeedbackResponseDTO> feedbackResponseDTOs = new LinkedList<>();
         for (Feedback feedback : feedbacks) {
-            FeedbackResponseDTO responseDTO = new FeedbackResponseDTO(feedback.getId(), feedback.getDescription(), feedback.getRating().getValue(), feedback.getUser().getUserName(), feedback.getDoctor().getUserName(), feedback.getCreatedDate(), feedback.getUpdateDate());
+            FeedbackResponseDTO responseDTO = new FeedbackResponseDTO(feedback.getId(), feedback.getDescription(), feedback.getRating().getValue(), feedback.getUser().getUsername(), feedback.getDoctor().getUsername(), feedback.getCreatedDate(), feedback.getUpdateDate());
             feedbackResponseDTOs.add(responseDTO);
         }
         return feedbackResponseDTOs;
@@ -145,7 +145,7 @@ public class FeedbackService {
         List<Feedback> feedbacks = feedbackRepository.findByUserId(userId);
         List<FeedbackResponseDTO> feedbackResponseDTOs = new LinkedList<>();
         for (Feedback feedback : feedbacks) {
-            FeedbackResponseDTO responseDTO = new FeedbackResponseDTO(feedback.getId(), feedback.getDescription(), feedback.getRating().getValue(), feedback.getUser().getUserName(), feedback.getUser().getUserName(), feedback.getCreatedDate(), feedback.getUpdateDate());
+            FeedbackResponseDTO responseDTO = new FeedbackResponseDTO(feedback.getId(), feedback.getDescription(), feedback.getRating().getValue(), feedback.getUser().getUsername(), feedback.getUser().getUsername(), feedback.getCreatedDate(), feedback.getUpdateDate());
             feedbackResponseDTOs.add(responseDTO);
         }
         return feedbackResponseDTOs;

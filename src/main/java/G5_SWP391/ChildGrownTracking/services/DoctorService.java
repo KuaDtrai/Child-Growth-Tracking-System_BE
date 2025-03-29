@@ -27,7 +27,7 @@ public class DoctorService {
         List<DoctorResponse> doctorsResponses = new ArrayList<>();
         for (User user : doctors) {
             UserResponse userResponse = new UserResponse(user.getId(),
-                    user.getUserName(),
+                    user.getUsername(),
                     user.getEmail(),
                     user.getRole(),
                     user.getMembership(),
@@ -50,7 +50,7 @@ public class DoctorService {
         newDoctor = doctorRepository.save(newDoctor);
         UserResponse userResponse = new UserResponse(
                 user.getId(),
-                user.getUserName(),
+                user.getUsername(),
                 user.getEmail(),
                 user.getRole(),
                 user.getMembership(),
@@ -71,7 +71,7 @@ public class DoctorService {
         newDoctor = doctorRepository.save(newDoctor);
         UserResponse userResponse = new UserResponse(
                 user.getId(),
-                user.getUserName(),
+                user.getUsername(),
                 user.getEmail(),
                 user.getRole(),
                 user.getMembership(),

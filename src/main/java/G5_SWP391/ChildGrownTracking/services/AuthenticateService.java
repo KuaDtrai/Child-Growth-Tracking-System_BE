@@ -50,7 +50,7 @@ public class AuthenticateService {
 
 
         UserResponse2 userResponse = new UserResponse2(
-                user.getId(), user.getUserName(), user.getEmail(),
+                user.getId(), user.getUsername(), user.getEmail(),
                 user.getRole(), user.getMembership(),
                 user.getCreatedDate(), user.getUpdateDate(), false, scope, user.isStatus()
         );
@@ -70,7 +70,7 @@ public class AuthenticateService {
         String scope = (user.getRole().equals(role.DOCTOR)) ? "doctor member" : "member";
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(user.getUserName())
+                .subject(user.getUsername())
                 .issuer("ChildTracking.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()))

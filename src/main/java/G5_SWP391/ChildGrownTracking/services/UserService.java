@@ -11,6 +11,9 @@ import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
 import G5_SWP391.ChildGrownTracking.responses.DoctorResponse;
 import G5_SWP391.ChildGrownTracking.responses.UserResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,7 +22,7 @@ import java.util.regex.Pattern;
 
 @Slf4j
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final DoctorRepository doctorRepository;
 
@@ -34,7 +37,7 @@ public class UserService {
         for (User user : users) {
             UserResponse userResponse = new UserResponse(
                     user.getId(),
-                    user.getUserName(),
+                    user.getUsername(),
                     user.getEmail(),
                     user.getRole(),
                     user.getMembership(),
@@ -52,7 +55,7 @@ public class UserService {
         List<UserResponse> userResponses = new ArrayList<>();
         for (User user : members) {
             UserResponse userResponse = new UserResponse(user.getId(),
-                    user.getUserName(),
+                    user.getUsername(),
                     user.getEmail(),
                     user.getRole(),
                     user.getMembership(),
@@ -71,7 +74,7 @@ public class UserService {
         assert user != null;
         return new UserResponse(
                 user.getId(),
-                user.getUserName(),
+                user.getUsername(),
                 user.getEmail(),
                 user.getRole(),
                 user.getMembership(),
@@ -85,7 +88,7 @@ public class UserService {
         User user = userRepository.findByUserName(userName).orElse(null);
         assert user != null;
         return new UserResponse(
-                user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
+                user.getId(), user.getUsername(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
         );
     }
 
@@ -107,7 +110,7 @@ public class UserService {
             user.setMembership(membership.BASIC);
             user = userRepository.save(user);
         }
-        return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
+        return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
     }
 
     public UserResponse updateUser(User user, UpdateUserDTO userDto) {
@@ -125,7 +128,7 @@ public class UserService {
             doctorRepository.save(new Doctor(user, "", ""));
         }
         UserResponse userResponse = new UserResponse(
-                user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
+                user.getId(), user.getUsername(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
         );
         return userResponse;
     }
@@ -136,7 +139,7 @@ public class UserService {
             user.setStatus(false);
             userRepository.save(user);
             return new UserResponse(
-                    user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
+                    user.getId(), user.getUsername(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
             );
         }else {
             return null;
@@ -162,5 +165,11 @@ public class UserService {
 
         // Check if email matches the pattern
         return email != null && p.matcher(email).matches();
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
     }
 }
