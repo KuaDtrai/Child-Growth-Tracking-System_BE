@@ -86,19 +86,19 @@ public class ChildController {
 
     // set doctor for child
     // http://localhost:8080/api/v1/child/setDoctor/
-    @PutMapping("/setDoctor/")
+    @PutMapping("/setDoctor/{id}")
     public ResponseEntity<ResponseObject> setDoctorForChild(
-            @RequestParam(required = false) Long childId,
+            @PathVariable(required = false) Long id,
             @RequestParam(required = false) Long doctorId) {
-        return service.setDoctorForChild(childId, doctorId);
+        return service.setDoctorForChild(id, doctorId);
     }
 
     // get child by doctor
     // http://localhost:8080/api/v1/child/getChildByDoctorId
-    @GetMapping("/getChildByDoctorId")
+    @GetMapping("/getChildByDoctorId/{id}")
     public ResponseEntity<ResponseObject> getChildByDoctorId(
-            @RequestParam(required = false) Long doctorId) {
-        return service.getChildByDoctorId(doctorId);
+            @PathVariable(required = false) Long id) {
+        return service.getChildByDoctorId(id);
     }
 
 }
