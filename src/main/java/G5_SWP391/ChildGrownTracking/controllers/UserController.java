@@ -56,6 +56,15 @@ public class UserController {
         }
     }
 
+    @GetMapping("/doctor/{id}")
+    ResponseEntity<ResponseObject> getDoctorSpec(@PathVariable Long id){
+        DoctorResponse doctorResponse = doctorSevice.getDoctor(id);
+        if (doctorResponse != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Found Doctor", doctorResponse));
+        }else
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("fail", "Not Found Doctor", null));
+    }
+
     // http://localhost:8080/api/v1/users/userid/{id}
     @GetMapping("/userid/{id}")
     ResponseEntity<ResponseObject> getUserById(@PathVariable("id") Long id){

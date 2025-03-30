@@ -1,5 +1,6 @@
 package G5_SWP391.ChildGrownTracking.services;
 
+import G5_SWP391.ChildGrownTracking.dtos.DoctorDTO;
 import G5_SWP391.ChildGrownTracking.dtos.UpdateUserDTO;
 import G5_SWP391.ChildGrownTracking.dtos.UserDTO;
 import G5_SWP391.ChildGrownTracking.models.Doctor;
@@ -146,6 +147,8 @@ public class UserService {
 //    public User findUserByUserNameAndPassword(String userName, String password) {
 //        return userRepository.findByUserNameAndPassword(userName, password);
 //    }
+
+
 
     public User findUserByEmailAndPassword(String email, String password) {
         return userRepository.findUserByEmailAndPassword(email, password);

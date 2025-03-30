@@ -35,7 +35,7 @@ public class DoctorService {
                     user.getUpdateDate(),
                     user.isStatus());
             Doctor doctor = doctorRepository.findByUserId(user.getId());
-            DoctorResponse doctorResponse = new DoctorResponse(user.getId(), userResponse, doctor.getSpecialization(), doctor.getCertificate());
+            DoctorResponse doctorResponse = new DoctorResponse(doctor.getId(), userResponse, doctor.getSpecialization(), doctor.getCertificate());
             doctorsResponses.add(doctorResponse);
         }
         return doctorsResponses;
@@ -59,6 +59,14 @@ public class DoctorService {
                 user.isStatus()
         );
         return new DoctorResponse(newDoctor.getId(), userResponse, newDoctor.getSpecialization(), newDoctor.getCertificate());
+    }
+
+
+    public DoctorResponse getDoctor(long id) {
+        Doctor doctor = doctorRepository.findById(id).orElse(null);
+        User user = doctor.getUser();
+        UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
+        return new DoctorResponse(doctor.getId(), userResponse, doctor.getSpecialization(), doctor.getCertificate());
     }
 
     public DoctorResponse updateDoctor(Doctor doctor, DoctorDTO doctorDTO) {
