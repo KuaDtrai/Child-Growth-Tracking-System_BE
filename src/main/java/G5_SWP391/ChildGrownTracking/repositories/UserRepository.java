@@ -1,12 +1,13 @@
 package G5_SWP391.ChildGrownTracking.repositories;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import G5_SWP391.ChildGrownTracking.models.Child;
 import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.models.role;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.List;
-import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUserName(String userName);

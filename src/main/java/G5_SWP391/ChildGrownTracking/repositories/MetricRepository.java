@@ -1,13 +1,13 @@
 package G5_SWP391.ChildGrownTracking.repositories;
 
-import G5_SWP391.ChildGrownTracking.models.Child;
-import G5_SWP391.ChildGrownTracking.models.Metric;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.query.Param;
+
+import G5_SWP391.ChildGrownTracking.models.Child;
+import G5_SWP391.ChildGrownTracking.models.Metric;
 
 
 public interface MetricRepository extends JpaRepository<Metric, Long> {

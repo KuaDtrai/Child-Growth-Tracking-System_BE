@@ -1,11 +1,11 @@
 package G5_SWP391.ChildGrownTracking.repositories;
 
-import G5_SWP391.ChildGrownTracking.models.Child;
-import G5_SWP391.ChildGrownTracking.models.Post;
-import G5_SWP391.ChildGrownTracking.responses.PostResponse;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+import G5_SWP391.ChildGrownTracking.models.Child;
+import G5_SWP391.ChildGrownTracking.models.Post;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
