@@ -65,7 +65,7 @@ public class DoctorService {
     public DoctorResponse getDoctor(long id) {
         Doctor doctor = doctorRepository.findById(id).orElse(null);
         User user = doctor.getUser();
-        UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
+        UserResponse userResponse = new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
         return new DoctorResponse(doctor.getId(), userResponse, doctor.getSpecialization(), doctor.getCertificate());
     }
 
