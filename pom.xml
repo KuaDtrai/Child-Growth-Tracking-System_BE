@@ -46,6 +46,15 @@
 			<artifactId>nimbus-jose-jwt</artifactId>
 			<version>10.0.1</version>
 		</dependency>
+		<!-- Spring Boot Security -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+
+
+
 
 		<!-- MySQL Driver -->
 		<dependency>

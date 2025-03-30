@@ -48,8 +48,8 @@ public class ChildService {
                         child.getName(),
                         child.getDob(),
                         child.getGender(),
-                        child.getParent().getUserName(), // Lấy tên cha/mẹ
-                        child.getDoctor().getUserName(), // Lấy tên bác sĩ
+                        child.getParent().getUsername(), // Lấy tên cha/mẹ
+                        child.getDoctor().getUsername(), // Lấy tên bác sĩ
                         child.getCreateDate(),
                         child.getUpdateDate(),
                         child.isStatus()
@@ -88,7 +88,7 @@ public class ChildService {
                         child.getName(),
                         child.getDob(),
                         child.getGender(),
-                        child.getParent().getUserName(), // Lấy tên cha/mẹ
+                        child.getParent().getUsername(), // Lấy tên cha/mẹ
                         null, // Lấy tên bác sĩ
                         child.getCreateDate(),
                         child.getUpdateDate(),
@@ -123,7 +123,7 @@ public class ChildService {
             }
             String doctorUserName;
             if (child.getDoctor() != null) {
-                doctorUserName = child.getDoctor().getUserName();
+                doctorUserName = child.getDoctor().getUsername();
             } else {
                 doctorUserName = null;
             }
@@ -132,7 +132,7 @@ public class ChildService {
                     child.getName(),
                     child.getDob(),
                     child.getGender(),
-                    child.getParent().getUserName(),
+                    child.getParent().getUsername(),
                     doctorUserName,
                     child.getCreateDate(),
                     child.getUpdateDate(),
@@ -181,7 +181,7 @@ public class ChildService {
         for (Child child : children) {
             String doctorUserName;
             if (child.getDoctor() != null) {
-                doctorUserName = child.getDoctor().getUserName();
+                doctorUserName = child.getDoctor().getUsername();
             } else {
                 doctorUserName = null;
             }
@@ -190,7 +190,7 @@ public class ChildService {
                     child.getName(),
                     child.getDob(),
                     child.getGender(),
-                    child.getParent().getUserName(),
+                    child.getParent().getUsername(),
                     doctorUserName,
                     child.getCreateDate(),
                     child.getUpdateDate(),
@@ -255,7 +255,7 @@ public class ChildService {
                 child.getName(),
                 child.getDob(),
                 child.getGender(),
-                child.getParent().getUserName(),
+                child.getParent().getUsername(),
                 null,
                 child.getCreateDate(),
                 child.getUpdateDate(),
@@ -305,8 +305,8 @@ public class ChildService {
                 child.getName(),
                 child.getDob(),
                 child.getGender(),
-                child.getParent().getUserName(),
-                child.getDoctor() != null ? child.getDoctor().getUserName() : null,
+                child.getParent().getUsername(),
+                child.getDoctor() != null ? child.getDoctor().getUsername() : null,
                 child.getCreateDate(),
                 child.getUpdateDate(),
                 child.isStatus()
@@ -414,8 +414,8 @@ public class ChildService {
                     child.getName(),
                     child.getDob(),
                     child.getGender(),
-                    child.getParent().getUserName(),
-                    child.getDoctor().getUserName(),
+                    child.getParent().getUsername(),
+                    child.getDoctor().getUsername(),
                     child.getCreateDate(),
                     child.getUpdateDate(),
                     child.isStatus()
