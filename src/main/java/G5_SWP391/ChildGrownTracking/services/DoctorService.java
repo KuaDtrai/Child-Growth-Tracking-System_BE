@@ -47,7 +47,7 @@ public class DoctorService {
 
             // Tạo DoctorResponse2 dùng record
             doctorsResponses.add(new DoctorResponse2(
-                    user.getId(),
+                    doctor.getId(),
                     userResponse,
                     doctor.getSpecialization(),
                     doctor.getCertificate(),
@@ -56,6 +56,13 @@ public class DoctorService {
         }
 
         return doctorsResponses;
+    }
+
+    public DoctorResponse getDoctor(long id) {
+        Doctor doctor = doctorRepository.findById(id).orElse(null);
+        User user = doctor.getUser();
+        UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
+        return new DoctorResponse(doctor.getId(), userResponse, doctor.getSpecialization(), doctor.getCertificate());
     }
 
 
