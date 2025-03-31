@@ -1,14 +1,12 @@
 package G5_SWP391.ChildGrownTracking.repositories;
 
-import G5_SWP391.ChildGrownTracking.models.Doctor;
-import G5_SWP391.ChildGrownTracking.models.Feedback;
+import java.util.List;
 
-import G5_SWP391.ChildGrownTracking.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
+import G5_SWP391.ChildGrownTracking.models.Feedback;
 
 public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
 
