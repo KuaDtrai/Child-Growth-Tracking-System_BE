@@ -2,6 +2,7 @@ package G5_SWP391.ChildGrownTracking.controllers;
 
 import G5_SWP391.ChildGrownTracking.dtos.DoctorDTO;
 import G5_SWP391.ChildGrownTracking.dtos.UpdateUserDTO;
+import G5_SWP391.ChildGrownTracking.dtos.UpdateUserProfileDTO;
 import G5_SWP391.ChildGrownTracking.dtos.UserDTO;
 import G5_SWP391.ChildGrownTracking.models.Doctor;
 import G5_SWP391.ChildGrownTracking.models.User;
@@ -15,6 +16,7 @@ import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
 import G5_SWP391.ChildGrownTracking.responses.UserResponse;
 import G5_SWP391.ChildGrownTracking.services.DoctorService;
 import G5_SWP391.ChildGrownTracking.services.UserService;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -123,6 +125,23 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject( "fail", "User updated fail", null));
         }
         else
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject( "fail", "User not found", null));
+    }
+
+    @PutMapping("/update/{id}")
+    ResponseEntity<ResponseObject> updateUserById(
+            @Valid @PathVariable("id") Long id,
+            @Valid @RequestBody UpdateUserProfileDTO userProfileDTO
+            ){
+        User user = userRepository.findById(id).orElse(null);
+        if(user != null) {
+            UserResponse userResponse = userSevice.updateUserTwo(user, userProfileDTO);
+            if (userResponse != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject( "ok", "User updated successfully", userResponse));
+            }
+            else
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject( "fail", "User updated faily", null));
+        }else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject( "fail", "User not found", null));
     }
 

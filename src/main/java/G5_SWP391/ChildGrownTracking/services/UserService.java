@@ -1,6 +1,7 @@
 package G5_SWP391.ChildGrownTracking.services;
 
 import G5_SWP391.ChildGrownTracking.dtos.UpdateUserDTO;
+import G5_SWP391.ChildGrownTracking.dtos.UpdateUserProfileDTO;
 import G5_SWP391.ChildGrownTracking.dtos.UserDTO;
 import G5_SWP391.ChildGrownTracking.models.Doctor;
 import G5_SWP391.ChildGrownTracking.models.User;
@@ -130,6 +131,20 @@ public class UserService {
                 user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
         );
         return userResponse;
+    }
+
+    public UserResponse updateUserTwo(User user, UpdateUserProfileDTO updateUserProfileDTO) {
+        if (!isEmailValid(updateUserProfileDTO.getEmail()))
+            return null;
+        if (userRepository.findByEmail(updateUserProfileDTO.getEmail()).isPresent() & !user.getEmail().equals(updateUserProfileDTO.getEmail()))
+            return null;
+
+        user.setUserName(updateUserProfileDTO.getUserName());
+        user.setEmail(updateUserProfileDTO.getEmail());
+        user.setPassword(updateUserProfileDTO.getPassword());
+        user = userRepository.save(user);
+
+        return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
     }
 
     public UserResponse deleteUserById(Long id){
