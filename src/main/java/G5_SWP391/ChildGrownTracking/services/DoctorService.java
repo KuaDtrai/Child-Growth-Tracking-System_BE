@@ -1,5 +1,10 @@
 package G5_SWP391.ChildGrownTracking.services;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import G5_SWP391.ChildGrownTracking.dtos.DoctorDTO;
 import G5_SWP391.ChildGrownTracking.models.Doctor;
 import G5_SWP391.ChildGrownTracking.models.User;
@@ -8,15 +13,11 @@ import G5_SWP391.ChildGrownTracking.repositories.ChildRepository;
 import G5_SWP391.ChildGrownTracking.repositories.DoctorRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
 import G5_SWP391.ChildGrownTracking.responses.DoctorResponse;
-import G5_SWP391.ChildGrownTracking.responses.UserResponse;
 import G5_SWP391.ChildGrownTracking.responses.DoctorResponse2;
-
+import G5_SWP391.ChildGrownTracking.responses.SpecResponse;
+import G5_SWP391.ChildGrownTracking.responses.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -47,8 +48,8 @@ public class DoctorService {
 
             // Tạo DoctorResponse2 dùng record
             doctorsResponses.add(new DoctorResponse2(
-                    doctor.getId(),
                     userResponse,
+                    doctor.getId(),
                     doctor.getSpecialization(),
                     doctor.getCertificate(),
                     childCount
@@ -58,11 +59,9 @@ public class DoctorService {
         return doctorsResponses;
     }
 
-    public DoctorResponse getDoctor(long id) {
-        Doctor doctor = doctorRepository.findById(id).orElse(null);
-        User user = doctor.getUser();
-        UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
-        return new DoctorResponse(doctor.getId(), userResponse, doctor.getSpecialization(), doctor.getCertificate());
+    public SpecResponse getDoctor(long id) {
+        Doctor doctor = doctorRepository.findByUserId(id);
+        return new SpecResponse(doctor.getId(), doctor.getSpecialization(), doctor.getCertificate());
     }
 
 

@@ -1,5 +1,18 @@
 package G5_SWP391.ChildGrownTracking.controllers;
 
+import java.text.ParseException;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.nimbusds.jose.JOSEException;
+
 import G5_SWP391.ChildGrownTracking.dtos.AuthenticateDTO;
 import G5_SWP391.ChildGrownTracking.dtos.IntrospcectDTO;
 import G5_SWP391.ChildGrownTracking.dtos.UserDTO;
@@ -8,17 +21,11 @@ import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
 import G5_SWP391.ChildGrownTracking.responses.UserResponse;
 import G5_SWP391.ChildGrownTracking.services.AuthenticateService;
 import G5_SWP391.ChildGrownTracking.services.UserService;
-import com.nimbusds.jose.JOSEException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.text.ParseException;
 
 @RestController
 @RequestMapping("/api/v1/authenticate")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class AuthenticateController {
     private final UserService userService;
