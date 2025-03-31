@@ -1,5 +1,11 @@
 package G5_SWP391.ChildGrownTracking.services;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import org.springframework.stereotype.Service;
+
 import G5_SWP391.ChildGrownTracking.dtos.UpdateUserDTO;
 import G5_SWP391.ChildGrownTracking.dtos.UserDTO;
 import G5_SWP391.ChildGrownTracking.models.Doctor;
@@ -8,14 +14,8 @@ import G5_SWP391.ChildGrownTracking.models.membership;
 import G5_SWP391.ChildGrownTracking.models.role;
 import G5_SWP391.ChildGrownTracking.repositories.DoctorRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
-import G5_SWP391.ChildGrownTracking.responses.DoctorResponse;
 import G5_SWP391.ChildGrownTracking.responses.UserResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -63,8 +63,6 @@ public class UserService {
         }
         return userResponses;
     }
-
-
 
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id).orElse(null);

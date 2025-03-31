@@ -1,33 +1,41 @@
 package G5_SWP391.ChildGrownTracking.controllers;
 
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import G5_SWP391.ChildGrownTracking.dtos.DoctorDTO;
 import G5_SWP391.ChildGrownTracking.dtos.UpdateUserDTO;
 import G5_SWP391.ChildGrownTracking.dtos.UserDTO;
 import G5_SWP391.ChildGrownTracking.models.Doctor;
 import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.models.membership;
-import G5_SWP391.ChildGrownTracking.models.role;
 import G5_SWP391.ChildGrownTracking.repositories.DoctorRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
 import G5_SWP391.ChildGrownTracking.responses.DoctorResponse;
 import G5_SWP391.ChildGrownTracking.responses.DoctorResponse2;
 import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
+import G5_SWP391.ChildGrownTracking.responses.SpecResponse;
 import G5_SWP391.ChildGrownTracking.responses.UserResponse;
 import G5_SWP391.ChildGrownTracking.services.DoctorService;
 import G5_SWP391.ChildGrownTracking.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 public class UserController {
 
     private final UserService userSevice;
@@ -39,138 +47,153 @@ public class UserController {
     @GetMapping("/member")
     ResponseEntity<ResponseObject> getUsers() {
         List<UserResponse> users = userSevice.getAllMember();
-        if(!users.isEmpty()) {
+        if (!users.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Found UserList", users));
-        }else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("fail", "Not Found UserList", null));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "Not Found UserList", null));
         }
     }
 
     // http://localhost:8080/api/v1/users/doctor
     @GetMapping("/doctor")
-    ResponseEntity<ResponseObject> getAllDoctor(){
+    ResponseEntity<ResponseObject> getAllDoctor() {
         List<DoctorResponse2> users = doctorSevice.getAllDoctor();
-        if(!users.isEmpty()) {
+        if (!users.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Found UserList", users));
-        }else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("fail", "Not Found UserList", null));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "Not Found UserList", null));
         }
     }
 
     @GetMapping("/doctor/{id}")
-    ResponseEntity<ResponseObject> getDoctorSpec(@PathVariable Long id){
-        DoctorResponse doctorResponse = doctorSevice.getDoctor(id);
+    ResponseEntity<ResponseObject> getDoctorSpec(@PathVariable("id") Long id) {
+        SpecResponse doctorResponse = doctorSevice.getDoctor(id);
         if (doctorResponse != null) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Found Doctor", doctorResponse));
-        }else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("fail", "Not Found Doctor", null));
+        } else
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "Not Found Doctor", null));
     }
 
     // http://localhost:8080/api/v1/users/userid/{id}
     @GetMapping("/userid/{id}")
-    ResponseEntity<ResponseObject> getUserById(@PathVariable("id") Long id){
+    ResponseEntity<ResponseObject> getUserById(@PathVariable("id") Long id) {
 
         UserResponse user = userSevice.getUserById(id);
-        if(user != null){
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject( "ok", "Found User with id: " +id, user));
-        }else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject( "fail", "Cannot find User with id: " +id, null));
+        if (user != null) {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("ok", "Found User with id: " + id, user));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "Cannot find User with id: " + id, null));
         }
     }
 
     // http://localhost:8080/api/v1/users/username/{username}
     @GetMapping("/username/{username}")
     ResponseEntity<ResponseObject> getUserByUsername(
-            @PathVariable("username") String username
-    ){
+            @PathVariable("username") String username) {
         UserResponse user = userSevice.getUserByUserName(username);
 
-        if(user != null)
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject( "ok", "Found User with username: " +username, user));
+        if (user != null)
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("ok", "Found User with username: " + username, user));
         else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject( "fail", "Cannot find User with username: " +username, null));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "Cannot find User with username: " + username, null));
     }
 
     // http://localhost:8080/api/v1/users
     @PostMapping("")
     ResponseEntity<ResponseObject> addUser(
-            @Valid
-            @RequestBody UserDTO userDTO
-    ){
+            @Valid @RequestBody UserDTO userDTO) {
         User user = userSevice.getUserByEmail(userDTO.getEmail());
         if (user == null) {
             UserResponse newUser = userSevice.saveUser(userDTO);
             if (newUser != null) {
-                return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObject( "ok", "User saved successfully", newUser));
-            }else
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject( "fail", "User saved fail", null));
-        }else
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject( "false", "User is already exist", null));
+                return ResponseEntity.status(HttpStatus.CREATED)
+                        .body(new ResponseObject("ok", "User saved successfully", newUser));
+            } else
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new ResponseObject("fail", "User saved fail", null));
+        } else
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("false", "User is already exist", null));
     }
 
     // http://localhost:8080/api/v1/users/{id}
     @PutMapping("/{id}")
     ResponseEntity<ResponseObject> updateUser(
             @Valid @PathVariable("id") Long id,
-            @Valid @RequestBody UpdateUserDTO userDTO
-            ){
+            @Valid @RequestBody UpdateUserDTO userDTO) {
         User user = userRepository.findById(id).orElse(null);
-        if(user != null) {
+        if (user != null) {
             UserResponse userResponse = userSevice.updateUser(user, userDTO);
             if (userResponse != null) {
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject( "ok", "User updated successfully", userResponse));
-            }else
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject( "fail", "User updated fail", null));
-        }
-        else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject( "fail", "User not found", null));
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body(new ResponseObject("ok", "User updated successfully", userResponse));
+            } else
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new ResponseObject("fail", "User updated fail", null));
+        } else
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("fail", "User not found", null));
     }
 
     // http://localhost:8080/api/v1/users/membership/{id}
     @PutMapping("/membership/{id}")
     ResponseEntity<ResponseObject> updateUserMembership(
-            @Valid @PathVariable("id") Long id,
-            @Valid @RequestBody membership membership
-    ){
+            @PathVariable("id") Long id,
+            @RequestParam("membership") membership membershipType) {
         User user = userRepository.findById(id).orElse(null);
-        if(user != null) {
-            user.setMembership(membership);
-            user = userRepository.save(user);
-            if (user != null) {
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "User updated successfully", user));
-            }else {
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "User updated fail", null));
-            }
-        }else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject( "fail", "User not found", null));
 
+        if (user != null) {
+            user.setMembership(membershipType);
+            User updatedUser = userRepository.save(user);
+
+            if (updatedUser != null) {
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body(new ResponseObject("ok", "User updated successfully", null));
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new ResponseObject("fail", "Failed to update user", null));
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "User not found", null));
+        }
     }
 
     // http://localhost:8080/api/v1/users/doctor/{id}
     @PutMapping("/doctor/{id}")
     ResponseEntity<ResponseObject> updateDoctor(
             @Valid @PathVariable("id") Long doctorId,
-            @Valid @RequestBody DoctorDTO doctorDTO
-    ){
+            @Valid @RequestBody DoctorDTO doctorDTO) {
         Doctor doctor = doctorRepository.findById(doctorId).orElse(null);
-        if(doctor != null){
+        if (doctor != null) {
             DoctorResponse doctorResponse = doctorSevice.updateDoctor(doctor, doctorDTO);
             if (doctorResponse != null) {
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject( "ok", "User updated successfully", doctorResponse));
-            }else
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject( "fail", "Doctor not found", null));
-        }else
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject( "fail", "Cannot find Doctor with id: " +doctorId, null));
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body(new ResponseObject("ok", "User updated successfully", doctorResponse));
+            } else
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ResponseObject("fail", "Doctor not found", null));
+        } else
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject("fail", "Cannot find Doctor with id: " + doctorId, null));
     }
 
     // http://localhost:8080/api/v1/users/{id}
     @PutMapping("/delete/{id}")
-    ResponseEntity<ResponseObject> deleteUserById(@PathVariable("id") Long id){
+    ResponseEntity<ResponseObject> deleteUserById(@PathVariable("id") Long id) {
         UserResponse user = userSevice.deleteUserById(id);
-        if(user != null){
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject( "ok", "User deleted successfully", user));
-        }else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject( "false", "Cannot delete User with id: "+id, null));
+        if (user != null) {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("ok", "User deleted successfully", user));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject("false", "Cannot delete User with id: " + id, null));
         }
     }
 }
