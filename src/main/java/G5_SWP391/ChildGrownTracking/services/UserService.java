@@ -113,6 +113,8 @@ public class UserService {
     public UserResponse updateUser(User user, UpdateUserDTO userDto) {
         if (!isEmailValid(userDto.getEmail()))
             return null;
+        if (userRepository.findByEmail(userDto.getEmail()).isPresent())
+            return null;
 
         user.setUserName(userDto.getUserName());
         user.setEmail(userDto.getEmail());

@@ -30,4 +30,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByIdAndStatusIsTrue(Long doctorId);
 
     Optional<User> findByChildrenAndStatusIsTrue(Child child);
+
+    Optional<User> findByEmail(String email);
 }

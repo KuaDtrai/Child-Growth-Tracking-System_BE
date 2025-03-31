@@ -1,5 +1,6 @@
 package G5_SWP391.ChildGrownTracking.repositories;
 
+import G5_SWP391.ChildGrownTracking.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import G5_SWP391.ChildGrownTracking.models.Doctor;
