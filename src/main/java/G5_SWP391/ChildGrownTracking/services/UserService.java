@@ -121,7 +121,7 @@ public class UserService {
         user.setUpdateDate(java.time.LocalDateTime.now());
         user = userRepository.save(user);
 
-        if (user.getRole() == role.DOCTOR){
+        if (user.getRole() == role.DOCTOR && doctorRepository.findByUser(user) == null) {
             doctorRepository.save(new Doctor(user, "", ""));
         }
         UserResponse userResponse = new UserResponse(
