@@ -1,28 +1,34 @@
 package G5_SWP391.ChildGrownTracking.services;
 
+import java.text.ParseException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSObject;
+import com.nimbusds.jose.JWSVerifier;
+import com.nimbusds.jose.Payload;
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
+
 import G5_SWP391.ChildGrownTracking.dtos.AuthenticateDTO;
 import G5_SWP391.ChildGrownTracking.dtos.IntrospcectDTO;
 import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
 import G5_SWP391.ChildGrownTracking.responses.AuthenticateResponse;
 import G5_SWP391.ChildGrownTracking.responses.UserResponse;
-import com.nimbusds.jose.*;
-import com.nimbusds.jose.crypto.MACSigner;
-import com.nimbusds.jose.crypto.MACVerifier;
-import com.nimbusds.jwt.JWTClaimsSet;
-
-import com.nimbusds.jwt.SignedJWT;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import java.text.ParseException;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +43,7 @@ public class AuthenticateService {
 
     public AuthenticateResponse authenticate(AuthenticateDTO request) {
         User user = userService.findUserByEmailAndPassword(request.getEmail(), request.getPassword());
-        UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), false);
+        UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getPassword(),user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), false);
         if (user == null) {
             return AuthenticateResponse.builder().authenticated(false).build();
         }else {
