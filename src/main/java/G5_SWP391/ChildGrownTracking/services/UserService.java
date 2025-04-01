@@ -37,6 +37,7 @@ public class UserService {
                     user.getId(),
                     user.getUserName(),
                     user.getEmail(),
+                    user.getPassword(),
                     user.getRole(),
                     user.getMembership(),
                     user.getCreatedDate(),
@@ -55,6 +56,7 @@ public class UserService {
             UserResponse userResponse = new UserResponse(user.getId(),
                     user.getUserName(),
                     user.getEmail(),
+                    user.getPassword(),
                     user.getRole(),
                     user.getMembership(),
                     user.getCreatedDate(),
@@ -72,6 +74,7 @@ public class UserService {
                 user.getId(),
                 user.getUserName(),
                 user.getEmail(),
+                user.getPassword(),
                 user.getRole(),
                 user.getMembership(),
                 user.getCreatedDate(),
@@ -84,7 +87,7 @@ public class UserService {
         User user = userRepository.findByUserName(userName).orElse(null);
         assert user != null;
         return new UserResponse(
-                user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
+                user.getId(), user.getUserName(), user.getEmail(), user.getPassword(),user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
         );
     }
 
@@ -106,7 +109,7 @@ public class UserService {
             user.setMembership(membership.BASIC);
             user = userRepository.save(user);
         }
-        return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
+        return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getPassword(),user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
     }
 
     public UserResponse updateUser(User user, UpdateUserDTO userDto) {
@@ -126,7 +129,7 @@ public class UserService {
             doctorRepository.save(new Doctor(user, "", ""));
         }
         UserResponse userResponse = new UserResponse(
-                user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
+                user.getId(), user.getUserName(), user.getEmail(), user.getPassword(),user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
         );
         return userResponse;
     }
@@ -142,7 +145,7 @@ public class UserService {
         user.setPassword(updateUserProfileDTO.getPassword());
         user = userRepository.save(user);
 
-        return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
+        return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getPassword(),user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
     }
 
     public UserResponse deleteUserById(Long id){
@@ -151,7 +154,7 @@ public class UserService {
             user.setStatus(false);
             userRepository.save(user);
             return new UserResponse(
-                    user.getId(), user.getUserName(), user.getEmail(), user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
+                    user.getId(), user.getUserName(), user.getEmail(), user.getPassword(),user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
             );
         }else {
             return null;

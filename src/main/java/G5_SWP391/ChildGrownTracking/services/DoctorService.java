@@ -36,6 +36,7 @@ public class DoctorService {
                     user.getId(),
                     user.getUserName(),
                     user.getEmail(),
+                    user.getPassword(),
                     user.getRole(),
                     user.getMembership(),
                     user.getCreatedDate(),
@@ -76,6 +77,7 @@ public class DoctorService {
                 user.getId(),
                 user.getUserName(),
                 user.getEmail(),
+                user.getPassword(),
                 user.getRole(),
                 user.getMembership(),
                 user.getCreatedDate(),
@@ -85,25 +87,16 @@ public class DoctorService {
         return new DoctorResponse(newDoctor.getId(), userResponse, newDoctor.getSpecialization(), newDoctor.getCertificate());
     }
 
-    public DoctorResponse updateDoctor(Doctor doctor, DoctorDTO doctorDTO) {
-        Doctor newDoctor = new Doctor(
-                doctor.getUser(),
-                doctor.getSpecialization(),
-                doctor.getCertificate()
+    public SpecResponse updateDoctor(Doctor doctor, DoctorDTO doctorDTO) {
+        // Update the doctor with values from doctorDTO
+        doctor.setSpecialization(doctorDTO.getSpecialization());
+        doctor.setCertificate(doctorDTO.getCertificate());
+        Doctor updatedDoctor = doctorRepository.save(doctor);
+    
+        return new SpecResponse(
+            updatedDoctor.getId(),
+            updatedDoctor.getSpecialization(),
+            updatedDoctor.getCertificate()
         );
-        User user = doctor.getUser();
-        newDoctor = doctorRepository.save(newDoctor);
-        UserResponse userResponse = new UserResponse(
-                user.getId(),
-                user.getUserName(),
-                user.getEmail(),
-                user.getRole(),
-                user.getMembership(),
-                user.getCreatedDate(),
-                user.getUpdateDate(),
-                user.isStatus()
-        );
-
-        return new DoctorResponse(newDoctor.getId(), userResponse, newDoctor.getSpecialization(), newDoctor.getCertificate());
-    }
+    }    
 }

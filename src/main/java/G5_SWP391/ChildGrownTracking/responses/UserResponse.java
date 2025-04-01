@@ -1,16 +1,15 @@
 package G5_SWP391.ChildGrownTracking.responses;
 
-import G5_SWP391.ChildGrownTracking.models.Child;
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import G5_SWP391.ChildGrownTracking.models.membership;
 import G5_SWP391.ChildGrownTracking.models.role;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,6 +24,9 @@ public class UserResponse {
 
     @JsonProperty("email")
     private String email;
+
+    @JsonProperty("password")
+    private String password;
 
     @JsonProperty("role")
     private role role;
