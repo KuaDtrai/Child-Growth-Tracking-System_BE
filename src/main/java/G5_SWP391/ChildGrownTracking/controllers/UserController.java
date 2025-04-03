@@ -162,11 +162,11 @@ public class UserController {
     @PutMapping("/membership/{id}")
     ResponseEntity<ResponseObject> updateUserMembership(
             @PathVariable("id") Long id,
-            @RequestParam("membership") membership membershipType) {
+            @RequestParam("membership") membership string) {
         User user = userRepository.findById(id).orElse(null);
 
         if (user != null) {
-            user.setMembership(membershipType);
+            user.setMembership(string);
             User updatedUser = userRepository.save(user);
 
             if (updatedUser != null) {

@@ -42,8 +42,7 @@ public class UserService {
                     user.getMembership(),
                     user.getCreatedDate(),
                     user.getUpdateDate(),
-                    user.isStatus()
-            );
+                    user.isStatus());
             userResponses.add(userResponse);
         }
         return userResponses;
@@ -79,16 +78,15 @@ public class UserService {
                 user.getMembership(),
                 user.getCreatedDate(),
                 user.getUpdateDate(),
-                user.isStatus()
-        );
+                user.isStatus());
     }
 
     public UserResponse getUserByUserName(String userName) {
         User user = userRepository.findByUserName(userName).orElse(null);
         assert user != null;
         return new UserResponse(
-                user.getId(), user.getUserName(), user.getEmail(), user.getPassword(),user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
-        );
+                user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(),
+                user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
     }
 
     public User getUserByEmail(String email) {
@@ -99,9 +97,11 @@ public class UserService {
     public UserResponse saveUser(UserDTO userDto) {
         if (!isEmailValid(userDto.getEmail()))
             return null;
-        User user = new User(userDto.getUserName(), userDto.getPassword(), userDto.getEmail(), role.valueOf(userDto.getRole()), membership.BASIC,java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), true);
+        User user = new User(userDto.getUserName(), userDto.getPassword(), userDto.getEmail(),
+                role.valueOf(userDto.getRole()), membership.BASIC, java.time.LocalDateTime.now(),
+                java.time.LocalDateTime.now(), true);
 
-        if (user.getRole() == role.DOCTOR){
+        if (user.getRole() == role.DOCTOR) {
             user.setMembership(membership.PREMIUM);
             user = userRepository.save(user);
             doctorRepository.save(new Doctor(user, "", ""));
@@ -109,7 +109,8 @@ public class UserService {
             user.setMembership(membership.BASIC);
             user = userRepository.save(user);
         }
-        return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getPassword(),user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
+        return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(),
+                user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
     }
 
     public UserResponse updateUser(User user, UpdateUserDTO userDto) {
@@ -129,15 +130,16 @@ public class UserService {
             doctorRepository.save(new Doctor(user, "", ""));
         }
         UserResponse userResponse = new UserResponse(
-                user.getId(), user.getUserName(), user.getEmail(), user.getPassword(),user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
-        );
+                user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(),
+                user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
         return userResponse;
     }
 
     public UserResponse updateUserTwo(User user, UpdateUserProfileDTO updateUserProfileDTO) {
         if (!isEmailValid(updateUserProfileDTO.getEmail()))
             return null;
-        if (userRepository.findByEmail(updateUserProfileDTO.getEmail()).isPresent() & !user.getEmail().equals(updateUserProfileDTO.getEmail()))
+        if (userRepository.findByEmail(updateUserProfileDTO.getEmail()).isPresent()
+                & !user.getEmail().equals(updateUserProfileDTO.getEmail()))
             return null;
 
         user.setUserName(updateUserProfileDTO.getUserName());
@@ -145,25 +147,26 @@ public class UserService {
         user.setPassword(updateUserProfileDTO.getPassword());
         user = userRepository.save(user);
 
-        return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getPassword(),user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
+        return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(),
+                user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
     }
 
-    public UserResponse deleteUserById(Long id){
+    public UserResponse deleteUserById(Long id) {
         User user = userRepository.findById(id).orElse(null);
-        if(user != null){
+        if (user != null) {
             user.setStatus(false);
             userRepository.save(user);
             return new UserResponse(
-                    user.getId(), user.getUserName(), user.getEmail(), user.getPassword(),user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus()
-            );
-        }else {
+                    user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(),
+                    user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
+        } else {
             return null;
         }
     }
 
-//    public User findUserByUserNameAndPassword(String userName, String password) {
-//        return userRepository.findByUserNameAndPassword(userName, password);
-//    }
+    // public User findUserByUserNameAndPassword(String userName, String password) {
+    // return userRepository.findByUserNameAndPassword(userName, password);
+    // }
 
     public User findUserByEmailAndPassword(String email, String password) {
         return userRepository.findUserByEmailAndPassword(email, password);
