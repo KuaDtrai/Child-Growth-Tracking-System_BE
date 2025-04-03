@@ -1,6 +1,6 @@
 package G5_SWP391.ChildGrownTracking.models;
 
-public enum role {
+public enum Role {
     ADMIN,
     MEMBER,
     DOCTOR

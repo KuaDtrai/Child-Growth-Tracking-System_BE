@@ -1,17 +1,12 @@
 package G5_SWP391.ChildGrownTracking.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -28,37 +23,35 @@ public class User {
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-    @Column( name = "userName")
+    @Column(name = "userName")
     private String userName;
-
-    private String password;
 
     @Email
     @Column(unique = true)
     private String email;
 
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Membership membership;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Doctor doctor;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Child> children = new ArrayList<>();
 
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
-    private List<Child> children2 = new ArrayList<>();
+    private List<Feedback> feedbacks = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user" , cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference("user-feedbacks")
-    private List<Feedback> userFeedbacks = new ArrayList<>();
-
-    @OneToMany(mappedBy = "doctor" , cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference("doctor-feedbacks")
-    private List<Feedback> doctorFeedbacks = new ArrayList<>();
-
-    @Enumerated(EnumType.STRING)
-    private membership membership;
-
-    @Enumerated(EnumType.STRING)
-    private role role;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Post> posts = new ArrayList<>();
 
     private LocalDateTime createdDate;
 
@@ -66,34 +59,29 @@ public class User {
 
     private boolean status;
 
-    public User(String userName, String password, String email ,role role, membership membership, LocalDateTime createdDate, LocalDateTime updateDate, boolean status) {
+    public User(String userName, String password, String email, Role role, LocalDateTime createdDate, LocalDateTime updateDate, boolean status) {
         this.userName = userName;
         this.password = password;
         this.email = email;
-        this.role = role ;
-        this.membership = membership;
+        this.role = role;
         this.createdDate = createdDate;
         this.updateDate = updateDate;
         this.status = status;
     }
 
-
-
+    public User(String userName, String password, String email, Role role, Membership membership, LocalDateTime now, LocalDateTime now1, boolean b) {
+    }
 
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", userName='" + userName + '\'' +
-                ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
-                ", children=" + children +
-                ", membership=" + membership +
+                ", role=" + role +
                 ", createdDate=" + createdDate +
                 ", updateDate=" + updateDate +
                 ", status=" + status +
                 '}';
     }
-
-
 }

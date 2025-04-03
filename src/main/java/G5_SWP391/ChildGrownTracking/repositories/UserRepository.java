@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import G5_SWP391.ChildGrownTracking.models.Child;
 import G5_SWP391.ChildGrownTracking.models.User;
-import G5_SWP391.ChildGrownTracking.models.role;
+import G5_SWP391.ChildGrownTracking.models.Role;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUserName(String userName);
@@ -25,7 +25,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 //    List<User> findAllByStatusIsTrue();
     ;
 
-    List<User> findAllByStatusIsTrueAndRole(role role);
+    List<User> findAllByStatusIsTrueAndRole(Role role);
 
     Optional<User> findByIdAndStatusIsTrue(Long doctorId);
 

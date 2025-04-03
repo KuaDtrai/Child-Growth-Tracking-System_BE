@@ -1,6 +1,5 @@
 package G5_SWP391.ChildGrownTracking.dtos;
 
-
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +10,7 @@ import java.util.Date;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class ChildRequestDTO {
 
     @NotNull(message = "name is required.")
@@ -22,8 +22,9 @@ public class ChildRequestDTO {
     @NotNull(message = "gender is required.")
     private String gender;
 
-    @NotNull(message = "parenId ID is required.")
+    @NotNull(message = "parentId is required.")
     private Long parentId;
 
+    @NotNull(message = "doctorId is required.")
+    private Long doctorId; // Thêm trường doctorId tham chiếu từ User
 }
-

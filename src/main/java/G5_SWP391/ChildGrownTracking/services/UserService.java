@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import G5_SWP391.ChildGrownTracking.models.Membership;
 import org.springframework.stereotype.Service;
 
 import G5_SWP391.ChildGrownTracking.dtos.UpdateUserDTO;
@@ -11,8 +12,7 @@ import G5_SWP391.ChildGrownTracking.dtos.UpdateUserProfileDTO;
 import G5_SWP391.ChildGrownTracking.dtos.UserDTO;
 import G5_SWP391.ChildGrownTracking.models.Doctor;
 import G5_SWP391.ChildGrownTracking.models.User;
-import G5_SWP391.ChildGrownTracking.models.membership;
-import G5_SWP391.ChildGrownTracking.models.role;
+import G5_SWP391.ChildGrownTracking.models.Role;
 import G5_SWP391.ChildGrownTracking.repositories.DoctorRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
 import G5_SWP391.ChildGrownTracking.responses.UserResponse;
@@ -49,7 +49,7 @@ public class UserService {
     }
 
     public List<UserResponse> getAllMember() {
-        List<User> members = userRepository.findAllByStatusIsTrueAndRole(role.MEMBER);
+        List<User> members = userRepository.findAllByStatusIsTrueAndRole(Role.MEMBER);
         List<UserResponse> userResponses = new ArrayList<>();
         for (User user : members) {
             UserResponse userResponse = new UserResponse(user.getId(),
@@ -97,16 +97,18 @@ public class UserService {
     public UserResponse saveUser(UserDTO userDto) {
         if (!isEmailValid(userDto.getEmail()))
             return null;
+        Membership membership = new Membership();
+
         User user = new User(userDto.getUserName(), userDto.getPassword(), userDto.getEmail(),
-                role.valueOf(userDto.getRole()), membership.BASIC, java.time.LocalDateTime.now(),
+                Role.valueOf(userDto.getRole()), membership, java.time.LocalDateTime.now(),
                 java.time.LocalDateTime.now(), true);
 
-        if (user.getRole() == role.DOCTOR) {
-            user.setMembership(membership.PREMIUM);
+        if (user.getRole() == Role.DOCTOR) {
+            user.setMembership(membership);
             user = userRepository.save(user);
             doctorRepository.save(new Doctor(user, "", ""));
-        } else if (user.getRole() == role.MEMBER) {
-            user.setMembership(membership.BASIC);
+        } else if (user.getRole() == Role.MEMBER) {
+            user.setMembership(membership);
             user = userRepository.save(user);
         }
         return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(),
@@ -118,15 +120,15 @@ public class UserService {
             return null;
         if (userRepository.findByEmail(userDto.getEmail()).isPresent() & !user.getEmail().equals(userDto.getEmail()))
             return null;
-
+        Membership membership = new Membership();
         user.setUserName(userDto.getUserName());
         user.setEmail(userDto.getEmail());
-        user.setRole(role.valueOf(userDto.getRole()));
-        user.setMembership(membership.valueOf(userDto.getMembership()));
+        user.setRole(Role.valueOf(userDto.getRole()));
+        user.setMembership(membership);
         user.setUpdateDate(java.time.LocalDateTime.now());
         user = userRepository.save(user);
 
-        if (user.getRole() == role.DOCTOR && doctorRepository.findByUser(user) == null) {
+        if (user.getRole() == Role.DOCTOR && doctorRepository.findByUser(user) == null) {
             doctorRepository.save(new Doctor(user, "", ""));
         }
         UserResponse userResponse = new UserResponse(

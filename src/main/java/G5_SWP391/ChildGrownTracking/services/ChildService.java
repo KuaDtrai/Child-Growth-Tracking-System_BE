@@ -4,9 +4,9 @@ import G5_SWP391.ChildGrownTracking.dtos.ChildRequestDTO;
 import G5_SWP391.ChildGrownTracking.dtos.ChildResponseDTO;
 import G5_SWP391.ChildGrownTracking.dtos.UpdateChildRequestDTO;
 import G5_SWP391.ChildGrownTracking.models.Child;
+import G5_SWP391.ChildGrownTracking.models.Membership;
 import G5_SWP391.ChildGrownTracking.models.User;
-import G5_SWP391.ChildGrownTracking.models.membership;
-import G5_SWP391.ChildGrownTracking.models.role;
+import G5_SWP391.ChildGrownTracking.models.Role;
 import G5_SWP391.ChildGrownTracking.repositories.ChildRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
 import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
@@ -42,7 +42,7 @@ public class ChildService {
             if (child.getParent() != null &&
                     child.getParent().isStatus() &&
                     child.getDoctor() != null &&
-                    child.getDoctor().getRole().equals(role.DOCTOR)) {
+                    child.getDoctor().getRole().equals(Role.DOCTOR)) {
 
                 ChildResponseDTO dto = new ChildResponseDTO(
                         child.getId(),
@@ -51,7 +51,7 @@ public class ChildService {
                         child.getGender(),
                         child.getParent().getUserName(), // Lấy tên cha/mẹ
                         child.getDoctor().getUserName(), // Lấy tên bác sĩ
-                        child.getCreateDate(),
+                        child.getCreatedDate(),
                         child.getUpdateDate(),
                         child.isStatus()
                 );
@@ -91,7 +91,7 @@ public class ChildService {
                         child.getGender(),
                         child.getParent().getUserName(), // Lấy tên cha/mẹ
                         null, // Lấy tên bác sĩ
-                        child.getCreateDate(),
+                        child.getCreatedDate(),
                         child.getUpdateDate(),
                         child.isStatus()
                 );
@@ -135,7 +135,7 @@ public class ChildService {
                     child.getGender(),
                     child.getParent().getUserName(),
                     doctorUserName,
-                    child.getCreateDate(),
+                    child.getCreatedDate(),
                     child.getUpdateDate(),
                     child.isStatus()
             );
@@ -165,7 +165,7 @@ public class ChildService {
 
         User parent = parentOptional.get();
 
-        if(parent.getRole() != role.MEMBER || !parent.isStatus()){
+        if(parent.getRole() != Role.MEMBER || !parent.isStatus()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Parent with ID " + parentId + " not found  ", null));
         }
@@ -193,7 +193,7 @@ public class ChildService {
                     child.getGender(),
                     child.getParent().getUserName(),
                     doctorUserName,
-                    child.getCreateDate(),
+                    child.getCreatedDate(),
                     child.getUpdateDate(),
                     child.isStatus()
             );
@@ -234,12 +234,12 @@ public class ChildService {
 
         User parent = parentOptional.get();
 
-        if(parent.getRole() != role.MEMBER){
+        if(parent.getRole() != Role.MEMBER){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Parent ID is not exist!", null));
         }
 
-        if(parent.getRole() == role.MEMBER && parent.getMembership() == membership.BASIC){
+        if(parent.getRole() == Role.MEMBER && parent.getMembership() == Membership.builder().build()){
             List<Child> child = childRepository.findByParentAndStatusIsTrue(parent);
             if(child.size() >= 1){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -250,11 +250,12 @@ public class ChildService {
 
         Child child = new Child(
                 newChild.getName(),
+                LocalDateTime.now(),
+                LocalDateTime.now(),
                 newChild.getDob(),
                 newChild.getGender(),
                 parent,
-                LocalDateTime.now(),
-                LocalDateTime.now(),
+                null,
                 true
         );
 
@@ -267,7 +268,7 @@ public class ChildService {
                 child.getGender(),
                 child.getParent().getUserName(),
                 null,
-                child.getCreateDate(),
+                child.getCreatedDate(),
                 child.getUpdateDate(),
                 child.isStatus()
         );
@@ -317,7 +318,7 @@ public class ChildService {
                 child.getGender(),
                 child.getParent().getUserName(),
                 child.getDoctor() != null ? child.getDoctor().getUserName() : null,
-                child.getCreateDate(),
+                child.getCreatedDate(),
                 child.getUpdateDate(),
                 child.isStatus()
         );
@@ -369,7 +370,7 @@ public class ChildService {
 
         User doctor = doctorOptional.get();
 
-        if(doctor.getRole() != role.DOCTOR){
+        if(doctor.getRole() != Role.DOCTOR){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "DOCTOR with ID " + doctor.getId() + " not found.", null));
         }
@@ -404,7 +405,7 @@ public class ChildService {
 
         User doctor = doctorOptional.get();
 
-        if(doctor.getRole() != role.DOCTOR){
+        if(doctor.getRole() != Role.DOCTOR){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Doctor with ID " + doctorId + " not found.", null));
         }
@@ -426,7 +427,7 @@ public class ChildService {
                     child.getGender(),
                     child.getParent().getUserName(),
                     child.getDoctor().getUserName(),
-                    child.getCreateDate(),
+                    child.getCreatedDate(),
                     child.getUpdateDate(),
                     child.isStatus()
             );

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import G5_SWP391.ChildGrownTracking.dtos.DoctorDTO;
 import G5_SWP391.ChildGrownTracking.models.Doctor;
 import G5_SWP391.ChildGrownTracking.models.User;
-import G5_SWP391.ChildGrownTracking.models.role;
+import G5_SWP391.ChildGrownTracking.models.Role;
 import G5_SWP391.ChildGrownTracking.repositories.ChildRepository;
 import G5_SWP391.ChildGrownTracking.repositories.DoctorRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
@@ -28,7 +28,7 @@ public class DoctorService {
     private final ChildRepository childRepository;
 
     public List<DoctorResponse2> getAllDoctor() {
-        List<User> doctors = userRepository.findAllByStatusIsTrueAndRole(role.DOCTOR);
+        List<User> doctors = userRepository.findAllByStatusIsTrueAndRole(Role.DOCTOR);
         List<DoctorResponse2> doctorsResponses = new ArrayList<>();
 
         for (User user : doctors) {

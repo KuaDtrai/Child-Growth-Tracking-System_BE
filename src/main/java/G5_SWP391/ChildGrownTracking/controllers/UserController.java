@@ -2,6 +2,7 @@ package G5_SWP391.ChildGrownTracking.controllers;
 
 import java.util.List;
 
+import G5_SWP391.ChildGrownTracking.models.Membership;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,7 +21,6 @@ import G5_SWP391.ChildGrownTracking.dtos.UpdateUserProfileDTO;
 import G5_SWP391.ChildGrownTracking.dtos.UserDTO;
 import G5_SWP391.ChildGrownTracking.models.Doctor;
 import G5_SWP391.ChildGrownTracking.models.User;
-import G5_SWP391.ChildGrownTracking.models.membership;
 import G5_SWP391.ChildGrownTracking.repositories.DoctorRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
 import G5_SWP391.ChildGrownTracking.responses.DoctorResponse2;
@@ -162,7 +162,7 @@ public class UserController {
     @PutMapping("/membership/{id}")
     ResponseEntity<ResponseObject> updateUserMembership(
             @PathVariable("id") Long id,
-            @RequestParam("membership") membership string) {
+            @RequestParam("membership") Membership string) {
         User user = userRepository.findById(id).orElse(null);
 
         if (user != null) {
