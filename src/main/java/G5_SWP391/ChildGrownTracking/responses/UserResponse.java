@@ -32,7 +32,7 @@ public class UserResponse {
     private Role role;
 
     @JsonProperty("membership")
-    private Membership membership;
+    private String membership;
 
     @JsonProperty("createdDate")
     private LocalDateTime createdDate;

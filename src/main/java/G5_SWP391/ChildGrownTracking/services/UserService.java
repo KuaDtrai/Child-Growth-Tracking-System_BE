@@ -1,18 +1,18 @@
 package G5_SWP391.ChildGrownTracking.services;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import G5_SWP391.ChildGrownTracking.models.Membership;
+import G5_SWP391.ChildGrownTracking.models.*;
+import G5_SWP391.ChildGrownTracking.repositories.MembershipPlanRepository;
+import G5_SWP391.ChildGrownTracking.repositories.MembershipRepository;
 import org.springframework.stereotype.Service;
 
 import G5_SWP391.ChildGrownTracking.dtos.UpdateUserDTO;
 import G5_SWP391.ChildGrownTracking.dtos.UpdateUserProfileDTO;
 import G5_SWP391.ChildGrownTracking.dtos.UserDTO;
-import G5_SWP391.ChildGrownTracking.models.Doctor;
-import G5_SWP391.ChildGrownTracking.models.User;
-import G5_SWP391.ChildGrownTracking.models.Role;
 import G5_SWP391.ChildGrownTracking.repositories.DoctorRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
 import G5_SWP391.ChildGrownTracking.responses.UserResponse;
@@ -23,10 +23,14 @@ import lombok.extern.slf4j.Slf4j;
 public class UserService {
     private final UserRepository userRepository;
     private final DoctorRepository doctorRepository;
+    private final MembershipPlanRepository membershipPlanRepository;
+    private final MembershipRepository membershipRepository;
 
-    public UserService(UserRepository userRepository, DoctorRepository doctorRepository) {
+    public UserService(UserRepository userRepository, DoctorRepository doctorRepository, MembershipPlanRepository membershipPlanRepository, MembershipRepository membershipRepository) {
         this.userRepository = userRepository;
         this.doctorRepository = doctorRepository;
+        this.membershipPlanRepository = membershipPlanRepository;
+        this.membershipRepository = membershipRepository;
     }
 
     public List<UserResponse> getUsers() {
@@ -39,7 +43,7 @@ public class UserService {
                     user.getEmail(),
                     user.getPassword(),
                     user.getRole(),
-                    user.getMembership(),
+                    membershipRepository.findByUser(user).getPlan().getName(),
                     user.getCreatedDate(),
                     user.getUpdateDate(),
                     user.isStatus());
@@ -57,7 +61,7 @@ public class UserService {
                     user.getEmail(),
                     user.getPassword(),
                     user.getRole(),
-                    user.getMembership(),
+                    membershipRepository.findByUser(user).getPlan().getName(),
                     user.getCreatedDate(),
                     user.getUpdateDate(),
                     user.isStatus());
@@ -75,7 +79,7 @@ public class UserService {
                 user.getEmail(),
                 user.getPassword(),
                 user.getRole(),
-                user.getMembership(),
+                membershipRepository.findByUser(user).getPlan().getName(),
                 user.getCreatedDate(),
                 user.getUpdateDate(),
                 user.isStatus());
@@ -85,8 +89,8 @@ public class UserService {
         User user = userRepository.findByUserName(userName).orElse(null);
         assert user != null;
         return new UserResponse(
-                user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(),
-                user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
+                user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(), membershipRepository.findByUser(user).getPlan().getName(),
+                user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
     }
 
     public User getUserByEmail(String email) {
@@ -97,22 +101,26 @@ public class UserService {
     public UserResponse saveUser(UserDTO userDto) {
         if (!isEmailValid(userDto.getEmail()))
             return null;
-        Membership membership = new Membership();
 
-        User user = new User(userDto.getUserName(), userDto.getPassword(), userDto.getEmail(),
-                Role.valueOf(userDto.getRole()), membership, java.time.LocalDateTime.now(),
-                java.time.LocalDateTime.now(), true);
+        User user = new User(userDto.getUserName(), userDto.getPassword(), userDto.getEmail(), Role.valueOf(userDto.getRole()), LocalDateTime.now(), LocalDateTime.now(), true);
 
-        if (user.getRole() == Role.DOCTOR) {
-            user.setMembership(membership);
+        MembershipPlan membershipPlan = membershipPlanRepository.findById(1L).orElse(null);
+        Membership membership = new Membership(user, membershipPlan, LocalDateTime.now(), LocalDateTime.now(), true);
+
+        if (user.getRole().equals(Role.DOCTOR)) {
+            user.setMembership(null);
             user = userRepository.save(user);
+            membership.setStatus(false);
             doctorRepository.save(new Doctor(user, "", ""));
         } else if (user.getRole() == Role.MEMBER) {
-            user.setMembership(membership);
+            user.setMembership(null);
             user = userRepository.save(user);
         }
-        return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(),
-                user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
+
+        membershipRepository.save(membership);
+
+        return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(), membershipRepository.findByUser(user).getPlan().getName(),
+                user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
     }
 
     public UserResponse updateUser(User user, UpdateUserDTO userDto) {
@@ -120,6 +128,7 @@ public class UserService {
             return null;
         if (userRepository.findByEmail(userDto.getEmail()).isPresent() & !user.getEmail().equals(userDto.getEmail()))
             return null;
+//        MembershipPlan membershipPlan = membershipPlanRepository.findById(userDto.getMembership()).orElse(null);
         Membership membership = new Membership();
         user.setUserName(userDto.getUserName());
         user.setEmail(userDto.getEmail());
@@ -133,7 +142,8 @@ public class UserService {
         }
         UserResponse userResponse = new UserResponse(
                 user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(),
-                user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
+                membershipRepository.findByUser(user).getPlan().getName(),
+                 user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
         return userResponse;
     }
 
@@ -150,7 +160,8 @@ public class UserService {
         user = userRepository.save(user);
 
         return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(),
-                user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
+                membershipRepository.findByUser(user).getPlan().getName(),
+                user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
     }
 
     public UserResponse deleteUserById(Long id) {
@@ -160,7 +171,8 @@ public class UserService {
             userRepository.save(user);
             return new UserResponse(
                     user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(),
-                    user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
+                    membershipRepository.findByUser(user).getPlan().getName(),
+                    user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
         } else {
             return null;
         }

@@ -1,5 +1,6 @@
 package G5_SWP391.ChildGrownTracking.dtos;
 
+import G5_SWP391.ChildGrownTracking.models.Role;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 

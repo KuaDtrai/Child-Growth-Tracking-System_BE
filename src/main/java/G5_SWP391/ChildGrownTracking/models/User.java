@@ -61,15 +61,12 @@ public class User {
 
     public User(String userName, String password, String email, Role role, LocalDateTime createdDate, LocalDateTime updateDate, boolean status) {
         this.userName = userName;
-        this.password = password;
         this.email = email;
+        this.password = password;
         this.role = role;
         this.createdDate = createdDate;
         this.updateDate = updateDate;
         this.status = status;
-    }
-
-    public User(String userName, String password, String email, Role role, Membership membership, LocalDateTime now, LocalDateTime now1, boolean b) {
     }
 
     @Override

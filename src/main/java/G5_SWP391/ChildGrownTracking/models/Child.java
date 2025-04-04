@@ -2,11 +2,12 @@ package G5_SWP391.ChildGrownTracking.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "children")
@@ -41,11 +42,12 @@ public class Child {
     @JoinColumn(name = "doctor_id")
     private User doctor;
 
-    private String metric; // Các chỉ số sức khỏe hoặc phát triển
+    private boolean status;
 
-    private boolean status; // Thêm trường status
+    @OneToMany(mappedBy = "child", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Metric> metrics = new ArrayList<>();
 
-    public Child(String name, LocalDateTime createdDate, LocalDateTime updateDate, Date dob, String gender, User parent, User doctor, String metric, boolean status) {
+    public Child(String name, LocalDateTime createdDate, LocalDateTime updateDate, Date dob, String gender, User parent, User doctor, boolean status) {
         this.name = name;
         this.createdDate = createdDate;
         this.updateDate = updateDate;
@@ -53,10 +55,6 @@ public class Child {
         this.gender = gender;
         this.parent = parent;
         this.doctor = doctor;
-        this.metric = metric;
         this.status = status;
-    }
-
-    public Child(@NotNull(message = "name is required.") String name, LocalDateTime now, LocalDateTime now1, @NotNull(message = "dob is required.") Date dob, @NotNull(message = "gender is required.") String gender, User parent, Object o, boolean b) {
     }
 }

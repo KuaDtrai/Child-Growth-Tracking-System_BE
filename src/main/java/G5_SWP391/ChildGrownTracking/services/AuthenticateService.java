@@ -2,10 +2,15 @@ package G5_SWP391.ChildGrownTracking.services;
 
 import java.text.ParseException;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.UUID;
 
+import G5_SWP391.ChildGrownTracking.models.Membership;
+import G5_SWP391.ChildGrownTracking.models.MembershipPlan;
+import G5_SWP391.ChildGrownTracking.repositories.MembershipPlanRepository;
+import G5_SWP391.ChildGrownTracking.repositories.MembershipRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +40,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AuthenticateService {
     private final UserService userService;
-    UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final MembershipRepository membershipRepository;
+    private final MembershipPlanRepository membershipPlanRepository;
 
     @NonFinal
     @Value("${jwt.signerkey}")
@@ -43,10 +50,17 @@ public class AuthenticateService {
 
     public AuthenticateResponse authenticate(AuthenticateDTO request) {
         User user = userService.findUserByEmailAndPassword(request.getEmail(), request.getPassword());
-        UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getPassword(),user.getRole(), user.getMembership(), user.getCreatedDate(), user.getUpdateDate(), false);
+
+        UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getPassword(),user.getRole(), membershipRepository.findByUser(user).getPlan().getName(), user.getCreatedDate(), user.getUpdateDate(), false);
         if (user == null) {
             return AuthenticateResponse.builder().authenticated(false).build();
         }else {
+            Membership membership = membershipRepository.findByUser(user);
+            if (membership.getEndDate().isBefore(LocalDateTime.now())) {
+                MembershipPlan membershipPlan = membershipPlanRepository.findByName("BASIC");
+                membership.setPlan(membershipPlan);
+                membershipRepository.save(membership);
+            }
             String token = generateToken(user);
             return AuthenticateResponse.builder().token(token).userResponse(userResponse).authenticated(true).build();
         }

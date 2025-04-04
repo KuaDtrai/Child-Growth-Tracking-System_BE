@@ -3,15 +3,13 @@ package G5_SWP391.ChildGrownTracking.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import G5_SWP391.ChildGrownTracking.repositories.*;
 import org.springframework.stereotype.Service;
 
 import G5_SWP391.ChildGrownTracking.dtos.DoctorDTO;
 import G5_SWP391.ChildGrownTracking.models.Doctor;
 import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.models.Role;
-import G5_SWP391.ChildGrownTracking.repositories.ChildRepository;
-import G5_SWP391.ChildGrownTracking.repositories.DoctorRepository;
-import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
 import G5_SWP391.ChildGrownTracking.responses.DoctorResponse;
 import G5_SWP391.ChildGrownTracking.responses.DoctorResponse2;
 import G5_SWP391.ChildGrownTracking.responses.SpecResponse;
@@ -26,6 +24,7 @@ public class DoctorService {
     private final UserRepository userRepository;
     private final DoctorRepository doctorRepository;
     private final ChildRepository childRepository;
+    private final MembershipRepository membershipRepository;
 
     public List<DoctorResponse2> getAllDoctor() {
         List<User> doctors = userRepository.findAllByStatusIsTrueAndRole(Role.DOCTOR);
@@ -38,8 +37,7 @@ public class DoctorService {
                     user.getEmail(),
                     user.getPassword(),
                     user.getRole(),
-                    user.getMembership(),
-                    user.getCreatedDate(),
+                    membershipRepository.findByUser(user).getPlan().getName(),                    user.getCreatedDate(),
                     user.getUpdateDate(),
                     user.isStatus()
             );
@@ -79,7 +77,7 @@ public class DoctorService {
                 user.getEmail(),
                 user.getPassword(),
                 user.getRole(),
-                user.getMembership(),
+                membershipRepository.findByUser(user).getPlan().getName(),
                 user.getCreatedDate(),
                 user.getUpdateDate(),
                 user.isStatus()

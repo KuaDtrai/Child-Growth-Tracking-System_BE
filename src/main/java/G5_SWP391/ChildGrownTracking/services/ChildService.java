@@ -3,11 +3,9 @@ package G5_SWP391.ChildGrownTracking.services;
 import G5_SWP391.ChildGrownTracking.dtos.ChildRequestDTO;
 import G5_SWP391.ChildGrownTracking.dtos.ChildResponseDTO;
 import G5_SWP391.ChildGrownTracking.dtos.UpdateChildRequestDTO;
-import G5_SWP391.ChildGrownTracking.models.Child;
-import G5_SWP391.ChildGrownTracking.models.Membership;
-import G5_SWP391.ChildGrownTracking.models.User;
-import G5_SWP391.ChildGrownTracking.models.Role;
+import G5_SWP391.ChildGrownTracking.models.*;
 import G5_SWP391.ChildGrownTracking.repositories.ChildRepository;
+import G5_SWP391.ChildGrownTracking.repositories.MembershipRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
 import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +25,8 @@ public class ChildService {
     private ChildRepository childRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private MembershipRepository membershipRepository;
 
     public ResponseEntity<ResponseObject> getAllChildrenHaveDoctor() {
         List<Child> children = childRepository.findByStatusIsTrue();
@@ -207,6 +207,7 @@ public class ChildService {
 }
 
     public ResponseEntity<ResponseObject> createChild(ChildRequestDTO newChild) {
+
         if (newChild.getName() == null || newChild.getName().trim().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Name cannot be empty!", null));
@@ -233,6 +234,13 @@ public class ChildService {
         }
 
         User parent = parentOptional.get();
+
+        Membership membership = membershipRepository.findByUser(parent);
+        MembershipPlan membershipPlan = membership.getPlan();
+        List<Child> children = childRepository.findByParentAndStatusIsTrue(parent);
+        if (membershipPlan.getMaxChildren() <= children.size()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Membership plan have not support more child", null));
+        }
 
         if(parent.getRole() != Role.MEMBER){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
