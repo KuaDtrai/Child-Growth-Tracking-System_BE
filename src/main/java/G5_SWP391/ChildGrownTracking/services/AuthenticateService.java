@@ -50,21 +50,47 @@ public class AuthenticateService {
 
     public AuthenticateResponse authenticate(AuthenticateDTO request) {
         User user = userService.findUserByEmailAndPassword(request.getEmail(), request.getPassword());
-
-        UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getPassword(),user.getRole(), membershipRepository.findByUser(user).getPlan().getName(), user.getCreatedDate(), user.getUpdateDate(), false);
         if (user == null) {
             return AuthenticateResponse.builder().authenticated(false).build();
-        }else {
-            Membership membership = membershipRepository.findByUser(user);
-            if (membership.getEndDate().isBefore(LocalDateTime.now())) {
-                MembershipPlan membershipPlan = membershipPlanRepository.findByName("BASIC");
-                membership.setPlan(membershipPlan);
+        }
+    
+        Membership membership = membershipRepository.findByUser(user);
+    
+        String planName = null;
+    if (membership != null && membership.isStatus()) {
+        MembershipPlan plan = membership.getPlan();
+        if (plan != null) {
+            planName = plan.getName();
+            LocalDateTime now = LocalDateTime.now();
+            if (membership.getEndDate() != null && membership.getEndDate().isBefore(now)) {
+                MembershipPlan basicPlan = membershipPlanRepository.findByName("BASIC");
+                membership.setPlan(basicPlan);
                 membershipRepository.save(membership);
+                planName = basicPlan.getName();
             }
-            String token = generateToken(user);
-            return AuthenticateResponse.builder().token(token).userResponse(userResponse).authenticated(true).build();
         }
     }
+    
+        UserResponse userResponse = new UserResponse(
+            user.getId(),
+            user.getUserName(),
+            user.getEmail(),
+            null,
+            user.getRole(),
+            planName,
+            user.getCreatedDate(),
+            user.getUpdateDate(),
+            false
+        );
+    
+        String token = generateToken(user);
+        return AuthenticateResponse.builder()
+                                   .token(token)
+                                   .userResponse(userResponse)
+                                   .authenticated(true)
+                                   .build();
+    }
+    
 
     private String generateToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
