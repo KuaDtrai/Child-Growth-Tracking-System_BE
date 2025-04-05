@@ -201,7 +201,7 @@ public class UserService {
     }
 
     public ResponseEntity<ResponseObject> countAllByMembershipBasic() {
-        Long count = userRepository.countAllByMembership_Plan_Name("BASIC");
+        Long count = userRepository.countByMembershipPlanAndStatus("BASIC", true, true);
         if (count == null) {
             return ResponseEntity.ok(
                     new ResponseObject("failed", "Count failed", null));
@@ -212,7 +212,7 @@ public class UserService {
     }
 
     public ResponseEntity<ResponseObject> countAllByMembershipPremium() {
-        Long count = userRepository.countAllByMembership_Plan_NameAndStatusIsTrue("PREMIUM");
+        Long count = userRepository.countByMembershipPlanAndStatus("PREMIUM", true, true);
         if (count == null) {
             return ResponseEntity.ok(
                     new ResponseObject("failed", "Count failed", null));
@@ -223,7 +223,7 @@ public class UserService {
     }
 
     public ResponseEntity<ResponseObject> countAllByMembershipVIP() {
-        Long count = userRepository.countAllByMembership_Plan_NameAndStatusIsTrue("VIP");
+        Long count = userRepository.countByMembershipPlanAndStatus("VIP", true, true);
         if (count == null) {
             return ResponseEntity.ok(
                     new ResponseObject("failed", "Count failed", null));
