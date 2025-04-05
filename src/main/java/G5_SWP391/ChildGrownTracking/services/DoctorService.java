@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import G5_SWP391.ChildGrownTracking.dtos.DoctorDTO;
 import G5_SWP391.ChildGrownTracking.models.Doctor;
+import G5_SWP391.ChildGrownTracking.models.Membership;
+import G5_SWP391.ChildGrownTracking.models.MembershipPlan;
 import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.models.Role;
 import G5_SWP391.ChildGrownTracking.responses.DoctorResponse;
@@ -31,16 +33,26 @@ public class DoctorService {
         List<DoctorResponse2> doctorsResponses = new ArrayList<>();
 
         for (User user : doctors) {
+            String planName = null;
+            Membership membership = membershipRepository.findByUser(user);
+            if (membership != null && membership.isStatus()) {
+                MembershipPlan plan = membership.getPlan();
+                if (plan != null) {
+                    planName = plan.getName();
+                }
+            } else {
+                planName = null;
+            }
             UserResponse userResponse = new UserResponse(
                     user.getId(),
                     user.getUserName(),
                     user.getEmail(),
                     user.getPassword(),
                     user.getRole(),
-                    membershipRepository.findByUser(user).getPlan().getName(),                    user.getCreatedDate(),
+                    planName,
+                    user.getCreatedDate(),
                     user.getUpdateDate(),
-                    user.isStatus()
-            );
+                    user.isStatus());
 
             Doctor doctor = doctorRepository.findByUserId(user.getId());
             Long childCount = childRepository.countByDoctorAndStatusIsTrue(user); // Lấy số lượng trẻ
@@ -51,8 +63,7 @@ public class DoctorService {
                     doctor.getId(),
                     doctor.getSpecialization(),
                     doctor.getCertificate(),
-                    childCount
-            ));
+                    childCount));
         }
 
         return doctorsResponses;
@@ -68,11 +79,10 @@ public class DoctorService {
         doctor.setSpecialization(doctorDTO.getSpecialization());
         doctor.setCertificate(doctorDTO.getCertificate());
         Doctor updatedDoctor = doctorRepository.save(doctor);
-    
+
         return new SpecResponse(
-            updatedDoctor.getId(),
-            updatedDoctor.getSpecialization(),
-            updatedDoctor.getCertificate()
-        );
-    }    
+                updatedDoctor.getId(),
+                updatedDoctor.getSpecialization(),
+                updatedDoctor.getCertificate());
+    }
 }

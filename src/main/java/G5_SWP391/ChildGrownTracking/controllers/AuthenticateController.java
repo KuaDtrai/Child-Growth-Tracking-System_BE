@@ -59,7 +59,7 @@ public class AuthenticateController {
     ) {
         AuthenticateResponse token = authenticateService.authenticate(request);
         if (token.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObject("ok", "login 1 successfully", token));
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObject("ok", "login successfully", token));
         }else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("error", "Invalid username or password", null));
     }

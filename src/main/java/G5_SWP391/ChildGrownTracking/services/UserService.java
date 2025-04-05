@@ -9,6 +9,7 @@ import G5_SWP391.ChildGrownTracking.models.*;
 import G5_SWP391.ChildGrownTracking.repositories.MembershipPlanRepository;
 import G5_SWP391.ChildGrownTracking.repositories.MembershipRepository;
 import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ import G5_SWP391.ChildGrownTracking.dtos.UserDTO;
 import G5_SWP391.ChildGrownTracking.repositories.DoctorRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
 import G5_SWP391.ChildGrownTracking.responses.UserResponse;
+import jakarta.validation.constraints.Null;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -28,7 +30,8 @@ public class UserService {
     private final MembershipPlanRepository membershipPlanRepository;
     private final MembershipRepository membershipRepository;
 
-    public UserService(UserRepository userRepository, DoctorRepository doctorRepository, MembershipPlanRepository membershipPlanRepository, MembershipRepository membershipRepository) {
+    public UserService(UserRepository userRepository, DoctorRepository doctorRepository,
+            MembershipPlanRepository membershipPlanRepository, MembershipRepository membershipRepository) {
         this.userRepository = userRepository;
         this.doctorRepository = doctorRepository;
         this.membershipPlanRepository = membershipPlanRepository;
@@ -75,13 +78,23 @@ public class UserService {
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id).orElse(null);
         assert user != null;
+        String planName = null;
+        Membership membership = membershipRepository.findByUser(user);
+        if (membership != null && membership.isStatus()) {
+            MembershipPlan plan = membership.getPlan();
+            if (plan != null) {
+                planName = plan.getName();
+            }
+        }else {
+            planName = null;
+        }
         return new UserResponse(
                 user.getId(),
                 user.getUserName(),
                 user.getEmail(),
                 user.getPassword(),
                 user.getRole(),
-                membershipRepository.findByUser(user).getPlan().getName(),
+                planName,
                 user.getCreatedDate(),
                 user.getUpdateDate(),
                 user.isStatus());
@@ -91,7 +104,8 @@ public class UserService {
         User user = userRepository.findByUserName(userName).orElse(null);
         assert user != null;
         return new UserResponse(
-                user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(), membershipRepository.findByUser(user).getPlan().getName(),
+                user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(),
+                membershipRepository.findByUser(user).getPlan().getName(),
                 user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
     }
 
@@ -104,7 +118,8 @@ public class UserService {
         if (!isEmailValid(userDto.getEmail()))
             return null;
 
-        User user = new User(userDto.getUserName(), userDto.getPassword(), userDto.getEmail(), Role.valueOf(userDto.getRole()), LocalDateTime.now(), LocalDateTime.now(), true);
+        User user = new User(userDto.getUserName(), userDto.getPassword(), userDto.getEmail(),
+                Role.valueOf(userDto.getRole()), LocalDateTime.now(), LocalDateTime.now(), true);
 
         MembershipPlan membershipPlan = membershipPlanRepository.findById(1L).orElse(null);
         Membership membership = new Membership(user, membershipPlan, LocalDateTime.now(), LocalDateTime.now(), true);
@@ -121,7 +136,8 @@ public class UserService {
 
         membershipRepository.save(membership);
 
-        return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(), membershipRepository.findByUser(user).getPlan().getName(),
+        return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(),
+                membershipRepository.findByUser(user).getPlan().getName(),
                 user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
     }
 
@@ -130,7 +146,8 @@ public class UserService {
             return null;
         if (userRepository.findByEmail(userDto.getEmail()).isPresent() & !user.getEmail().equals(userDto.getEmail()))
             return null;
-//        MembershipPlan membershipPlan = membershipPlanRepository.findById(userDto.getMembership()).orElse(null);
+        // MembershipPlan membershipPlan =
+        // membershipPlanRepository.findById(userDto.getMembership()).orElse(null);
         Membership membership = new Membership();
         user.setUserName(userDto.getUserName());
         user.setEmail(userDto.getEmail());
@@ -144,7 +161,7 @@ public class UserService {
         UserResponse userResponse = new UserResponse(
                 user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(),
                 membershipRepository.findByUser(user).getPlan().getName(),
-                 user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
+                user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
         return userResponse;
     }
 
