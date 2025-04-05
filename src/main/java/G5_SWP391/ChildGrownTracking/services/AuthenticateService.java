@@ -80,7 +80,7 @@ public class AuthenticateService {
             planName,
             user.getCreatedDate(),
             user.getUpdateDate(),
-            false
+            user.isStatus()
         );
     
         String token = generateToken(user);
