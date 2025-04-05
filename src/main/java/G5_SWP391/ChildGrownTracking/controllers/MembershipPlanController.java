@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,10 +26,26 @@ public class MembershipPlanController {
     @GetMapping("")
     public ResponseEntity<ResponseObject> getMembershipPlan() {
         List<MembershipPlan> membershipPlans = membershipPlanRepository.findAllByStatusIsTrue();
-        if (membershipPlans.size()>0)
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Membership plans founded", membershipPlans));
+        List<MembershipPlanResponse> membershipPlansResponse = new ArrayList<>();
+        for (MembershipPlan membershipPlan : membershipPlans) {
+            MembershipPlanResponse membershipPlanResponse = new MembershipPlanResponse(
+                    membershipPlan.getId(),
+                    membershipPlan.getName(),
+                    membershipPlan.getDescription(),
+                    membershipPlan.getFeatures(),
+                    membershipPlan.getCreatedDate(),
+                    membershipPlan.getUpdateDate(),
+                    membershipPlan.getAnnualPrice(),
+                    membershipPlan.getMaxChildren(),
+                    membershipPlan.isStatus(),
+                    membershipPlan.getDuration()
+            );
+            membershipPlansResponse.add(membershipPlanResponse);
+        }
+        if (membershipPlansResponse.size()>0)
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Membership plans founded", membershipPlansResponse));
         else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("fail", "No membership plan founded", membershipPlans));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("fail", "No membership plan founded", null));
     }
 
     @PostMapping("")
@@ -62,7 +79,19 @@ public class MembershipPlanController {
         if (membershipPlan != null) {
             membershipPlan.setStatus(false);
             membershipPlan = membershipPlanRepository.save(membershipPlan);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Membership plan removed successfully", membershipPlan));
+            MembershipPlanResponse membershipPlanResponse = new MembershipPlanResponse(
+                    membershipPlan.getId(),
+                    membershipPlan.getName(),
+                    membershipPlan.getDescription(),
+                    membershipPlan.getFeatures(),
+                    membershipPlan.getCreatedDate(),
+                    membershipPlan.getUpdateDate(),
+                    membershipPlan.getAnnualPrice(),
+                    membershipPlan.getMaxChildren(),
+                    membershipPlan.isStatus(),
+                    membershipPlan.getDuration()
+            );
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Membership plan removed successfully", membershipPlanResponse));
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "No membership plan founded", null));
     }
