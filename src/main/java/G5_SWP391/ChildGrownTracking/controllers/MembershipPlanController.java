@@ -23,6 +23,7 @@ public class MembershipPlanController {
 
     private final MembershipPlanRepository membershipPlanRepository;
     private final MembershipPlanService membershipPlanService;
+
     @GetMapping("/getAllMembershipPlan")
     public ResponseEntity<ResponseObject> getMembershipPlan() {
         List<MembershipPlan> membershipPlans = membershipPlanRepository.findAllByStatusIsTrue();
@@ -38,23 +39,26 @@ public class MembershipPlanController {
                     membershipPlan.getAnnualPrice(),
                     membershipPlan.getMaxChildren(),
                     membershipPlan.isStatus(),
-                    membershipPlan.getDuration()
-            );
+                    membershipPlan.getDuration());
             membershipPlansResponse.add(membershipPlanResponse);
         }
-        if (membershipPlansResponse.size()>0)
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Membership plans founded", membershipPlansResponse));
+        if (membershipPlansResponse.size() > 0)
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("ok", "Membership plans founded", membershipPlansResponse));
         else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("fail", "No membership plan founded", null));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "No membership plan founded", null));
     }
 
     @PostMapping("/create")
     public ResponseEntity<ResponseObject> createMembershipPlan(@RequestBody MembershipPlanDTO membershipPlanDTO) {
         MembershipPlanResponse membershipPlan = membershipPlanService.saveMembershipPlan(membershipPlanDTO);
         if (membershipPlan != null)
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Membership plan create successfully", membershipPlan));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("ok", "Membership plan create successfully", membershipPlan));
         else
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "Membership plan's name is already exist", null));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("fail", "Membership plan's name is already exist", null));
     }
 
     @PutMapping("/update/{id}")
@@ -63,37 +67,60 @@ public class MembershipPlanController {
             @RequestBody MembershipPlanDTO membershipPlanDTO) {
         MembershipPlan membershipPlan = membershipPlanRepository.findById(id).orElse(null);
         if (membershipPlan != null) {
-            MembershipPlanResponse membershipPlanResponse = membershipPlanService.updateMembershipPlan(membershipPlan, membershipPlanDTO);
+            MembershipPlanResponse membershipPlanResponse = membershipPlanService.updateMembershipPlan(membershipPlan,
+                    membershipPlanDTO);
             if (membershipPlan != null)
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Membership plan modified successfully", membershipPlanResponse));
+                return ResponseEntity.status(HttpStatus.OK).body(
+                        new ResponseObject("ok", "Membership plan modified successfully", membershipPlanResponse));
             else
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject("fail", "No membership plan modified", membershipPlanResponse));
-        }
-        else
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "Membership plan is already existed", null));
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new ResponseObject("fail", "No membership plan modified", membershipPlanResponse));
+        } else
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("fail", "Membership plan is already existed", null));
     }
 
-    @PutMapping("/delete/{id}")
-    public ResponseEntity<ResponseObject> deleteMembershipPlan(@PathVariable Long id) {
-        MembershipPlan membershipPlan = membershipPlanRepository.findById(id).orElse(null);
-        if (membershipPlan != null) {
-            membershipPlan.setStatus(false);
-            membershipPlan = membershipPlanRepository.save(membershipPlan);
-            MembershipPlanResponse membershipPlanResponse = new MembershipPlanResponse(
-                    membershipPlan.getId(),
-                    membershipPlan.getName(),
-                    membershipPlan.getDescription(),
-                    membershipPlan.getFeatures(),
-                    membershipPlan.getCreatedDate(),
-                    membershipPlan.getUpdateDate(),
-                    membershipPlan.getAnnualPrice(),
-                    membershipPlan.getMaxChildren(),
-                    membershipPlan.isStatus(),
-                    membershipPlan.getDuration()
-            );
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Membership plan removed successfully", membershipPlanResponse));
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "No membership plan founded", null));
+    @PutMapping("/disable/{id}")
+    public ResponseEntity<ResponseObject> disableMembershipPlan(@PathVariable Long id) {
+        return membershipPlanRepository.findById(id)
+                .map(mp -> {
+                    mp.setStatus(false);
+                    membershipPlanRepository.save(mp);
+                    ResponseObject resp = new ResponseObject(
+                            "ok",
+                            "Membership plan disable successfully",
+                            null);
+                    return ResponseEntity.ok(resp);
+                })
+                .orElseGet(() -> {
+
+                    ResponseObject resp = new ResponseObject(
+                            "fail",
+                            "No membership plan found",
+                            null);
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resp);
+                });
     }
 
+    @PutMapping("/active/{id}")
+    public ResponseEntity<ResponseObject> activeMembershipPlan(@PathVariable Long id) {
+        return membershipPlanRepository.findById(id)
+                .map(mp -> {
+                    mp.setStatus(true);
+                    membershipPlanRepository.save(mp);
+                    ResponseObject resp = new ResponseObject(
+                            "ok",
+                            "Membership plan active successfully",
+                            null);
+                    return ResponseEntity.ok(resp);
+                })
+                .orElseGet(() -> {
+
+                    ResponseObject resp = new ResponseObject(
+                            "fail",
+                            "No membership plan found",
+                            null);
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resp);
+                });
+    }
 }
