@@ -18,7 +18,15 @@ import org.springframework.web.bind.annotation.*;
 public class MembershipController {
     private final MembershipService membershipService;
 
-    @PutMapping("/{id}")
+    @GetMapping("/{userId}")
+    public ResponseEntity<ResponseObject> getMembership(@PathVariable Long userId) {
+        MembershipResponse membershipResponse = membershipService.getMembershipByUserId(userId);
+        if (membershipResponse != null)
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "", membershipResponse));
+        else return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("notFound", "", membershipResponse));
+    }
+
+    @PutMapping("/{userId}")
     public ResponseEntity<ResponseObject> updateMembership(
             @PathVariable Long userId,
             @RequestBody Long planId

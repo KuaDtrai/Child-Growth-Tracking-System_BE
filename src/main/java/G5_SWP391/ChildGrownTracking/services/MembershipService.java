@@ -18,9 +18,47 @@ import java.time.LocalDateTime;
 @Service
 public class MembershipService {
     @Autowired
-    private MembershipRepository membershipRepository;
-    private UserRepository userRepository;
-    private MembershipPlanRepository membershipPlanRepository;
+    private final MembershipRepository membershipRepository;
+    private final UserRepository userRepository;
+    private final MembershipPlanRepository membershipPlanRepository;
+
+    public MembershipService(MembershipRepository membershipRepository, UserRepository userRepository, MembershipPlanRepository membershipPlanRepository) {
+        this.membershipRepository = membershipRepository;
+        this.userRepository = userRepository;
+        this.membershipPlanRepository = membershipPlanRepository;
+    }
+
+    public MembershipResponse getMembershipByUserId(Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        Membership membership = membershipRepository.findByUser(user);
+        MembershipPlan membershipPlan = membership.getPlan();
+        UserResponse userResponse = new UserResponse(
+                user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(),
+                membershipRepository.findByUser(user).getPlan().getName(),
+                user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
+
+        MembershipPlanResponse membershipPlanResponse = new MembershipPlanResponse(
+                membershipPlan.getId(),
+                membershipPlan.getName(),
+                membershipPlan.getDescription(),
+                membershipPlan.getFeatures(),
+                membershipPlan.getCreatedDate(),
+                membershipPlan.getUpdateDate(),
+                membershipPlan.getAnnualPrice(),
+                membershipPlan.getMaxChildren(),
+                membershipPlan.isStatus(),
+                membershipPlan.getDuration()
+        );
+        MembershipResponse membershipResponse = new MembershipResponse(
+                membership.getId(),
+                userResponse,
+                membershipPlanResponse,
+                membership.getStartDate(),
+                membership.getEndDate(),
+                membership.isStatus()
+        );
+        return membershipResponse;
+    }
 
     public MembershipResponse updateMembership(Long userId, Long membershipPlanId) {
         User user = userRepository.findById(userId).orElse(null);
