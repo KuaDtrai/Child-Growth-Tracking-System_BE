@@ -18,7 +18,4 @@ public class UpdateUserDTO {
 
     @JsonProperty("role")
     private String role;
-
-    @JsonProperty("membership")
-    private String membership;
 }

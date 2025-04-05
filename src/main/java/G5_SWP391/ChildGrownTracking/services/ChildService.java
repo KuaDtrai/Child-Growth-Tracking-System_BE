@@ -5,6 +5,7 @@ import G5_SWP391.ChildGrownTracking.dtos.ChildResponseDTO;
 import G5_SWP391.ChildGrownTracking.dtos.UpdateChildRequestDTO;
 import G5_SWP391.ChildGrownTracking.models.*;
 import G5_SWP391.ChildGrownTracking.repositories.ChildRepository;
+import G5_SWP391.ChildGrownTracking.repositories.MembershipPlanRepository;
 import G5_SWP391.ChildGrownTracking.repositories.MembershipRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
 import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
@@ -27,6 +28,8 @@ public class ChildService {
     private UserRepository userRepository;
     @Autowired
     private MembershipRepository membershipRepository;
+    @Autowired
+    private MembershipPlanRepository membershipPlanRepository;
 
     public ResponseEntity<ResponseObject> getAllChildrenHaveDoctor() {
         List<Child> children = childRepository.findByStatusIsTrue();
@@ -150,6 +153,7 @@ public class ChildService {
 
 
     public ResponseEntity<ResponseObject> findChildrenByParentId(Long parentId) {
+//        Kiểm tra parent hợp lệ k
         if (parentId == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Invalid parentId: cannot be empty or null!", null));
@@ -164,12 +168,15 @@ public class ChildService {
         }
 
         User parent = parentOptional.get();
-
+//      Kiểm tra role của parent có phải member k
         if(parent.getRole() != Role.MEMBER || !parent.isStatus()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Parent with ID " + parentId + " not found  ", null));
         }
 
+        Membership membership = membershipRepository.findByUser(parent);
+        MembershipPlan membershipPlan = membership.getPlan();
+        int size = membershipPlan.getMaxChildren();
         List<Child> children = childRepository.findByParentAndStatusIsTrue(parent);
 
         if (children.isEmpty()) {
@@ -177,33 +184,36 @@ public class ChildService {
                     .body(new ResponseObject("fail", "Parent with ID " + parentId + " has no children", null));
         }
 
+//       Lấy số child trong danh sách dựa trên số trẻ tối đa trong membershipPlan
         List<ChildResponseDTO> childResponseList = new ArrayList<>();
-
+        int counter = 0;
         for (Child child : children) {
-            String doctorUserName;
-            if (child.getDoctor() != null) {
-                doctorUserName = child.getDoctor().getUserName();
-            } else {
-                doctorUserName = null;
+            if (counter < size) {
+                String doctorUserName;
+                if (child.getDoctor() != null) {
+                    doctorUserName = child.getDoctor().getUserName();
+                } else {
+                    doctorUserName = null;
+                }
+                ChildResponseDTO dto = new ChildResponseDTO(
+                        child.getId(),
+                        child.getName(),
+                        child.getDob(),
+                        child.getGender(),
+                        child.getParent().getUserName(),
+                        doctorUserName,
+                        child.getCreatedDate(),
+                        child.getUpdateDate(),
+                        child.isStatus()
+                );
+                childResponseList.add(dto);
+                counter++;
             }
-            ChildResponseDTO dto = new ChildResponseDTO(
-                    child.getId(),
-                    child.getName(),
-                    child.getDob(),
-                    child.getGender(),
-                    child.getParent().getUserName(),
-                    doctorUserName,
-                    child.getCreatedDate(),
-                    child.getUpdateDate(),
-                    child.isStatus()
-            );
-            childResponseList.add(dto);
+            else
+                break;
         }
 
         return ResponseEntity.ok(new ResponseObject("ok", "List of children of parent with ID " + parentId, childResponseList));
-
-
-
 }
 
     public ResponseEntity<ResponseObject> createChild(ChildRequestDTO newChild) {
@@ -237,19 +247,16 @@ public class ChildService {
 
         Membership membership = membershipRepository.findByUser(parent);
         MembershipPlan membershipPlan = membership.getPlan();
-        List<Child> children = childRepository.findByParentAndStatusIsTrue(parent);
-        if (membershipPlan.getMaxChildren() <= children.size()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Membership plan have not support more child", null));
-        }
 
         if(parent.getRole() != Role.MEMBER){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject("fail", "Parent ID is not exist!", null));
         }
 
+//        Kiểm tra số lượng trẻ với số lượng qui định trong gói membership
         if(parent.getRole() == Role.MEMBER && parent.getMembership() == Membership.builder().build()){
             List<Child> child = childRepository.findByParentAndStatusIsTrue(parent);
-            if(child.size() >= 1){
+            if(child.size() >= membershipPlan.getMaxChildren()){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(new ResponseObject("fail", "Reach max child for BASIC account !", null));
             }

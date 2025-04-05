@@ -3,6 +3,8 @@ package G5_SWP391.ChildGrownTracking.controllers;
 import java.util.List;
 
 import G5_SWP391.ChildGrownTracking.models.Membership;
+import G5_SWP391.ChildGrownTracking.repositories.MembershipPlanRepository;
+import G5_SWP391.ChildGrownTracking.repositories.MembershipRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -42,6 +44,8 @@ public class UserController {
     private final UserRepository userRepository;
     private final DoctorService doctorSevice;
     private final DoctorRepository doctorRepository;
+    private final MembershipRepository membershipRepository;
+    private final MembershipPlanRepository membershipPlanRepository;
 
     // http://localhost:8080/api/v1/users/member
     @GetMapping("/member")
@@ -162,20 +166,19 @@ public class UserController {
     @PutMapping("/membership/{id}")
     ResponseEntity<ResponseObject> updateUserMembership(
             @PathVariable("id") Long id,
-            @RequestParam("membership") Membership string) {
+            @RequestParam("membership") Long membershipPlanId) {
         User user = userRepository.findById(id).orElse(null);
 
         if (user != null) {
-            user.setMembership(string);
+            Membership membership = membershipRepository.findByUser(user);
+            if (membership != null) {
+                membership.setPlan(membershipPlanRepository.findById(membershipPlanId).orElse(null));
+            }
+            user.setMembership(membership);
             User updatedUser = userRepository.save(user);
 
-            if (updatedUser != null) {
-                return ResponseEntity.status(HttpStatus.OK)
-                        .body(new ResponseObject("ok", "User updated successfully", null));
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ResponseObject("fail", "Failed to update user", null));
-            }
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("ok", "User updated successfully", updatedUser));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseObject("fail", "User not found", null));

@@ -133,7 +133,6 @@ public class UserService {
         user.setUserName(userDto.getUserName());
         user.setEmail(userDto.getEmail());
         user.setRole(Role.valueOf(userDto.getRole()));
-        user.setMembership(membership);
         user.setUpdateDate(java.time.LocalDateTime.now());
         user = userRepository.save(user);
 

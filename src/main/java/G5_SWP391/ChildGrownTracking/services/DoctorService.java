@@ -63,28 +63,6 @@ public class DoctorService {
         return new SpecResponse(doctor.getId(), doctor.getSpecialization(), doctor.getCertificate());
     }
 
-
-    public DoctorResponse addDoctor(User user, DoctorDTO doctor) {
-        Doctor newDoctor = new Doctor(
-                user,
-                doctor.getSpecialization(),
-                doctor.getCertificate()
-        );
-        newDoctor = doctorRepository.save(newDoctor);
-        UserResponse userResponse = new UserResponse(
-                user.getId(),
-                user.getUserName(),
-                user.getEmail(),
-                user.getPassword(),
-                user.getRole(),
-                membershipRepository.findByUser(user).getPlan().getName(),
-                user.getCreatedDate(),
-                user.getUpdateDate(),
-                user.isStatus()
-        );
-        return new DoctorResponse(newDoctor.getId(), userResponse, newDoctor.getSpecialization(), newDoctor.getCertificate());
-    }
-
     public SpecResponse updateDoctor(Doctor doctor, DoctorDTO doctorDTO) {
         // Update the doctor with values from doctorDTO
         doctor.setSpecialization(doctorDTO.getSpecialization());
