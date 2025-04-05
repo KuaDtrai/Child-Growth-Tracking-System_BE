@@ -2,7 +2,6 @@ package G5_SWP391.ChildGrownTracking.responses;
 
 import java.time.LocalDateTime;
 
-import G5_SWP391.ChildGrownTracking.models.Membership;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import G5_SWP391.ChildGrownTracking.models.Role;
