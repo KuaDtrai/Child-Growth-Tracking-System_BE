@@ -32,4 +32,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByChildrenAndStatusIsTrue(Child child);
 
     Optional<User> findByEmail(String email);
+
+
+
+    Long countAllByMembership_Plan_NameAndStatusIsTrue (String planName);
+
+    Long countAllByMembership_Plan_Name(String membershipPlanName);
+    Long countByRoleAndStatusIsTrue(Role role);
+
 }

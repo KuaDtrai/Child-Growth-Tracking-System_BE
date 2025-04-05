@@ -98,4 +98,10 @@ public class ChildController {
         return service.getChildByDoctorId(id);
     }
 
+    // http://localhost:8080/api/v1/child/countAll
+    @GetMapping("/countAll")
+    public ResponseEntity<ResponseObject> countAll() {
+        return service.countAll();
+    }
+
 }

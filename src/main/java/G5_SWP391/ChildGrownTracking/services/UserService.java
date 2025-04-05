@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 import G5_SWP391.ChildGrownTracking.models.*;
 import G5_SWP391.ChildGrownTracking.repositories.MembershipPlanRepository;
 import G5_SWP391.ChildGrownTracking.repositories.MembershipRepository;
+import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import G5_SWP391.ChildGrownTracking.dtos.UpdateUserDTO;
@@ -196,5 +198,60 @@ public class UserService {
 
         // Check if email matches the pattern
         return email != null && p.matcher(email).matches();
+    }
+
+    public ResponseEntity<ResponseObject> countAllByMembershipBasic() {
+        Long count = userRepository.countAllByMembership_Plan_Name("BASIC");
+        if (count == null) {
+            return ResponseEntity.ok(
+                    new ResponseObject("failed", "Count failed", null));
+        } else {
+            return ResponseEntity.ok(
+                    new ResponseObject("ok", "Count successfully", count));
+        }
+    }
+
+    public ResponseEntity<ResponseObject> countAllByMembershipPremium() {
+        Long count = userRepository.countAllByMembership_Plan_NameAndStatusIsTrue("PREMIUM");
+        if (count == null) {
+            return ResponseEntity.ok(
+                    new ResponseObject("failed", "Count failed", null));
+        } else {
+            return ResponseEntity.ok(
+                    new ResponseObject("ok", "Count successfully", count));
+        }
+    }
+
+    public ResponseEntity<ResponseObject> countAllByMembershipVIP() {
+        Long count = userRepository.countAllByMembership_Plan_NameAndStatusIsTrue("VIP");
+        if (count == null) {
+            return ResponseEntity.ok(
+                    new ResponseObject("failed", "Count failed", null));
+        } else {
+            return ResponseEntity.ok(
+                    new ResponseObject("ok", "Count successfully", count));
+        }
+    }
+
+    public ResponseEntity<ResponseObject> countAllDoctor() {
+        Long count = userRepository.countByRoleAndStatusIsTrue(Role.DOCTOR);
+        if (count == null || count == 0) {
+            return ResponseEntity.ok(
+                    new ResponseObject("failed", "Count failed", null));
+        } else {
+            return ResponseEntity.ok(
+                    new ResponseObject("ok", "Count successfully", count));
+        }
+    }
+
+    public ResponseEntity<ResponseObject> countAllMember() {
+        Long count = userRepository.countByRoleAndStatusIsTrue(Role.MEMBER);
+        if (count == null || count == 0) {
+            return ResponseEntity.ok(
+                    new ResponseObject("failed", "Count failed", null));
+        } else {
+            return ResponseEntity.ok(
+                    new ResponseObject("ok", "Count successfully", count));
+        }
     }
 }

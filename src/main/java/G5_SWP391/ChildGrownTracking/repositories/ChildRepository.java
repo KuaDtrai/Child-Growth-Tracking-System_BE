@@ -18,19 +18,5 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
     Long countByDoctorAndStatusIsTrue(User doctor);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    Long countByStatusIsTrue();
 }

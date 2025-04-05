@@ -220,4 +220,34 @@ public class UserController {
                     .body(new ResponseObject("false", "Cannot delete User with id: " + id, null));
         }
     }
+    // http://localhost:8080/api/v1/users/countByMembershipBasic
+    @GetMapping("/countByMembershipBasic")
+    ResponseEntity<ResponseObject> countByMembershipBasic() {
+      return userSevice.countAllByMembershipBasic();
+    }
+
+    // http://localhost:8080/api/v1/users/countByMembershipPremium
+    @GetMapping("/countByMembershipPremium")
+    ResponseEntity<ResponseObject> countByMembershipPremium() {
+      return userSevice.countAllByMembershipPremium();
+    }
+
+    // http://localhost:8080/api/v1/users/countByMembershipVIP
+    @GetMapping("/countByMembershipVIP")
+    ResponseEntity<ResponseObject> countByMembershipVIP() {
+      return userSevice.countAllByMembershipVIP();
+    }
+
+    // http://localhost:8080/api/v1/users/countAllDoctor
+    @GetMapping("/countAllDoctor")
+    ResponseEntity<ResponseObject> countAllDoctor() {
+      return userSevice.countAllDoctor();
+    }
+
+    // http://localhost:8080/api/v1/users/countAllMember
+    @GetMapping("/countAllMember")
+    ResponseEntity<ResponseObject> countAllMember() {
+      return userSevice.countAllMember();
+    }
+
 }

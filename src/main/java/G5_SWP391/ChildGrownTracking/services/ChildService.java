@@ -454,4 +454,13 @@ public class ChildService {
 
 
     }
+
+    public ResponseEntity<ResponseObject> countAll() {
+        Long count = childRepository.countByStatusIsTrue();
+        if (count == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "not found any child", null));
+        }
+        return ResponseEntity.ok(new ResponseObject("ok", "Total number of children: " + count, count));
+    }
 }
