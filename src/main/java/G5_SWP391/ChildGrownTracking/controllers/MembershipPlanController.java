@@ -23,7 +23,7 @@ public class MembershipPlanController {
 
     private final MembershipPlanRepository membershipPlanRepository;
     private final MembershipPlanService membershipPlanService;
-    @GetMapping("")
+    @GetMapping("/getAllMembershipPlan")
     public ResponseEntity<ResponseObject> getMembershipPlan() {
         List<MembershipPlan> membershipPlans = membershipPlanRepository.findAllByStatusIsTrue();
         List<MembershipPlanResponse> membershipPlansResponse = new ArrayList<>();
@@ -48,7 +48,7 @@ public class MembershipPlanController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("fail", "No membership plan founded", null));
     }
 
-    @PostMapping("")
+    @PostMapping("/create")
     public ResponseEntity<ResponseObject> createMembershipPlan(@RequestBody MembershipPlanDTO membershipPlanDTO) {
         MembershipPlanResponse membershipPlan = membershipPlanService.saveMembershipPlan(membershipPlanDTO);
         if (membershipPlan != null)
@@ -57,7 +57,7 @@ public class MembershipPlanController {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "Membership plan's name is already exist", null));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<ResponseObject> updateMembershipPlan(
             @PathVariable Long id,
             @RequestBody MembershipPlanDTO membershipPlanDTO) {
