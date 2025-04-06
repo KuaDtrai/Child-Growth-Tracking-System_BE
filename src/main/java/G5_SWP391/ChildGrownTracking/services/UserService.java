@@ -155,8 +155,13 @@ public class UserService {
         user.setUpdateDate(java.time.LocalDateTime.now());
         user = userRepository.save(user);
 
-        if (user.getRole() == Role.DOCTOR && doctorRepository.findByUser(user) == null) {
-            doctorRepository.save(new Doctor(user, "", ""));
+        if (user.getRole() == Role.DOCTOR) {
+            membership = membershipRepository.findByUser(user);
+            membership.setStatus(false);
+            membershipRepository.save(membership);
+            if (doctorRepository.findByUser(user) == null) {
+                doctorRepository.save(new Doctor(user, "", ""));
+            }
         }
         UserResponse userResponse = new UserResponse(
                 user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(),

@@ -31,28 +31,11 @@ public class MembershipService {
     public MembershipResponse getMembershipByUserId(Long id) {
         User user = userRepository.findById(id).orElse(null);
         Membership membership = membershipRepository.findByUser(user);
-        MembershipPlan membershipPlan = membership.getPlan();
-        UserResponse userResponse = new UserResponse(
-                user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(),
-                membershipRepository.findByUser(user).getPlan().getName(),
-                user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
 
-        MembershipPlanResponse membershipPlanResponse = new MembershipPlanResponse(
-                membershipPlan.getId(),
-                membershipPlan.getName(),
-                membershipPlan.getDescription(),
-                membershipPlan.getFeatures(),
-                membershipPlan.getCreatedDate(),
-                membershipPlan.getUpdateDate(),
-                membershipPlan.getAnnualPrice(),
-                membershipPlan.getMaxChildren(),
-                membershipPlan.isStatus(),
-                membershipPlan.getDuration()
-        );
         MembershipResponse membershipResponse = new MembershipResponse(
                 membership.getId(),
-                userResponse,
-                membershipPlanResponse,
+                membership.getUser().getUserName(),
+                membership.getPlan().getName(),
                 membership.getStartDate(),
                 membership.getEndDate(),
                 membership.isStatus()
@@ -72,28 +55,10 @@ public class MembershipService {
         }
         membership = membershipRepository.save(membership);
 
-        UserResponse userResponse = new UserResponse(
-                user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(),
-                membershipRepository.findByUser(user).getPlan().getName(),
-                user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
-
-        MembershipPlanResponse membershipPlanResponse = new MembershipPlanResponse(
-                membershipPlan.getId(),
-                membershipPlan.getName(),
-                membershipPlan.getDescription(),
-                membershipPlan.getFeatures(),
-                membershipPlan.getCreatedDate(),
-                membershipPlan.getUpdateDate(),
-                membershipPlan.getAnnualPrice(),
-                membershipPlan.getMaxChildren(),
-                membershipPlan.isStatus(),
-                membershipPlan.getDuration()
-        );
-
         MembershipResponse membershipResponse = new MembershipResponse(
                 membership.getId(),
-                userResponse,
-                membershipPlanResponse,
+                membership.getUser().getUserName(),
+                membership.getPlan().getName(),
                 membership.getStartDate(),
                 membership.getEndDate(),
                 membership.isStatus()

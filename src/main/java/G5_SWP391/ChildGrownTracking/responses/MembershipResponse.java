@@ -14,9 +14,9 @@ import java.time.LocalDateTime;
 public class MembershipResponse {
     private long id;
 
-    private UserResponse user;
+    private String username;
 
-    private MembershipPlanResponse plan;
+    private String planname;
 
     private LocalDateTime startDate;
 
