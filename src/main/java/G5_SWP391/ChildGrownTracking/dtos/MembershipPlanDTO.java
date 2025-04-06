@@ -19,8 +19,8 @@ public class MembershipPlanDTO {
     @JsonProperty("features")
     private String features;
 
-    @JsonProperty("anualPrice")
-    private double anualPrice;
+    @JsonProperty("annualPrice")
+    private double annualPrice;
 
     @JsonProperty("maxChildren")
     private int maxChildren;
