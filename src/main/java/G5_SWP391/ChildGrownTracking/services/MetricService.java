@@ -7,6 +7,7 @@ import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.repositories.ChildRepository;
 import G5_SWP391.ChildGrownTracking.repositories.MetricRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
+import G5_SWP391.ChildGrownTracking.responses.MetricResponse;
 import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -55,7 +57,21 @@ public class MetricService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseObject("fail", "No metrics found for childId: " + childId, null));
         }
-
+        
+        List<MetricResponse> metricResponses = new ArrayList<>();
+        for (Metric metric : activeMetrics) {
+            MetricResponse metricResponse = new MetricResponse(
+                    metric.getId(),
+                    metric.getWeight(),
+                    metric.getHeight(),
+                    metric.getBMI(),
+                    metric.getRecordedDate(),
+                    metric.getCreateDate(),
+                    metric.isStatus()
+            );
+            metricResponses.add(metricResponse);
+        }
+        
         return ResponseEntity.ok(new ResponseObject("ok", "Metrics found for childId: " + childId, activeMetrics));
     }
 
@@ -112,6 +128,13 @@ public class MetricService {
         BigDecimal BMI = inputMetric.getWeight().divide(heightInMeters.multiply(heightInMeters), 2, RoundingMode.HALF_UP);
 //        Optional<Child> childOptional = childRepository.findByIdAndStatusIsTrue(inputMetric.getChildId());
 //        Child child = childOptional.get(); // Chắc chắn có dữ liệu
+        
+        // Chặn mức BMI phi thực tế
+        if (BMI.compareTo(BigDecimal.TEN) <= 0)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("BMI must be greater than ten.");
+        if (BMI.compareTo(BigDecimal.valueOf(60)) >= 0)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("BMI must be less than 60.");
+
         // Tạo mới Metric
         Metric newMetric = new Metric();
         newMetric.setChild(child);
@@ -124,9 +147,18 @@ public class MetricService {
 
         metricRepository.save(newMetric);
 
+        MetricResponse metricResponse = new MetricResponse(newMetric.getId(),
+                newMetric.getWeight(),
+                newMetric.getHeight(),
+                newMetric.getBMI(),
+                newMetric.getRecordedDate(),
+                newMetric.getCreateDate(),
+                newMetric.isStatus()
+        );
+
         // Trả về phản hồi có thông báo thành công
         return ResponseEntity.status(HttpStatus.CREATED).body(
-        new ResponseObject("ok", "Metric created successfully.", newMetric.toString()));
+        new ResponseObject("ok", "Metric created successfully.", metricResponse));
     }
 
 

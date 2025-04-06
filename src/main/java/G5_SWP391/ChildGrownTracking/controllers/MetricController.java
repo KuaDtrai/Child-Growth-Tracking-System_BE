@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 // http://localhost:8080/api/v1/metric
 public class MetricController {
 
-
     private final MetricService service;
 
 
@@ -36,7 +35,6 @@ public class MetricController {
 
     // http://localhost:8080/api/v1/metric/create
     @PostMapping("/create")
-
     public ResponseEntity<?> createMetric(@RequestBody(required = false) MetricRequestDTO request) {
         return service.createMetric(request);
     }
