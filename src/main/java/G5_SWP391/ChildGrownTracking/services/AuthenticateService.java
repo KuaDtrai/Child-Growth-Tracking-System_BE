@@ -7,10 +7,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.UUID;
 
-import G5_SWP391.ChildGrownTracking.models.Membership;
-import G5_SWP391.ChildGrownTracking.models.MembershipPlan;
-import G5_SWP391.ChildGrownTracking.repositories.MembershipPlanRepository;
-import G5_SWP391.ChildGrownTracking.repositories.MembershipRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +23,11 @@ import com.nimbusds.jwt.SignedJWT;
 
 import G5_SWP391.ChildGrownTracking.dtos.AuthenticateDTO;
 import G5_SWP391.ChildGrownTracking.dtos.IntrospcectDTO;
+import G5_SWP391.ChildGrownTracking.models.Membership;
+import G5_SWP391.ChildGrownTracking.models.MembershipPlan;
 import G5_SWP391.ChildGrownTracking.models.User;
+import G5_SWP391.ChildGrownTracking.repositories.MembershipPlanRepository;
+import G5_SWP391.ChildGrownTracking.repositories.MembershipRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
 import G5_SWP391.ChildGrownTracking.responses.AuthenticateResponse;
 import G5_SWP391.ChildGrownTracking.responses.UserResponse;

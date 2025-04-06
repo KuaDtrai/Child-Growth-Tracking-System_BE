@@ -45,7 +45,7 @@ public class MembershipPlanService {
                 membershipPlanDTO.getFeatures(),
                 LocalDateTime.now(),
                 LocalDateTime.now(),
-                membershipPlanDTO.getAnualPrice(),
+                membershipPlanDTO.getAnnualPrice(),
                 membershipPlanDTO.getMaxChildren(),
                 true,
                 membershipPlanDTO.getDuration()
@@ -62,7 +62,7 @@ public class MembershipPlanService {
         membershipPlan.setDescription(membershipPlanDTO.getDescription());
         membershipPlan.setFeatures(membershipPlanDTO.getFeatures());
         membershipPlan.setUpdateDate(LocalDateTime.now());
-        membershipPlan.setAnnualPrice(membershipPlanDTO.getAnualPrice());
+        membershipPlan.setAnnualPrice(membershipPlanDTO.getAnnualPrice());
         membershipPlan.setMaxChildren(membershipPlanDTO.getMaxChildren());
         membershipPlan.setDuration(membershipPlanDTO.getDuration());
 
