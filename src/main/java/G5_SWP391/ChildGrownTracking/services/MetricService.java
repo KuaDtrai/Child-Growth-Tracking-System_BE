@@ -111,6 +111,16 @@ public class MetricService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with child ID " + inputMetric.getChildId() + " not found.");
         }
 
+        //Kiểm tra không cho metric cùng ngày
+        inputMetric.getRecordedDate().toLocalDate();
+        List<Metric> metrics = metricRepository.findByChildAndStatusIsTrue(child);
+        if (!metrics.isEmpty()){
+            for (Metric metric : metrics) {
+                if (metric.getRecordedDate().toLocalDate().isEqual(inputMetric.getRecordedDate().toLocalDate()))
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Can not create metric with existed recorded date.");
+            }
+        }
+
         User user = userOptional.get();
         LocalDateTime childDobLocalDateTime = Instant.ofEpochMilli(child.getDob().getTime())
                 .atZone(ZoneId.systemDefault())
@@ -119,9 +129,6 @@ public class MetricService {
         if (inputMetric.getRecordedDate().isBefore(childDobLocalDateTime)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Recorded date is before child date.");
         }
-        
-
-
 
         // Tính BMI = weight / (height * height) (chiều cao tính theo mét)
         BigDecimal heightInMeters = inputMetric.getHeight().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP); // Chuyển cm -> m
@@ -131,7 +138,7 @@ public class MetricService {
         
         // Chặn mức BMI phi thực tế
         if (BMI.compareTo(BigDecimal.TEN) <= 0)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("BMI must be greater than ten.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unrealistic BMI detected must be greater than ten.");
         if (BMI.compareTo(BigDecimal.valueOf(60)) >= 0)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("BMI must be less than 60.");
 

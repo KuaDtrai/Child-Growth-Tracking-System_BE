@@ -113,7 +113,7 @@ public class FeedbackService {
 
 
         return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("success", "Feedback created successfully", responseDTO)
+                new ResponseObject("ok", "Feedback created successfully", responseDTO)
         );
 
     }
