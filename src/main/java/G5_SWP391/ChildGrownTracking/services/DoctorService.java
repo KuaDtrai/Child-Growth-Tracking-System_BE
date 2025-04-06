@@ -71,7 +71,9 @@ public class DoctorService {
 
     public SpecResponse getDoctor(long id) {
         Doctor doctor = doctorRepository.findByUserId(id);
-        return new SpecResponse(doctor.getId(), doctor.getSpecialization(), doctor.getCertificate());
+        if (doctor != null)
+            return new SpecResponse(doctor.getId(), doctor.getSpecialization(), doctor.getCertificate());
+        return null;
     }
 
     public SpecResponse updateDoctor(Doctor doctor, DoctorDTO doctorDTO) {

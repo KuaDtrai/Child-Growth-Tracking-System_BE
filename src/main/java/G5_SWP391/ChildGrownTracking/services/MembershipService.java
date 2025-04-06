@@ -32,21 +32,26 @@ public class MembershipService {
         User user = userRepository.findById(id).orElse(null);
         Membership membership = membershipRepository.findByUser(user);
 
-        MembershipResponse membershipResponse = new MembershipResponse(
-                membership.getId(),
-                membership.getUser().getUserName(),
-                membership.getPlan().getName(),
-                membership.getStartDate(),
-                membership.getEndDate(),
-                membership.isStatus()
-        );
-        return membershipResponse;
+        if (user != null && membership != null) {
+            MembershipResponse membershipResponse = new MembershipResponse(
+                    membership.getId(),
+                    membership.getUser().getUserName(),
+                    membership.getPlan().getName(),
+                    membership.getStartDate(),
+                    membership.getEndDate(),
+                    membership.isStatus()
+            );
+            return membershipResponse;
+        }
+        return null;
     }
 
     public MembershipResponse updateMembership(Long userId, Long membershipPlanId) {
         User user = userRepository.findById(userId).orElse(null);
         Membership membership = membershipRepository.findByUser(user);
+        if (membership == null) return null;
         MembershipPlan membershipPlan = membershipPlanRepository.findById(membershipPlanId).orElse(null);
+        if (membershipPlan == null) return null;
         membership.setPlan(membershipPlanRepository.findById(membershipPlanId).orElse(null));
         membership.setStartDate(LocalDateTime.now());
         membership.setEndDate(LocalDateTime.now().plusDays(membershipPlan.getDuration()));

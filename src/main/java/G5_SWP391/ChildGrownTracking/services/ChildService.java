@@ -254,11 +254,11 @@ public class ChildService {
         }
 
 //        Kiểm tra số lượng trẻ với số lượng qui định trong gói membership
-        if(parent.getRole() == Role.MEMBER && parent.getMembership() == Membership.builder().build()){
+        if(parent.getRole() == Role.MEMBER){
             List<Child> child = childRepository.findByParentAndStatusIsTrue(parent);
             if(child.size() >= membershipPlan.getMaxChildren()){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(new ResponseObject("fail", "Reach max child for BASIC account !", null));
+                        .body(new ResponseObject("fail", String.format("Reach max child for %s account !", parent.getMembership().getPlan().getName()), null));
             }
         }
 

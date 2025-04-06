@@ -1,6 +1,7 @@
 package G5_SWP391.ChildGrownTracking.services;
 
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -61,6 +62,7 @@ public class UserService {
         List<User> members = userRepository.findAllByStatusIsTrueAndRole(Role.MEMBER);
         List<UserResponse> userResponses = new ArrayList<>();
         for (User user : members) {
+            Membership membership = membershipRepository.findByUser(user);
             UserResponse userResponse = new UserResponse(user.getId(),
                     user.getUserName(),
                     user.getEmail(),
@@ -122,7 +124,7 @@ public class UserService {
                 Role.valueOf(userDto.getRole()), LocalDateTime.now(), LocalDateTime.now(), true);
 
         MembershipPlan membershipPlan = membershipPlanRepository.findById(1L).orElse(null);
-        Membership membership = new Membership(user, membershipPlan, LocalDateTime.now(), LocalDateTime.now(), true);
+        Membership membership = new Membership(user, membershipPlan, LocalDateTime.now(), LocalDateTime.of(9999, Month.DECEMBER, 31, 23, 59, 50, 999), true);
 
         if (user.getRole().equals(Role.DOCTOR)) {
             user.setMembership(null);
