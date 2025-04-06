@@ -24,9 +24,35 @@ public class MembershipPlanController {
     private final MembershipPlanRepository membershipPlanRepository;
     private final MembershipPlanService membershipPlanService;
 
-    @GetMapping("/getAllMembershipPlan")
+    @GetMapping("/getAllActive")
     public ResponseEntity<ResponseObject> getMembershipPlan() {
         List<MembershipPlan> membershipPlans = membershipPlanRepository.findAllByStatusIsTrue();
+        List<MembershipPlanResponse> membershipPlansResponse = new ArrayList<>();
+        for (MembershipPlan membershipPlan : membershipPlans) {
+            MembershipPlanResponse membershipPlanResponse = new MembershipPlanResponse(
+                    membershipPlan.getId(),
+                    membershipPlan.getName(),
+                    membershipPlan.getDescription(),
+                    membershipPlan.getFeatures(),
+                    membershipPlan.getCreatedDate(),
+                    membershipPlan.getUpdateDate(),
+                    membershipPlan.getAnnualPrice(),
+                    membershipPlan.getMaxChildren(),
+                    membershipPlan.isStatus(),
+                    membershipPlan.getDuration());
+            membershipPlansResponse.add(membershipPlanResponse);
+        }
+        if (membershipPlansResponse.size() > 0)
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("ok", "Membership plans founded", membershipPlansResponse));
+        else
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("fail", "No membership plan founded", null));
+    }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<ResponseObject> getMembershipPlans() {
+        List<MembershipPlan> membershipPlans = membershipPlanRepository.findAll();
         List<MembershipPlanResponse> membershipPlansResponse = new ArrayList<>();
         for (MembershipPlan membershipPlan : membershipPlans) {
             MembershipPlanResponse membershipPlanResponse = new MembershipPlanResponse(
