@@ -37,6 +37,8 @@ public class MembershipService {
                     membership.getId(),
                     membership.getUser().getUserName(),
                     membership.getPlan().getName(),
+                    membership.getPlan().getMaxChildren(),
+                    membership.getPlan().getDuration(),
                     membership.getStartDate(),
                     membership.getEndDate(),
                     membership.isStatus()
@@ -72,6 +74,8 @@ public class MembershipService {
                 membership.getId(),
                 membership.getUser().getUserName(),
                 membership.getPlan().getName(),
+                membership.getPlan().getMaxChildren(),
+                membership.getPlan().getDuration(),
                 membership.getStartDate(),
                 membership.getEndDate(),
                 membership.isStatus()

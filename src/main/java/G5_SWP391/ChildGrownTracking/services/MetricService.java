@@ -83,7 +83,7 @@ public class MetricService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Child ID is required.", null));
         }
         if (inputMetric.getWeight() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Weight is required.", null));");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Weight is required.", null));
         }
         if (inputMetric.getHeight() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Height is required.", null));

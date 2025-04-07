@@ -18,6 +18,10 @@ public class MembershipResponse {
 
     private String planname;
 
+    private int maxChildren;
+
+    private int duration;
+
     private LocalDateTime startDate;
 
     private LocalDateTime endDate;
