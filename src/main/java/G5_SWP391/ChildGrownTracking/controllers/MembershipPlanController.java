@@ -3,6 +3,7 @@ package G5_SWP391.ChildGrownTracking.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -84,7 +85,11 @@ public class MembershipPlanController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ResponseObject> createMembershipPlan(@RequestBody MembershipPlanDTO membershipPlanDTO) {
+    public ResponseEntity<ResponseObject> createMembershipPlan(@Valid @RequestBody MembershipPlanDTO membershipPlanDTO) {
+        if (membershipPlanDTO.getName().trim().isEmpty() || membershipPlanDTO.getAnnualPrice() < 0 || membershipPlanDTO.getDuration() < 0
+                || membershipPlanDTO.getMaxChildren() <= 0
+        ) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Name require, Price/Duration must be positive & max children must greater than 0", null));
+
         MembershipPlanResponse membershipPlan = membershipPlanService.saveMembershipPlan(membershipPlanDTO);
         if (membershipPlan != null)
             return ResponseEntity.status(HttpStatus.OK)
@@ -98,6 +103,10 @@ public class MembershipPlanController {
     public ResponseEntity<ResponseObject> updateMembershipPlan(
             @PathVariable Long id,
             @RequestBody MembershipPlanDTO membershipPlanDTO) {
+        if (membershipPlanDTO.getName().trim().isEmpty() || membershipPlanDTO.getAnnualPrice() < 0 || membershipPlanDTO.getDuration() < 0
+                || membershipPlanDTO.getMaxChildren() <= 0
+        ) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Name require, Price/Duration must be positive & max children must greater than 0", null));
+
         MembershipPlan membershipPlan = membershipPlanRepository.findById(id).orElse(null);
         if (membershipPlan != null) {
             MembershipPlanResponse membershipPlanResponse = membershipPlanService.updateMembershipPlan(membershipPlan,

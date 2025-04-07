@@ -36,6 +36,7 @@ public class MembershipPlanService {
 
     public MembershipPlanResponse saveMembershipPlan(MembershipPlanDTO membershipPlanDTO) {
 
+
         if (membershipPlanRepository.findByName(membershipPlanDTO.getName()) != null)
             return null;
 

@@ -50,9 +50,11 @@ public class MembershipService {
         User user = userRepository.findById(userId).orElse(null);
         Membership membership = membershipRepository.findByUser(user);
         if (membership == null) return null;
+        MembershipPlan oldPlan = membership.getPlan();
         MembershipPlan membershipPlan = membershipPlanRepository.findById(membershipPlanId).orElse(null);
         if (membershipPlan == null) return null;
-        membership.setPlan(membershipPlanRepository.findById(membershipPlanId).orElse(null));
+
+        membership.setPlan(membershipPlan);
         membership.setStartDate(LocalDateTime.now());
         membership.setEndDate(LocalDateTime.now().plusDays(membershipPlan.getDuration()));
         if (user.getRole().equals(Role.DOCTOR)) {

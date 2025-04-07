@@ -138,9 +138,9 @@ public class MetricService {
         
         // Chặn mức BMI phi thực tế
         if (BMI.compareTo(BigDecimal.TEN) <= 0)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unrealistic BMI detected must be greater than ten.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unrealistic BMI detected, must be greater than ten.");
         if (BMI.compareTo(BigDecimal.valueOf(60)) >= 0)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("BMI must be less than 60.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unrealistic BMI detected, must be less than 60.");
 
         // Tạo mới Metric
         Metric newMetric = new Metric();

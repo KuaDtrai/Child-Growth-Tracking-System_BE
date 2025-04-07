@@ -32,7 +32,6 @@ public class MetricController {
         return service.getAllMetricByChildId(id);
     }
 
-
     // http://localhost:8080/api/v1/metric/create
     @PostMapping("/create")
     public ResponseEntity<?> createMetric(@RequestBody(required = false) MetricRequestDTO request) {
