@@ -139,8 +139,8 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.OK)
                         .body(new ResponseObject("ok", "User updated successfully", userResponse));
             } else
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ResponseObject("fail", "User updated fail", null));
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body(new ResponseObject("fail", "User name is already exist", null));
         } else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("fail", "User not found", null));
     }
