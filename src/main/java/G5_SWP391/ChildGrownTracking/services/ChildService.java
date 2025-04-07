@@ -219,27 +219,27 @@ public class ChildService {
     public ResponseEntity<ResponseObject> createChild(ChildRequestDTO newChild) {
 
         if (newChild.getName() == null || newChild.getName().trim().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("fail", "Name cannot be empty!", null));
         }
 
         if (newChild.getDob() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("fail", "Date of birth is required!", null));
         }
 
         if (newChild.getGender() == null || newChild.getGender().trim().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("fail", "Gender cannot be empty!", null));
         }
 
         if (newChild.getParentId() == null ) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("fail", "Parent ID cannot be empty!", null));
         }
         Optional<User> parentOptional = userRepository.findByIdAndStatusIsTrue(newChild.getParentId());
         if (parentOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("fail", "Parent ID is not exist!", null));
         }
 
@@ -249,7 +249,7 @@ public class ChildService {
         MembershipPlan membershipPlan = membership.getPlan();
 
         if(parent.getRole() != Role.MEMBER){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("fail", "Parent ID is not exist!", null));
         }
 
@@ -257,7 +257,7 @@ public class ChildService {
         if(parent.getRole() == Role.MEMBER){
             List<Child> child = childRepository.findByParentAndStatusIsTrue(parent);
             if(child.size() >= membershipPlan.getMaxChildren()){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                return ResponseEntity.status(HttpStatus.OK)
                         .body(new ResponseObject("fail", String.format("Reach max child for %s account !", parent.getMembership().getPlan().getName()), null));
             }
         }
@@ -287,7 +287,7 @@ public class ChildService {
                 child.getUpdateDate(),
                 child.isStatus()
         );
-                return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObject("ok", "Created Child with id: " + child.getId(), childResponseDTO));
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Created Child with id: " + child.getId(), childResponseDTO));
     }
 
 
@@ -458,7 +458,7 @@ public class ChildService {
     public ResponseEntity<ResponseObject> countAll() {
         Long count = childRepository.countByStatusIsTrue();
         if (count == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("fail", "not found any child", null));
         }
         return ResponseEntity.ok(new ResponseObject("ok", "Total number of children: " + count, count));

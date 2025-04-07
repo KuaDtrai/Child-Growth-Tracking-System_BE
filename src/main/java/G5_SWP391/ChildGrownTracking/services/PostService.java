@@ -35,7 +35,7 @@ public class PostService {
 
         Child child = childRepository.findByIdAndStatusIsTrue(childId).orElse(null);
         if (child == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("fail", "Child with ID " + childId + " not found.", null));
         }
 
@@ -62,7 +62,7 @@ public class PostService {
         }
         // If no active posts are found, return a NOT FOUND response
         if (postResponses.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("fail", "Child with ID " + childId + " has no active posts.", null));
         }
 
@@ -74,14 +74,14 @@ public class PostService {
     public ResponseEntity<ResponseObject> createPost(PostDTO postDTO) {
 
         if( postDTO.getUserId() == null || postDTO.getChildId() == null || postDTO.getTitle() == null || postDTO.getDescription() == null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("fail", "Missing required fields.", null));
         }
 
 
         Optional<User> userOptional = userRepository.findByIdAndStatusIsTrue(postDTO.getUserId());
         if (!userOptional.isPresent() || !userOptional.get().isStatus()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("fail", "User not found or inactive.", null));
         }
 
@@ -89,14 +89,14 @@ public class PostService {
 
         Optional<Child> childOptional = childRepository.findByIdAndStatusIsTrue(postDTO.getChildId());
         if (!childOptional.isPresent() || !childOptional.get().isStatus()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("fail", "Child not found or inactive.", null));
         }
 
         Child child = childOptional.get();
 
         if (!(user.getRole().equals(Role.DOCTOR) || user.getRole().equals(Role.MEMBER))) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("fail", "User is not doctor or parent.", null));
         }
 
@@ -111,7 +111,7 @@ public class PostService {
 
         if(user.getRole().equals(Role.MEMBER)){
             if(!user.getChildren().contains(child)){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                return ResponseEntity.status(HttpStatus.OK)
                         .body(new ResponseObject("fail", "User is not parent of this child.", null));
             }
         }
@@ -137,7 +137,7 @@ public class PostService {
                 newPost.getCreatedDate(),
                 newPost.isStatus()
         );
-        return ResponseEntity.status(HttpStatus.CREATED)
+        return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseObject("success", "Post created successfully", p));
 
     }
@@ -146,7 +146,7 @@ public class PostService {
         // Tìm Post theo ID
         Optional<Post> postOptional = postRepository.findById(postId);
         if (!postOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("fail", "Post with ID " + postId + " not found.", null));
         }
 
@@ -154,7 +154,7 @@ public class PostService {
 
         // Nếu Post đã bị vô hiệu hóa rồi thì báo lỗi
         if (!post.isStatus()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("fail", "Post is already deleted.", null));
         }
 

@@ -23,7 +23,7 @@ public class MembershipController {
         MembershipResponse membershipResponse = membershipService.getMembershipByUserId(userId);
         if (membershipResponse != null)
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "", membershipResponse));
-        else return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("notFound", "", membershipResponse));
+        else return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("notFound", "", membershipResponse));
     }
 
 

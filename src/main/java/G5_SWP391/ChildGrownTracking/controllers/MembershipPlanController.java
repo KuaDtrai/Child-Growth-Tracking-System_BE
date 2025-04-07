@@ -51,7 +51,7 @@ public class MembershipPlanController {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("ok", "Membership plans founded", membershipPlansResponse));
         else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("fail", "No membership plan founded", null));
     }
 
@@ -62,7 +62,7 @@ public class MembershipPlanController {
             List<Membership> memberships = membershipRepository.getMembershipsByPlanAndStatusIs(membershipPlan.get(), status);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Membership count", memberships.size()));
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("fail", "No membership founded", null));
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "No membership founded", null));
     }
 
     @GetMapping("/getAll")
@@ -87,7 +87,7 @@ public class MembershipPlanController {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("ok", "Membership plans founded", membershipPlansResponse));
         else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("fail", "No membership plan founded", null));
     }
 
@@ -95,7 +95,7 @@ public class MembershipPlanController {
     public ResponseEntity<ResponseObject> createMembershipPlan(@Valid @RequestBody MembershipPlanDTO membershipPlanDTO) {
         if (membershipPlanDTO.getName().trim().isEmpty() || membershipPlanDTO.getAnnualPrice() < 0 || membershipPlanDTO.getDuration() < 0
                 || membershipPlanDTO.getMaxChildren() <= 0
-        ) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Name require, Price/Duration must be positive & max children must greater than 0", null));
+        ) return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "Name require, Price/Duration must be positive & max children must greater than 0", null));
 
         MembershipPlanResponse membershipPlan = membershipPlanService.saveMembershipPlan(membershipPlanDTO);
         if (membershipPlan != null)
@@ -148,7 +148,7 @@ public class MembershipPlanController {
                             "fail",
                             "No membership plan found",
                             null);
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resp);
+                    return ResponseEntity.status(HttpStatus.OK).body(resp);
                 });
     }
 
@@ -170,7 +170,7 @@ public class MembershipPlanController {
                             "fail",
                             "No membership plan found",
                             null);
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resp);
+                    return ResponseEntity.status(HttpStatus.OK).body(resp);
                 });
     }
 }

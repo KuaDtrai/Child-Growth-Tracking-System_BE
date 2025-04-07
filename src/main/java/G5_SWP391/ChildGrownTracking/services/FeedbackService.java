@@ -28,22 +28,22 @@ public class FeedbackService {
     public ResponseEntity<ResponseObject> createFeedback(Long doctorId,Long parentId, FeedbackDTO feedback) {
 
         if(doctorId == null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+            return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("fail", "Doctor Id is required", null)
             );
         }
         if(parentId == null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+            return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("fail", "Parent Id is required", null)
             );
         }
         if(feedback.getDescription() == null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+            return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("fail", "Discription is required", null)
             );
         }
         if(Rating.fromValue(feedback.getRating()) == null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+            return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("fail", "Rating is required", null)
             );
         }
@@ -51,7 +51,7 @@ public class FeedbackService {
         Optional<User> parentOptional = userRepository.findByIdAndStatusIsTrue(parentId);
 
         if(!parentOptional.isPresent()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+            return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("fail", "Parent not found", null)
             );
         }
@@ -59,7 +59,7 @@ public class FeedbackService {
         User parent = parentOptional.get();
 
         if(parent.getRole() != Role.MEMBER){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+            return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("fail", "Parent not found", null)
             );
         }
@@ -69,7 +69,7 @@ public class FeedbackService {
         Optional<User> doctorOptional = userRepository.findByIdAndStatusIsTrue(doctorId);
 
         if(!doctorOptional.isPresent()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+            return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("fail", "Doctor not found", null)
             );
         }
@@ -77,7 +77,7 @@ public class FeedbackService {
         User doctor = doctorOptional.get();
 
         if(doctor.getRole() != Role.DOCTOR){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+            return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("fail", "Doctor not found", null)
             );
         }
@@ -85,7 +85,7 @@ public class FeedbackService {
         long feedbackCount = feedbackRepository.countByUserAndDoctor(parentId, doctorId);
 
         if (feedbackCount > 0) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+            return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("fail", "Bạn chỉ có thể gửi feedback duy nhất một lần!", null)
             );
         }
