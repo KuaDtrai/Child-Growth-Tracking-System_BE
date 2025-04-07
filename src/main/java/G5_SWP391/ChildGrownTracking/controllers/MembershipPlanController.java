@@ -2,18 +2,14 @@ package G5_SWP391.ChildGrownTracking.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import G5_SWP391.ChildGrownTracking.models.Membership;
+import G5_SWP391.ChildGrownTracking.repositories.MembershipRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import G5_SWP391.ChildGrownTracking.dtos.MembershipPlanDTO;
 import G5_SWP391.ChildGrownTracking.models.MembershipPlan;
@@ -31,6 +27,7 @@ public class MembershipPlanController {
 
     private final MembershipPlanRepository membershipPlanRepository;
     private final MembershipPlanService membershipPlanService;
+    private final MembershipRepository membershipRepository;
 
     @GetMapping("/getAllActive")
     public ResponseEntity<ResponseObject> getMembershipPlan() {
@@ -56,6 +53,16 @@ public class MembershipPlanController {
         else
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseObject("fail", "No membership plan founded", null));
+    }
+
+    @GetMapping("/count/{planId}")
+    public ResponseEntity<ResponseObject> getMembershipCount(@PathVariable Long planId,@Valid @RequestParam boolean status) {
+        Optional<MembershipPlan> membershipPlan = membershipPlanRepository.findById(planId);
+        if (membershipPlan.isPresent()) {
+            List<Membership> memberships = membershipRepository.getMembershipsByPlanAndStatusIs(membershipPlan.get(), status);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Membership count", memberships.size()));
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("fail", "No membership founded", null));
     }
 
     @GetMapping("/getAll")

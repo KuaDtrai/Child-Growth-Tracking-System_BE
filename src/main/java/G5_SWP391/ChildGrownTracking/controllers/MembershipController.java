@@ -26,6 +26,8 @@ public class MembershipController {
         else return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("notFound", "", membershipResponse));
     }
 
+
+
     @PutMapping("/{userId}")
     public ResponseEntity<ResponseObject> updateMembership(
             @PathVariable Long userId,

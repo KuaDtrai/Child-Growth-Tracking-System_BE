@@ -51,6 +51,12 @@ public class MembershipService {
         Membership membership = membershipRepository.findByUser(user);
         if (membership == null) return null;
         MembershipPlan oldPlan = membership.getPlan();
+
+//        Nếu từ basic thì bth
+//        Nếu không từ basic
+        if (!oldPlan.getName().equals("BASIC") && membership.getEndDate().isAfter(LocalDateTime.now()))
+            return null;
+
         MembershipPlan membershipPlan = membershipPlanRepository.findById(membershipPlanId).orElse(null);
         if (membershipPlan == null) return null;
 
