@@ -112,7 +112,7 @@ public class MembershipPlanController {
             @RequestBody MembershipPlanDTO membershipPlanDTO) {
         if (membershipPlanDTO.getName().trim().isEmpty() || membershipPlanDTO.getAnnualPrice() < 0 || membershipPlanDTO.getDuration() < 0
                 || membershipPlanDTO.getMaxChildren() <= 0
-        ) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Name require, Price/Duration must be positive & max children must greater than 0", null));
+        ) return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "Name require, Price/Duration must be positive & max children must greater than 0", null));
 
         MembershipPlan membershipPlan = membershipPlanRepository.findById(id).orElse(null);
         if (membershipPlan != null) {
@@ -122,7 +122,7 @@ public class MembershipPlanController {
                 return ResponseEntity.status(HttpStatus.OK).body(
                         new ResponseObject("ok", "Membership plan modified successfully", membershipPlanResponse));
             else
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                return ResponseEntity.status(HttpStatus.OK)
                         .body(new ResponseObject("fail", "No membership plan modified", membershipPlanResponse));
         } else
             return ResponseEntity.status(HttpStatus.OK)
