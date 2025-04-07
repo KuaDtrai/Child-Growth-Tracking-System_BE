@@ -140,7 +140,7 @@ public class UserController {
                         .body(new ResponseObject("ok", "User updated successfully", userResponse));
             } else
                 return ResponseEntity.status(HttpStatus.OK)
-                        .body(new ResponseObject("fail", "User name is already exist", null));
+                        .body(new ResponseObject("fail", "Wrong email format or email is already in used", null));
         } else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("fail", "User not found", null));
     }
