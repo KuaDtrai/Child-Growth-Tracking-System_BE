@@ -80,22 +80,22 @@ public class MetricService {
     public ResponseEntity<?> createMetric(MetricRequestDTO inputMetric) {
         // Kiểm tra dữ liệu thiếu
         if (inputMetric.getChildId() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Child ID is required.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Child ID is required.", null));
         }
         if (inputMetric.getWeight() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Weight is required.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Weight is required.", null));");
         }
         if (inputMetric.getHeight() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Height is required.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Height is required.", null));
         }
         if (inputMetric.getRecordedDate() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Recorded date is required.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Recorded date is required.", null));
         }
         if (inputMetric.getWeight().compareTo(BigDecimal.ZERO) <= 0) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Weight must be greater than zero.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Weight must be greater than zero.", null));
         }
         if (inputMetric.getHeight().compareTo(BigDecimal.ZERO) <= 0) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Height must be greater than zero.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Height must be greater than zero.", null));
         }
 
         Optional<Child> childOptional = childRepository.findByIdAndStatusIsTrue(inputMetric.getChildId());
@@ -138,9 +138,9 @@ public class MetricService {
         
         // Chặn mức BMI phi thực tế
         if (BMI.compareTo(BigDecimal.TEN) <= 0)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unrealistic BMI detected, must be greater than ten.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Unrealistic BMI detected, must be greater than ten.", null));
         if (BMI.compareTo(BigDecimal.valueOf(60)) >= 0)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unrealistic BMI detected, must be less than 60.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Unrealistic BMI detected, must be less than 60.", null));
 
         // Tạo mới Metric
         Metric newMetric = new Metric();

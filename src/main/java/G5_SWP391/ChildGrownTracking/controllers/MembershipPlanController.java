@@ -131,6 +131,7 @@ public class MembershipPlanController {
 
     @PutMapping("/disable/{id}")
     public ResponseEntity<ResponseObject> disableMembershipPlan(@PathVariable Long id) {
+        if (id == 1) return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "Cannot disable BASIC membership plan", null));
         return membershipPlanRepository.findById(id)
                 .map(mp -> {
                     mp.setStatus(false);
