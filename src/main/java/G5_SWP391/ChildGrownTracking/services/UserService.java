@@ -43,13 +43,16 @@ public class UserService {
         List<User> users = userRepository.findAll();
         List<UserResponse> userResponses = new ArrayList<>();
         for (User user : users) {
+            Membership membership = user.getMembership();
+            String membershipPlanName = membership.getPlan().getName();
+            if (!membership.isStatus()) membershipPlanName = membershipPlanRepository.findById(1L).get().getName();
             UserResponse userResponse = new UserResponse(
                     user.getId(),
                     user.getUserName(),
                     user.getEmail(),
                     user.getPassword(),
                     user.getRole(),
-                    membershipRepository.findByUser(user).getPlan().getName(),
+                    membershipPlanName,
                     user.getCreatedDate(),
                     user.getUpdateDate(),
                     user.isStatus());
@@ -62,13 +65,15 @@ public class UserService {
         List<User> members = userRepository.findAllByStatusIsTrueAndRole(Role.MEMBER);
         List<UserResponse> userResponses = new ArrayList<>();
         for (User user : members) {
-            Membership membership = membershipRepository.findByUser(user);
+            Membership membership = user.getMembership();
+            String membershipPlanName = membership.getPlan().getName();
+            if (!membership.isStatus() || membership.getEndDate().isBefore(LocalDateTime.now())) membershipPlanName = membershipPlanRepository.findById(1L).get().getName();
             UserResponse userResponse = new UserResponse(user.getId(),
                     user.getUserName(),
                     user.getEmail(),
                     user.getPassword(),
                     user.getRole(),
-                    membershipRepository.findByUser(user).getPlan().getName(),
+                    membershipPlanName,
                     user.getCreatedDate(),
                     user.getUpdateDate(),
                     user.isStatus());
@@ -82,14 +87,15 @@ public class UserService {
         assert user != null;
         String planName = null;
         Membership membership = membershipRepository.findByUser(user);
-        if (membership != null && membership.isStatus()) {
+        if (membership != null && membership.isStatus() && !membership.getEndDate().isBefore(LocalDateTime.now())) {
             MembershipPlan plan = membership.getPlan();
             if (plan != null) {
                 planName = plan.getName();
             }
         }else {
-            planName = null;
+            planName = membershipPlanRepository.findById(1L).get().getName();
         }
+
         return new UserResponse(
                 user.getId(),
                 user.getUserName(),
@@ -169,9 +175,13 @@ public class UserService {
             membership.setStatus(true);
             membershipRepository.save(membership);
         }
+        membership = user.getMembership();
+        String planName = membership.getPlan().getName();
+        if (!membership.isStatus() || membership.getEndDate().isBefore(LocalDateTime.now()))
+            planName = membershipPlanRepository.findById(1L).get().getName();
         UserResponse userResponse = new UserResponse(
                 user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(),
-                membershipRepository.findByUser(user).getPlan().getName(),
+                planName,
                 user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
         return userResponse;
     }
@@ -188,8 +198,13 @@ public class UserService {
         user.setPassword(updateUserProfileDTO.getPassword());
         user = userRepository.save(user);
 
+        Membership membership = user.getMembership();
+        String planName = membership.getPlan().getName();
+        if (!membership.isStatus() || membership.getEndDate().isBefore(LocalDateTime.now()))
+            planName = membershipPlanRepository.findById(1L).get().getName();
+
         return new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(),
-                membershipRepository.findByUser(user).getPlan().getName(),
+                planName,
                 user.getCreatedDate(), user.getUpdateDate(), user.isStatus());
     }
 

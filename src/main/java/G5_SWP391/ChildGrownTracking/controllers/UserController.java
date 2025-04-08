@@ -176,9 +176,20 @@ public class UserController {
             }
             user.setMembership(membership);
             User updatedUser = userRepository.save(user);
+            UserResponse userResponse = new UserResponse(
+                    updatedUser.getId(),
+                    user.getUserName(),
+                    updatedUser.getEmail(),
+                    updatedUser.getPassword(),
+                    updatedUser.getRole(),
+                    updatedUser.getMembership().getPlan().getName(),
+                    updatedUser.getCreatedDate(),
+                    updatedUser.getUpdateDate(),
+                    updatedUser.isStatus()
+            );
 
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject("ok", "User updated successfully", updatedUser));
+                    .body(new ResponseObject("ok", "User updated successfully", userResponse));
         } else {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject("fail", "User not found", null));
