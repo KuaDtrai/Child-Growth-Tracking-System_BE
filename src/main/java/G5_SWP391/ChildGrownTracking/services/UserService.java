@@ -164,6 +164,10 @@ public class UserService {
             if (doctorRepository.findByUser(user) == null) {
                 doctorRepository.save(new Doctor(user, "", ""));
             }
+        }else if (user.getRole() == Role.MEMBER) {
+            membership = membershipRepository.findByUser(user);
+            membership.setStatus(true);
+            membershipRepository.save(membership);
         }
         UserResponse userResponse = new UserResponse(
                 user.getId(), user.getUserName(), user.getEmail(), user.getPassword(), user.getRole(),
