@@ -102,7 +102,7 @@ public class PostService {
 
 
         if(user.getRole().equals(Role.DOCTOR)){
-            if(!user.getChildren().contains(child)){
+            if(!user.getChildren2().contains(child)){
                 return ResponseEntity.status(HttpStatus.OK)
                         .body(new ResponseObject("fail", "User is not doctor of this child.", null));
             }
