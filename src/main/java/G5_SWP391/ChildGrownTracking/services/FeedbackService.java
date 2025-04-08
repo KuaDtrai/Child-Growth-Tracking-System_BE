@@ -86,7 +86,7 @@ public class FeedbackService {
 
         if (feedbackCount > 0) {
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("fail", "Bạn chỉ có thể gửi feedback duy nhất một lần!", null)
+                    new ResponseObject("fail", "You can only submit feedback once!", null)
             );
         }
 
