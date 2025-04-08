@@ -1,12 +1,10 @@
 package G5_SWP391.ChildGrownTracking.services;
 
 import G5_SWP391.ChildGrownTracking.dtos.FeedbackDTO;
-import G5_SWP391.ChildGrownTracking.models.Feedback;
-import G5_SWP391.ChildGrownTracking.models.Rating;
-import G5_SWP391.ChildGrownTracking.models.User;
-import G5_SWP391.ChildGrownTracking.models.Role;
+import G5_SWP391.ChildGrownTracking.models.*;
 import G5_SWP391.ChildGrownTracking.repositories.FeedbackRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
+import G5_SWP391.ChildGrownTracking.responses.ChildDoctorResponse;
 import G5_SWP391.ChildGrownTracking.responses.FeedbackResponseDTO;
 import G5_SWP391.ChildGrownTracking.responses.ResponseObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +22,30 @@ public class FeedbackService {
 
     @Autowired
     private UserRepository userRepository;
+
+    public List<ChildDoctorResponse> childDoctorResponseList(Long patientId) {
+        User parent = userRepository.findById(patientId).get();
+        if (parent == null || !parent.isStatus() || !parent.getRole().equals(Role.MEMBER)) return null;
+        List<Child> children = parent.getChildren();
+        if (children == null) return null;
+        List<ChildDoctorResponse> childDoctorResponseList = new ArrayList<>();
+        for (Child child : children) {
+            Long doctorId = null;
+            String doctorName = null;
+            if (child.getDoctor() != null){
+                doctorId = child.getDoctor().getId();
+                doctorName = child.getDoctor().getUserName();
+            }
+            ChildDoctorResponse childDoctorResponse = new ChildDoctorResponse(
+                    child.getId(),
+                    child.getName(),
+                    doctorId,
+                    doctorName
+            );
+            childDoctorResponseList.add(childDoctorResponse);
+        }
+        return childDoctorResponseList;
+    };
 
     public ResponseEntity<ResponseObject> createFeedback(Long doctorId,Long parentId, FeedbackDTO feedback) {
 

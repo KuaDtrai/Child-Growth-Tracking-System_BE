@@ -2,6 +2,7 @@ package G5_SWP391.ChildGrownTracking.controllers;
 
 import java.util.List;
 
+import G5_SWP391.ChildGrownTracking.responses.ChildDoctorResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +45,13 @@ public class FeedbackController {
             @RequestParam(required = false) Long parentId,
             @RequestBody(required = false) FeedbackDTO feedback) {
         return feedbackService.createFeedback(doctorId,parentId, feedback);
+    }
+
+    @GetMapping("/{parentId}")
+    public ResponseEntity<ResponseObject> getFeedback(@PathVariable Long parentId) {
+        List<ChildDoctorResponse> childDoctorResponse = feedbackService.childDoctorResponseList(parentId);
+        if (childDoctorResponse == null) return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "No child foumd", null));
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Child - Doctor list", childDoctorResponse));
     }
 
     @GetMapping("")

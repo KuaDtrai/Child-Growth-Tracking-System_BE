@@ -67,7 +67,7 @@ public class UserService {
         for (User user : members) {
             Membership membership = user.getMembership();
             String membershipPlanName = membership.getPlan().getName();
-            if (!membership.isStatus() || membership.getEndDate().isBefore(LocalDateTime.now())) membershipPlanName = membershipPlanRepository.findById(1L).get().getName();
+            if (!membership.isStatus() || membership.getEndDate().isBefore(LocalDateTime.now()) || !membership.getPlan().isStatus()) membershipPlanName = membershipPlanRepository.findById(1L).get().getName();
             UserResponse userResponse = new UserResponse(user.getId(),
                     user.getUserName(),
                     user.getEmail(),
@@ -87,11 +87,9 @@ public class UserService {
         assert user != null;
         String planName = null;
         Membership membership = membershipRepository.findByUser(user);
-        if (membership != null && membership.isStatus() && !membership.getEndDate().isBefore(LocalDateTime.now())) {
+        if (membership != null && membership.isStatus() && !membership.getEndDate().isBefore(LocalDateTime.now()) && membership.getPlan().isStatus()) {
             MembershipPlan plan = membership.getPlan();
-            if (plan != null) {
                 planName = plan.getName();
-            }
         }else {
             planName = membershipPlanRepository.findById(1L).get().getName();
         }
