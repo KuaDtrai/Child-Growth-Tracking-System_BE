@@ -117,7 +117,7 @@ public class MetricService {
         if (!metrics.isEmpty()){
             for (Metric metric : metrics) {
                 if (metric.getRecordedDate().toLocalDate().isEqual(inputMetric.getRecordedDate().toLocalDate()))
-                    return ResponseEntity.status(HttpStatus.OK).body("Can not create metric with existed recorded date.");
+                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "Can not create metric with existed recorded date.", null));
             }
         }
 
@@ -127,7 +127,7 @@ public class MetricService {
                 .toLocalDateTime();
 
         if (inputMetric.getRecordedDate().isBefore(childDobLocalDateTime)) {
-            return ResponseEntity.status(HttpStatus.OK).body("Recorded date is before child date.");
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "Recorded date is before child date.", null));
         }
 
         // Tính BMI = weight / (height * height) (chiều cao tính theo mét)
