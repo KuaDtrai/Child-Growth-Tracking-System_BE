@@ -56,7 +56,7 @@ public class AuthenticateService {
     
         Membership membership = membershipRepository.findByUser(user);
     
-        String planName = null;
+        String planName = membershipPlanRepository.findById(1L).get().getName();
     if (membership != null && membership.isStatus()) {
         MembershipPlan plan = membership.getPlan();
         if (plan != null) {

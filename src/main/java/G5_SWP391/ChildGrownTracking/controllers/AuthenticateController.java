@@ -40,14 +40,14 @@ public class AuthenticateController {
     ) {
         UserResponse user = userService.getUserByUserName(username);
         if (user != null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Username is already used", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "Username is already used", null));
         } else {
             UserDTO userDTO = new UserDTO(username, password, email, "");
             user = userService.saveUser(userDTO);
             if (user != null) {
-                return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObject("ok", "Register successfully", user));
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Register successfully", user));
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Username or password is invalid", null));
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "Username or password is invalid", null));
             }
         }
     }
@@ -59,18 +59,18 @@ public class AuthenticateController {
     ) {
         AuthenticateResponse token = authenticateService.authenticate(request);
         if (token.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObject("ok", "login successfully", token));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "login successfully", token));
         }else
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Invalid username or password", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "Invalid username or password", null));
     }
 
     @PostMapping("/introspect")
     ResponseEntity<ResponseObject> authenticate(@RequestBody IntrospcectDTO token) throws ParseException, JOSEException {
         var result = authenticateService.introspect(token);
         if (result)
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObject("ok", "introspect", true));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "introspect", true));
         else
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObject("fail", "introspect failed", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "introspect failed", null));
     }
 
 }
