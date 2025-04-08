@@ -40,14 +40,14 @@ public class AuthenticateController {
     ) {
         UserResponse user = userService.getUserByUserName(username);
         if (user != null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("error", "Username is already used", null));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Username is already used", null));
         } else {
             UserDTO userDTO = new UserDTO(username, password, email, "");
             user = userService.saveUser(userDTO);
             if (user != null) {
                 return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObject("ok", "Register successfully", user));
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("error", "Username or password is invalid", null));
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Username or password is invalid", null));
             }
         }
     }
@@ -61,7 +61,7 @@ public class AuthenticateController {
         if (token.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObject("ok", "login successfully", token));
         }else
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("error", "Invalid username or password", null));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("fail", "Invalid username or password", null));
     }
 
     @PostMapping("/introspect")
@@ -70,7 +70,7 @@ public class AuthenticateController {
         if (result)
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseObject("ok", "introspect", true));
         else
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObject("error", "introspect failed", null));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseObject("fail", "introspect failed", null));
     }
 
 }

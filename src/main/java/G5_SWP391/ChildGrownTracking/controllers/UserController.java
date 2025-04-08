@@ -124,7 +124,7 @@ public class UserController {
                         .body(new ResponseObject("fail", "User saved fail", null));
         } else
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject("false", "User is already exist", null));
+                    .body(new ResponseObject("fail", "User is already exist", null));
     }
 
     // http://localhost:8080/api/v1/users/{id}
@@ -217,7 +217,7 @@ public class UserController {
                     .body(new ResponseObject("ok", "User deleted successfully", user));
         } else {
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject("false", "Cannot delete User with id: " + id, null));
+                    .body(new ResponseObject("fail", "Cannot delete User with id: " + id, null));
         }
     }
     // http://localhost:8080/api/v1/users/countByMembershipBasic

@@ -22,8 +22,8 @@ public class MembershipController {
     public ResponseEntity<ResponseObject> getMembership(@PathVariable Long userId) {
         MembershipResponse membershipResponse = membershipService.getMembershipByUserId(userId);
         if (membershipResponse != null)
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "", membershipResponse));
-        else return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("notFound", "", membershipResponse));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Membership founded", membershipResponse));
+        else return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "Membership not found", null));
     }
 
 
@@ -37,7 +37,7 @@ public class MembershipController {
         if (membershipResponse != null)
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok", "Membership modify successfully", membershipResponse));
         else
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "No membership plan founded", membershipResponse));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "Membership plan not available or already registered for membership package", membershipResponse));
     }
 
 }
