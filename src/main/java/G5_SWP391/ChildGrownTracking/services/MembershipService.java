@@ -32,6 +32,11 @@ public class MembershipService {
         User user = userRepository.findById(id).orElse(null);
         Membership membership = membershipRepository.findByUser(user);
 
+        if (membership == null || membership.getPlan() == null || !membership.isStatus() || membership.getPlan().isStatus() || membership.getEndDate().isBefore(LocalDateTime.now())) {
+            membership.setPlan(membershipPlanRepository.findById(1L).get());
+            membershipRepository.save(membership);
+        }
+
         if (user != null && membership != null) {
             MembershipResponse membershipResponse = new MembershipResponse(
                     membership.getId(),

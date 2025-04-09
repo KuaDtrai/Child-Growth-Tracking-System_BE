@@ -91,6 +91,9 @@ public class MetricService {
         if (inputMetric.getRecordedDate() == null) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "Recorded date is required.", null));
         }
+        if (inputMetric.getRecordedDate().isAfter(LocalDateTime.now())) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "Recorded date cannot be from the future.", null));
+        }
         if (inputMetric.getWeight().compareTo(BigDecimal.ZERO) <= 0) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("fail", "Weight must be greater than zero.", null));
         }
