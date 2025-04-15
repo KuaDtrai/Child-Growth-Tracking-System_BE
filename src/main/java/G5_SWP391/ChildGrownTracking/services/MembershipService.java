@@ -1,5 +1,10 @@
 package G5_SWP391.ChildGrownTracking.services;
 
+import java.time.LocalDateTime;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import G5_SWP391.ChildGrownTracking.models.Membership;
 import G5_SWP391.ChildGrownTracking.models.MembershipPlan;
 import G5_SWP391.ChildGrownTracking.models.Role;
@@ -7,13 +12,7 @@ import G5_SWP391.ChildGrownTracking.models.User;
 import G5_SWP391.ChildGrownTracking.repositories.MembershipPlanRepository;
 import G5_SWP391.ChildGrownTracking.repositories.MembershipRepository;
 import G5_SWP391.ChildGrownTracking.repositories.UserRepository;
-import G5_SWP391.ChildGrownTracking.responses.MembershipPlanResponse;
 import G5_SWP391.ChildGrownTracking.responses.MembershipResponse;
-import G5_SWP391.ChildGrownTracking.responses.UserResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 @Service
 public class MembershipService {
@@ -32,7 +31,7 @@ public class MembershipService {
         User user = userRepository.findById(id).orElse(null);
         Membership membership = membershipRepository.findByUser(user);
 
-        if (membership == null || membership.getPlan() == null || !membership.isStatus() || membership.getPlan().isStatus() || membership.getEndDate().isBefore(LocalDateTime.now())) {
+        if (membership == null || membership.getPlan() == null || !membership.isStatus() || !membership.getPlan().isStatus() || membership.getEndDate().isBefore(LocalDateTime.now())) {
             membership.setPlan(membershipPlanRepository.findById(1L).get());
             membershipRepository.save(membership);
         }
